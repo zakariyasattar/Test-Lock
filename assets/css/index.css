@@ -55,6 +55,7 @@ body {
   -o-transition: all .5s ease-in-out;
   transition: all .5s ease-in-out;
 }
+<<<<<<< HEAD
 
 #recognition {
   position: relative;
@@ -63,3 +64,5 @@ body {
   width: 100%;
   margin-bottom: 5px;
 }
+=======
+>>>>>>> parent of fbe7004... testing movement of recognition
