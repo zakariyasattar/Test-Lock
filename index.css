@@ -5,7 +5,7 @@ body {
   width: 100vw;
   height: 100vh;
 
-  font-family: 'Mandali', sans-serif;
+  font-family: 'Nunito', sans-serif;
   -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
 
   overflow-x: hidden;
@@ -29,4 +29,29 @@ body {
 
   top: 40vh;
   left: 27vw;
+}
+
+#submit {
+  width: 23%;
+  border-radius: 10px;
+  border: none;
+  padding: 5px;
+  background: cornflowerblue;
+  color: white;
+
+  margin-left: 20px;
+
+  -webkit-transition: all .5s ease-in-out;
+  -moz-transition: all .5s ease-in-out;
+  -o-transition: all .5s ease-in-out;
+  transition: all .5s ease-in-out;
+}
+
+#submit:hover {
+  background: #757372;
+
+  -webkit-transition: all .5s ease-in-out;
+  -moz-transition: all .5s ease-in-out;
+  -o-transition: all .5s ease-in-out;
+  transition: all .5s ease-in-out;
 }

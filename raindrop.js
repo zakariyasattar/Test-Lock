@@ -7,7 +7,7 @@
 	c.height = innerHeight
 
 	var lines = [],
-			maxSpeed = 5,
+			maxSpeed = 4,
 			spacing = 5,
 			xSpacing = 0,
 			n = innerWidth / spacing,
