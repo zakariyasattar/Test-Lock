@@ -59,7 +59,7 @@ body {
 #recognition {
   position: relative;
   bottom: 0;
-  top: 40px;
+  top: 10vh;
   width: 100%;
   margin-bottom: 5px;
 }
