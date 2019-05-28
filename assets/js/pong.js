@@ -21,13 +21,13 @@ window.cancelRequestAnimFrame = ( function() {
 
 
 // Initialize canvas and required variables
-var canvas = document.getElementById("canvas"),
+var canvas = document.getElementById("pong-canvas"),
 		ctx = canvas.getContext("2d"), // Create canvas context
 		W = window.innerWidth, // Window's width
-		H = window.innerHeight, // Window's height
+		H = window.innerHeight - 55	, // Window's height
 		particles = [], // Array containing particles
 		ball = {}, // Ball object
-		paddles = [2], // Array containing two paddles
+		paddles = [3], // Array containing two paddles
 		mouse = {}, // Mouse object to store it's current position
 		points = 0, // Varialbe to store points
 		fps = 60, // Max FPS (frames per second)
@@ -39,7 +39,21 @@ var canvas = document.getElementById("canvas"),
 		restartBtn = {}, // Restart button object
 		over = 0, // flag varialbe, cahnged when the game is over
 		init, // variable to initialize animation
-		paddleHit;
+		paddleHit,
+		isPaused = false;
+
+		document.body.onkeyup = function(e){
+    if(e.keyCode == 32){
+			if(!isPaused){
+				cancelRequestAnimFrame(init);
+				isPaused = true;
+			}
+			else{
+				animloop();
+				isPaused = false;
+			}
+	   }
+	}
 
 // Add mousemove and mousedown events to the canvas
 canvas.addEventListener("mousemove", trackPosition, true);
@@ -180,6 +194,12 @@ function update() {
 
 	// Update scores
 	updateScore();
+
+	ctx.fillStlye = "white";
+	ctx.font = "16px Arial, sans-serif";
+	ctx.textAlign = "right";
+	ctx.textBaseline = "top";
+	ctx.fillText("Press 'space' to pause ", window.innerWidth - 20, 20 );
 
 	// Move the paddles on mouse move
 	if(mouse.x && mouse.y) {

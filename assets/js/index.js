@@ -11,3 +11,14 @@ function removeAllActive() {
   document.getElementsByTagName("LI")[1].className = "";
   document.getElementsByTagName("LI")[2].className = "";
 }
+
+function display(title) {
+  if(title == '<a href="#">Ping-Pong</a>') {
+    document.getElementById('main').style.display = "none";
+    document.getElementById('pong').style.display = "initial";
+  }
+  else if(title == '<a href="#">Home</a>') {
+    document.getElementById('main').style.display = "initial";
+    document.getElementById('pong').style.display = "initial";
+  }
+}
