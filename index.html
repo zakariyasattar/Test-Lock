@@ -2,16 +2,46 @@
 
 <html>
   <head>
+    <!-- Misc -->
     <title>Drip &#124; A secure, cheat-free testing solution for the web</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- StyleSheets -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="assets/css/index.css">
+
+    <!-- Google Sign-In -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="941839358228-410f7ai6fkiqqob91o0uv5p07djgu2m6.apps.googleusercontent.com">
+
   </head>
 
   <body>
+    <!-- NavBar -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+
+
+          <ul class="nav nav-tabs">
+            <a class="navbar-brand" href="#">
+              <img id="logo" alt="Brand" src="assets/images/drip-logo.png">
+            </a>
+
+            <li style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active';"><a href="#">Home</a></li>
+            <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'"><a href="#">Dashboard</a></li>
+            <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'"><a href="#">Pong</a></li>
+
+            <div id="google-signin-pointer" style="position: absolute; right: 175px; top: 15px">
+              <span >Wait, I'm actually a teacher! </span> &nbsp
+              <span class="glyphicon glyphicon-hand-right"></span>
+            </div>
+            <div style="float: right; position: relative; top: 5px; right: 10px;" class="g-signin2" data-onsuccess="onSignIn"></div>
+          </ul>
+        </div>
+    </nav>
+
     <!-- Welcome Header Text -->
     <h1 id="welcome-header">Welcome to drip!</h1>
 
@@ -22,13 +52,31 @@
         <input id="submit" type="submit" value="Find Exam">
 
         <!-- Recognition -->
-        <hr style="position: relative; top: 90px"/>
-        <p style="position: relative; top: 90px;">Developed by Zakariya Sattar</p>
+        <hr style="position: relative; "/>
+        <p style="position: relative;">Developed by Zakariya Sattar</p>
       </div></center>
     </div>
 
     <!-- Simulate rain in background -->
     <canvas id="rain" width="100%" height="100%"></canvas>
     <script src="assets/js/raindrop.js"></script>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+<script src="assets/js/index.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyAX6wiL4sngrJ05Zc9ku_b8Hs0MtOGXiPc",
+    authDomain: "drip-af470.firebaseapp.com",
+    databaseURL: "https://drip-af470.firebaseio.com",
+    projectId: "drip-af470",
+    storageBucket: "drip-af470.appspot.com",
+    messagingSenderId: "493959564556",
+    appId: "1:493959564556:web:71ea299e6c68681a"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
   </body>
 </html>

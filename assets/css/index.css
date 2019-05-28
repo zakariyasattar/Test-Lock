@@ -12,6 +12,14 @@ body {
   overflow-y: hidden;
 }
 
+/* NavBar */
+#logo {
+  width: 75px;
+  height: 75px;
+  position: relative;
+  bottom: 25px;
+}
+
 #welcome-header {
   left: 35vw;
   top: 17vh;
