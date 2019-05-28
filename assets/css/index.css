@@ -1,0 +1,73 @@
+*{margin: 0; padding: 0}
+
+body {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+
+  font-family: 'Nunito', sans-serif;
+  -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
+
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* NavBar */
+#logo {
+  width: 75px;
+  height: 75px;
+  position: relative;
+  bottom: 25px;
+}
+
+#welcome-header {
+  left: 35vw;
+  top: 17vh;
+  position: absolute;
+  font-size: 4vw;
+}
+
+#initiator {
+  width: 50vw;
+  height: 30vh;
+  border: 1px solid;
+  position: absolute;
+  background: white;
+  border-radius: 10px;
+
+  top: 40vh;
+  left: 27vw;
+}
+
+#submit {
+  width: 23%;
+  border-radius: 10px;
+  border: none;
+  padding: 5px;
+  background: cornflowerblue;
+  color: white;
+
+  margin-left: 20px;
+
+  -webkit-transition: all .5s ease-in-out;
+  -moz-transition: all .5s ease-in-out;
+  -o-transition: all .5s ease-in-out;
+  transition: all .5s ease-in-out;
+}
+
+#submit:hover {
+  background: #757372;
+
+  -webkit-transition: all .5s ease-in-out;
+  -moz-transition: all .5s ease-in-out;
+  -o-transition: all .5s ease-in-out;
+  transition: all .5s ease-in-out;
+}
+
+#recognition {
+  position: relative;
+  bottom: 0;
+  top: 40px;
+  width: 100%;
+  margin-bottom: 5px;
+}
