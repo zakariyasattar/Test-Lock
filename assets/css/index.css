@@ -39,6 +39,15 @@ body {
   left: 27vw;
 }
 
+#inputExamCode {
+  width: 40%;
+  border-radius: 4px;
+  border: 1px solid;
+  margin-left: 15px;
+  padding: 3px 5px 3px 5px;
+  text-transform: uppercase;
+}
+
 #submit {
   width: 23%;
   border-radius: 10px;

@@ -43,24 +43,21 @@ var canvas = document.getElementById("pong-canvas"),
 		isPaused = false;
 
 		document.body.onkeyup = function(e){
-    if(e.keyCode == 32){
-			if(!isPaused){
-				cancelRequestAnimFrame(init);
-				isPaused = true;
-			}
-			else{
-				animloop();
-				isPaused = false;
-			}
-	   }
-	}
+	    if(e.keyCode == 32){
+				if(!isPaused){
+					cancelRequestAnimFrame(init);
+					isPaused = true;
+				}
+				else{
+					animloop();
+					isPaused = false;
+				}
+		   }
+		 }
 
 // Add mousemove and mousedown events to the canvas
 canvas.addEventListener("mousemove", trackPosition, true);
 canvas.addEventListener("mousedown", btnClick, true);
-
-// Initialise the collision sound
-collision = document.getElementById("collide");
 
 // Set the canvas's height and width to full screen
 canvas.width = W;
@@ -310,14 +307,6 @@ function collideAction(ball, p) {
 
 	points++;
 	increaseSpd();
-
-	if(collision) {
-		if(points > 0)
-			collision.pause();
-
-		collision.currentTime = 0;
-		collision.play();
-	}
 
 	particlePos.x = ball.x;
 	flag = 1;

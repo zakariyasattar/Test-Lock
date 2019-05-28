@@ -1,9 +1,21 @@
 function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  if(document.URL.indexOf("?") == -1 && document.URL.substring(document.URL.indexOf('?') + 1) != "noRedirect"){
+    window.location = "assets/html/teacher.html";
+
+    var profile = googleUser.getBasicProfile();
+    localStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
+  }
+  else {
+    window.location.href = document.URL.substring(0, document.URL.indexOf("?"));
+    signOut();
+  }
+}
+
+function signOut() {
+  var auth2 = gapi.auth2.getAuthInstance();
+  auth2.signOut().then(function () {
+    localStorage.removeItem('userInfo')
+  });
 }
 
 function removeAllActive() {
