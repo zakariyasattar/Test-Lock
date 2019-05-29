@@ -1,6 +1,6 @@
 function onSignIn(googleUser) {
   if(document.URL.indexOf("?") == -1 && document.URL.substring(document.URL.indexOf('?') + 1) != "noRedirect"){
-    window.location = "assets/html/teacher.html";
+    window.location = "teacher.html";
 
     var profile = googleUser.getBasicProfile();
     localStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
@@ -21,7 +21,6 @@ function signOut() {
 function removeAllActive() {
   document.getElementsByTagName("LI")[0].className = "";
   document.getElementsByTagName("LI")[1].className = "";
-  document.getElementsByTagName("LI")[2].className = "";
 }
 
 function display(title) {
@@ -33,4 +32,26 @@ function display(title) {
     document.getElementById('main').style.display = "initial";
     document.getElementById('pong').style.display = "initial";
   }
+}
+
+function submitExamCode() {
+  var code = document.getElementById('inputExamCode').value.toUpperCase();
+  console.log(code);
+
+  if(isValid(code)) {
+    localStorage.setItem('ExamCode', code);
+    document.getElementById('main').style.display = "none";
+    document.getElementById('navigation').style.display = "none";
+  }
+  else {
+    if(code.length > 0) {
+      swal("Invalid exam code!", "Check for special characters and make sure the length is at least 5", "error");
+    }
+  }
+}
+
+function isValid(code) {
+  var examExists = true;
+
+  return examExists && code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code));
 }

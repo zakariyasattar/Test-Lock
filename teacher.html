@@ -11,7 +11,7 @@
     <!-- StyleSheets -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="assets/css/index.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/teacher.css">
 
     <!-- Google Sign-In -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -25,47 +25,25 @@
     <nav id="navigation" class="navbar navbar-default">
       <div class="container-fluid">
           <ul class="nav nav-tabs">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="index.html">
               <img id="logo" alt="Brand" src="assets/images/drip-logo.png">
             </a>
-
             <li style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
+            <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
-
-            <div id="google-signin-pointer" style="position: absolute; right: 175px; top: 15px">
-              <span >Wait, I'm actually a teacher! </span> &nbsp
-              <span class="glyphicon glyphicon-hand-right"></span>
-            </div>
-            <div style="float: right; position: relative; top: 5px; right: 10px;" class="g-signin2" data-onsuccess="onSignIn"></div>
           </ul>
         </div>
     </nav>
 
-    <div id="main">
-      <!-- Welcome Header Text -->
-      <h1 id="welcome-header">Welcome to drip!</h1>
+    <!-- <button onclick="createQuiz()">Create quiz!</button> -->
 
-      <div id="initiator">
-        <center><div style="width: 100%; position: absolute; top: 30%;">
-          <!-- Input test code to find exam -->
-          <g style="font-size: 20px">Exam Code:</g> <input id="inputExamCode" type="text" maxlength="5" name="ExamCode" placeholder="Ex: QYZZA">
-          <input id="submit" type="submit" value="Find Exam" onclick="submitExamCode()">
-
-          <!-- Recognition -->
-          <hr style="position: relative; "/>
-          <p style="position: relative;">Developed by Zakariya Sattar</p>
-        </div></center>
-      </div>
-
-      <!-- Simulate rain in background -->
-      <canvas id="rain" width="100%" height="100%"></canvas>
-      <script src="assets/js/raindrop.js"></script>
+    <div id="wrapper">
+    </div>
 
       <!-- The core Firebase JS SDK is always required and must be listed first -->
       <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
-      <script src="assets/js/index.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
       <script>
-      signOut();
         // Your web app's Firebase configuration
         var firebaseConfig = {
           apiKey: "AIzaSyAX6wiL4sngrJ05Zc9ku_b8Hs0MtOGXiPc",
@@ -79,12 +57,9 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
       </script>
+      <script src="assets/js/teacher.js"></script>
     </div>
 
-    <div style="display: none; background: purple;" id="pong">
-      <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
-      <script src="assets/js/pong.js"></script>
-    </div>
   </body>
 
 </html>
