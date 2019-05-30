@@ -1,0 +1,54 @@
+<body>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <h1>Hello</h1>
+  <button id="view-fullscreen" onclick="toggleFullScreen()">Fullscreen</button>
+
+  <script>
+    function toggleFullScreen() {
+  if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+}
+document.onfullscreenchange = function ( event ) {
+  if(document.fullscreenElement == null) {
+    var time = 10;
+    var x = setInterval(function(){
+        if(time != 0) {
+          time--;
+        }
+        else {
+          clearInterval(x);
+
+        }
+     }, 1000);
+    swal({
+      title: "Are you sure?",
+      text: "Once you leave the test, you can no longer come back. Your final score will be recorded. YOU HAVE <span id='test'>" + time + "</span> SECONDS BEFORE THIS AUTOMATICALLY CLOSES AND ENDS TEST",
+      icon: "warning",
+      buttons: ["Take me back!", "Ok, end my test"],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        swal("Success! Your score has been recorded and sent to your teacher!", {
+          icon: "success",
+        });
+      } else {
+        toggleFullScreen();
+      }
+    });
+  }
+};
+document.addEventListener("keypress", function(e) {
+if (e.keyCode === 13) {
+  toggleFullScreen();
+}
+}, false);
+
+
+  </script>
+</body>
