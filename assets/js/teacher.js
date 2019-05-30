@@ -65,8 +65,31 @@ function createClassBox(className) {
   classBox.appendChild(span);
   classBox.appendChild(document.createElement('hr'));
 
-  wrapper.appendChild(classBox);
+  var numStudents = document.createElement('p');
+  var lowKey = document.createElement('h6');
+  lowKey.innerHTML = "Students";
+  lowKey.id="lowKey";
 
+  numStudents.innerHTML = 17;
+  numStudents.appendChild(lowKey);
+  numStudents.id = "numStudents";
+  classBox.appendChild(numStudents);
+
+  var hrInBetween = document.createElement('hr');
+  hrInBetween.id = "hrInBetween";
+  classBox.appendChild(hrInBetween);
+
+  var numExams = document.createElement('p');
+  lowKey = document.createElement('h6');
+  lowKey.innerHTML = "Exams";
+  lowKey.id = "lowKey";
+
+  numExams.innerHTML = 50;
+  numExams.appendChild(lowKey);
+  numExams.id="numExams";
+  classBox.appendChild(numExams);
+
+  wrapper.appendChild(classBox);
   document.body.appendChild(wrapper);
 }
 
