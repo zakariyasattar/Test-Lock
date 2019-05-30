@@ -31,12 +31,21 @@
             <li style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
             <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
+
+            <img id="profile"></img>
+            <hr style="transform: rotate(90deg); width: 10vh; float: right; margin-right: -18px;">
           </ul>
         </div>
     </nav>
 
     <!-- <button onclick="createQuiz()">Create quiz!</button> -->
 
+    <div id="welcome-div">
+      <h1 id="welcome-text"></h1>
+      <p style="color: #cdbfe3; font-size: 20px;">All of your classes have been preloaded below. Just click on one to start exploring!</p>
+    </div>
+
+    <!-- Wrapper for all css grid class boxes -->
     <div id="wrapper">
     </div>
 
