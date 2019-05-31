@@ -1,14 +1,16 @@
 var examCodes = [];
-var examCodesTeacher = [];
 var stopEnter = false;
+var key = initKey();
 
+// pull all exam codes then encrypt them
 firebase.database().ref('exam-codes').on('value', function(snapshot) {
   snapshot.forEach(function(childSnapshot) {
-    examCodes.push(childSnapshot.val().split(";")[0]);
-    examCodesTeacher.push(childSnapshot.val().split(";")[1]);
+    var code = CryptoJS.AES.encrypt(childSnapshot.val(), key);
+    examCodes.push(code);
   });
 });
 
+// code to run when google user signs in
 function onSignIn(googleUser) {
   if(document.URL.indexOf("?") == -1 && document.URL.substring(document.URL.indexOf('?') + 1) != "noRedirect"){
     window.location = "teacher.html";
@@ -22,6 +24,7 @@ function onSignIn(googleUser) {
   }
 }
 
+// request signout
 function signOut() {
   var auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
@@ -29,6 +32,21 @@ function signOut() {
   });
 }
 
+function initKey() {
+  var finalString;
+  var i, arr = [];
+  for (i = 0; i < 25; i++) {
+      arr[i] = i + 1;
+  }
+  arr.sort(function () {
+      return Math.random() - 0.25;
+  });
+
+  for(var j = 0; j < arr.length; j++) {
+    finalString = arr[j] + finalString + "";
+  }
+  return finalString.replace('NaN', '');
+}
 
 //function to remove all class='active'
 function removeAllActive() {
@@ -53,10 +71,25 @@ function submitExamCode() {
   var code = document.getElementById('inputExamCode').value.toUpperCase();
 
   if(isValid(code)) {
+    var i = 0;
     localStorage.setItem('ExamCode', code);
     document.getElementById('main').style.display = "none";
     document.getElementById('navigation').style.display = "none";
-    displayQuiz(code, examCodesTeacher[examCodes.indexOf(code)]);
+
+    for(var x = 0; x < examCodes.length; x++){
+      var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
+      var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+      if(plaintext.split(";")[0] == code){
+        i = x;
+        break;
+      }
+    }
+
+    var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
+    var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+    displayQuiz(code, plaintext.split(";")[1]);
     stopEnter = true;
   }
   else {
@@ -68,7 +101,18 @@ function submitExamCode() {
 
 //function to make sure exam code is valid
 function isValid(code) {
-  return examCodes.indexOf(code) != -1 && code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code));
+  var exists = false;
+
+  for(var x = 0; x < examCodes.length; x++){
+    var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
+    var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+    if(plaintext.split(";")[0] == code){
+      exists = true;
+    }
+  }
+
+  return exists && code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code));
 }
 
 // function to display quiz to student
@@ -89,6 +133,11 @@ function toggleFullScreen() {
   }
 }
 
+//function to end test
+function endTest() {
+  window.location.href = window.location.href;
+}
+
 //code to call when document leaves full screen
 document.onfullscreenchange = function ( event ) {
   if(document.fullscreenElement == null) {
@@ -102,8 +151,6 @@ document.onfullscreenchange = function ( event ) {
           endTest();
         }
      }, 1000);
-
-
     swal({
       title: "Are you sure?",
       text: "Once you leave the test, you can no longer come back. Your final score will be recorded. YOU HAVE " + time + " SECONDS BEFORE THIS AUTOMATICALLY CLOSES AND ENDS TEST",
@@ -130,7 +177,8 @@ window.onbeforeunload = function() {
 // if user hits enter, check exam code
 document.addEventListener("keypress", function(e) {
   if (e.keyCode === 13 && !stopEnter) {
-    console.log("hello");
     submitExamCode();
   }
 }, false);
+
+key = "";

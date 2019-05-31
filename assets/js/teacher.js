@@ -52,9 +52,7 @@ function generateCode() {
 }
 
 // create div box for every class
-function createClassBox(className) {
-  var examReference = firebase.database().ref('Teachers/' + userName + "/Classes/" + className + "/Exams/");
-  var studentReference = firebase.database().ref('Teachers/' + userName + "/Classes/" + className + "/Students/");
+function createClassBox(className, numStudentsInClass, numExamsInClass) {
 
   var wrapper = document.getElementById('wrapper');
 
@@ -70,14 +68,12 @@ function createClassBox(className) {
 
   var numStudents = document.createElement('p');
 
-  studentReference.once("value", function(students) {
-    var lowKey = document.createElement('h6');
-    lowKey.innerHTML = "Students";
-    lowKey.id="lowKey";
+  var lowKey = document.createElement('h6');
+  lowKey.innerHTML = "Students";
+  lowKey.id="lowKey";
 
-    numStudents.innerHTML = students.numChildren();
-    numStudents.appendChild(lowKey);
-  });
+  numStudents.innerHTML = numStudentsInClass;
+  numStudents.appendChild(lowKey);
 
   numStudents.id = "numStudents";
   classBox.appendChild(numStudents);
@@ -88,13 +84,11 @@ function createClassBox(className) {
 
   var numExams = document.createElement('p');
 
-  examReference.on("value", function(exams) {
-    lowKey = document.createElement('h6');
-    lowKey.innerHTML = "Exams";
-    lowKey.id = "lowKey";
-    numExams.innerHTML = exams.numChildren();
-    numExams.appendChild(lowKey);
-  });
+  lowKey = document.createElement('h6');
+  lowKey.innerHTML = "Exams";
+  lowKey.id = "lowKey";
+  numExams.innerHTML = numExamsInClass;
+  numExams.appendChild(lowKey);
 
   numExams.id="numExams";
   classBox.appendChild(numExams);
@@ -123,7 +117,7 @@ function populateDashboard() {
               // skip loop if the property is from prototype
               if(!obj.hasOwnProperty(prop)) continue;
 
-              createClassBox(prop);
+              createClassBox(prop, Object.keys(obj[prop].Students).length, Object.keys(obj[prop].Exams).length);
           }
         }
       }
