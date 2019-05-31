@@ -63,9 +63,8 @@
 
       <!-- The core Firebase JS SDK is always required and must be listed first -->
       <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
-      <script src="assets/js/index.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-database.js"></script>
       <script>
-      signOut();
         // Your web app's Firebase configuration
         var firebaseConfig = {
           apiKey: "AIzaSyAX6wiL4sngrJ05Zc9ku_b8Hs0MtOGXiPc",
@@ -79,12 +78,14 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
       </script>
+      <script src="assets/js/index.js"></script>
+
+      <div style="display: none; background: purple;" id="pong">
+        <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
+        <script src="assets/js/pong.js"></script>
+      </div>
     </div>
 
-    <div style="display: none; background: purple;" id="pong">
-      <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
-      <script src="assets/js/pong.js"></script>
-    </div>
   </body>
 
 </html>
