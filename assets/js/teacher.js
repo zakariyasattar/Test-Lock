@@ -53,6 +53,9 @@ function generateCode() {
 
 // create div box for every class
 function createClassBox(className) {
+  var examReference = firebase.database().ref('Teachers/' + userName + "/Classes/" + className + "/Exams/");
+  var studentReference = firebase.database().ref('Teachers/' + userName + "/Classes/" + className + "/Students/");
+
   var wrapper = document.getElementById('wrapper');
 
   var classBox = document.createElement('div');
@@ -66,12 +69,16 @@ function createClassBox(className) {
   classBox.appendChild(document.createElement('hr'));
 
   var numStudents = document.createElement('p');
-  var lowKey = document.createElement('h6');
-  lowKey.innerHTML = "Students";
-  lowKey.id="lowKey";
 
-  numStudents.innerHTML = 17;
-  numStudents.appendChild(lowKey);
+  studentReference.once("value", function(students) {
+    var lowKey = document.createElement('h6');
+    lowKey.innerHTML = "Students";
+    lowKey.id="lowKey";
+
+    numStudents.innerHTML = students.numChildren();
+    numStudents.appendChild(lowKey);
+  });
+
   numStudents.id = "numStudents";
   classBox.appendChild(numStudents);
 
@@ -80,12 +87,15 @@ function createClassBox(className) {
   classBox.appendChild(hrInBetween);
 
   var numExams = document.createElement('p');
-  lowKey = document.createElement('h6');
-  lowKey.innerHTML = "Exams";
-  lowKey.id = "lowKey";
 
-  numExams.innerHTML = 50;
-  numExams.appendChild(lowKey);
+  examReference.on("value", function(exams) {
+    lowKey = document.createElement('h6');
+    lowKey.innerHTML = "Exams";
+    lowKey.id = "lowKey";
+    numExams.innerHTML = exams.numChildren();
+    numExams.appendChild(lowKey);
+  });
+
   numExams.id="numExams";
   classBox.appendChild(numExams);
 
@@ -104,6 +114,7 @@ function populateDashboard() {
         arr.push(childSnapshot.child("Classes").val());
 
         for (var key in arr) {
+          var x = 0;
           // skip loop if the property is from prototype
           if (!arr.hasOwnProperty(key)) continue;
           var obj = arr[key];
@@ -112,7 +123,6 @@ function populateDashboard() {
               // skip loop if the property is from prototype
               if(!obj.hasOwnProperty(prop)) continue;
 
-              // your code
               createClassBox(prop);
           }
         }
