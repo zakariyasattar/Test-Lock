@@ -1,5 +1,6 @@
 var examCodes = [];
 var examCodesTeacher = [];
+var stopEnter = false;
 
 firebase.database().ref('exam-codes').on('value', function(snapshot) {
   snapshot.forEach(function(childSnapshot) {
@@ -56,6 +57,7 @@ function submitExamCode() {
     document.getElementById('main').style.display = "none";
     document.getElementById('navigation').style.display = "none";
     displayQuiz(code, examCodesTeacher[examCodes.indexOf(code)]);
+    stopEnter = true;
   }
   else {
     if(code.length > 0) {
@@ -121,10 +123,14 @@ document.onfullscreenchange = function ( event ) {
   }
 };
 
+window.onbeforeunload = function() {
+   return "Dude, are you sure you want to leave? Think of the kittens!";
+}
 
 // if user hits enter, check exam code
 document.addEventListener("keypress", function(e) {
-  if (e.keyCode === 13 && document.getElementById('main').style.display == "initial") {
+  if (e.keyCode === 13 && !stopEnter) {
+    console.log("hello");
     submitExamCode();
   }
 }, false);
