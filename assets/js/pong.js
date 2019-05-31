@@ -350,6 +350,8 @@ function gameOver() {
 	ctx.textBaseline = "middle";
 	ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
+	submitToLeaderboard(prompt("Would you like to report your score? Input name below!"));
+
 	// Stop the Animation
 	cancelRequestAnimFrame(init);
 
@@ -358,6 +360,15 @@ function gameOver() {
 
 	// Show the restart button
 	restartBtn.draw();
+}
+
+function submitToLeaderboard(name) {
+	if(typeof name == 'string' && name != ""){
+		firebase.database().ref('leaderboard').push(name + ";" + points);
+
+		document.getElementById('pong').style.display = "none";
+		document.getElementById('leaderboard').style.display = "initial";
+	}
 }
 
 // Function for running the whole animation

@@ -170,9 +170,9 @@ document.onfullscreenchange = function ( event ) {
   }
 };
 
-window.onbeforeunload = function() {
-   return "Dude, are you sure you want to leave? Think of the kittens!";
-}
+// window.onbeforeunload = function() {
+//    return "Dude, are you sure you want to leave? Think of the kittens!";
+// }
 
 // if user hits enter, check exam code
 document.addEventListener("keypress", function(e) {
