@@ -4,17 +4,16 @@ if(localStorage.getItem('userInfo') == null) {
   alert("NOT AUTHORIZED");
 }
 
-
 var examCodes = [];
 var examCodesTeachers = [];
 var arr = [];
 
-//when page loads populateDashboard()
+//when page loads, populateDashboard()
 window.onload = function() {
   populateDashboard();
 };
 
-// retrieve userName from localStorage
+// retrieve userName, img from localStorage
 var userName = (JSON.parse(localStorage.getItem("userInfo"))[1]);
 var profileImg = (JSON.parse(localStorage.getItem("userInfo"))[2]);
 
@@ -25,7 +24,7 @@ document.getElementById('profile').src = profileImg;
 function createQuiz() {
   if(examCodes.length == 0){
 
-    // Pull all exam codes and seperate the datapoint from each other
+    // Pull all exam codes and seperate the datapoints from each other
     firebase.database().ref('exam-codes').on('value', function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         examCodes.push(childSnapshot.val().split(";")[0]);
@@ -36,7 +35,34 @@ function createQuiz() {
 
   // get randomCode
   var randomCode = generateCode();
+}
 
+//load class based on name
+function loadClass(name) {
+  var examCounter = 0;
+  var collectiveAvg = 0;
+  var highestIndAvg = 0;
+
+  //firebase.database().ref("Teachers/Zakariya Sattar/Classes/Algebra/Exams/mid-term").push("zaksat1:92")
+  document.body.style.background = "#eeeeee";
+  document.getElementById('welcome-div').style.display = "none";
+  document.getElementById('wrapper').style.display = "none";
+  document.getElementById('main-header').innerHTML = "Welcome to " + name;
+
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      childSnapshot.forEach(function(exam) {
+        examCounter++;
+        var grade = exam.val().split(":")[1];
+        collectiveAvg += parseInt(grade);
+
+
+      });
+    });
+    collectiveAvg = collectiveAvg / examCounter;
+    collectiveAvg = (collectiveAvg).toFixed(1)
+    document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
+  });
 }
 
 // Generate random exam code
@@ -53,10 +79,13 @@ function generateCode() {
 
 // create div box for every class
 function createClassBox(className, numStudentsInClass, numExamsInClass) {
-
   var wrapper = document.getElementById('wrapper');
 
   var classBox = document.createElement('div');
+  classBox.onclick = function() {
+    loadClass(className, numExamsInClass);
+  };
+
   classBox.className = "classBox";
 
   var span = document.createElement('span');

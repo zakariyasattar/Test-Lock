@@ -3,6 +3,7 @@
 <html>
   <head>
     <!-- Misc -->
+    <meta charset="utf-8"/>
     <title>Drip &#124; A secure, cheat-free testing solution for the web</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
@@ -33,21 +34,39 @@
             <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
 
             <img id="profile"></img>
-            <hr style="transform: rotate(90deg); width: 10vh; float: right; margin-right: -18px;">
           </ul>
         </div>
     </nav>
 
-    <!-- <button onclick="createQuiz()">Create quiz!</button> -->
+      <!-- <button onclick="createQuiz()">Create quiz!</button> -->
 
-    <div id="welcome-div">
-      <h1 id="welcome-text"></h1>
-      <p id="welcome-text-p">All of your classes have been preloaded below. Just click on one to start exploring!</p>
-    </div>
+      <div id="welcome-div">
+        <h1 id="welcome-text"></h1>
+        <p id="welcome-text-p">All of your classes have been preloaded below. Just click on one to start exploring!</p>
+      </div>
 
-    <!-- Wrapper for all css grid class boxes -->
-    <div id="wrapper">
-    </div>
+      <!-- Wrapper for all css grid class boxes -->
+      <div id="wrapper">
+      </div>
+
+      <div id="classSpecific">
+        <div id="jumbotron" class="jumbotron">
+          <div style="float: left">
+            <h1 id="main-header"></h1>
+            <p id="main-p"></p>
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">
+              <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
+              Create Quiz
+            </a></p>
+          </div>
+
+          <div id="class-specific-data">
+            <span id="avg-grade-number"></span>
+            <span style="border-left: 1px solid gray;" id="individual-highest-avg">77.0%</span>
+            <span style="border-left: 1px solid gray;" id="individual-lowest-avg">57.0%</span>
+          </div>
+        </div>
+      </div>
 
       <!-- The core Firebase JS SDK is always required and must be listed first -->
       <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>

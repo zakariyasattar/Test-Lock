@@ -1,144 +1,167 @@
-*{margin: 0; padding: 0}
+  *{margin: 0; padding: 0}
 
-/* Style main body element */
-body {
-  font-family: 'Nunito', sans-serif;
-}
-
-/* NavBar */
-#logo {
-  width: 75px;
-  height: 75px;
-  position: relative;
-  bottom: 25px;
-}
-
-#profile {
-  width: 35px;
-  height: 35px;
-  border-radius: 100%;
-  float: right;
-  margin-top: 7px;
-}
-
-#welcome-div {
-  height: 30vh;
-  background-image: -webkit-gradient(linear,left top,left bottom,from(#563d7c),to(#6f5499));
-  margin-bottom: 35px;
-  position: relative;
-  bottom: 20px;
-  color: white;
-  text-align: center;
-  padding-top: 3%;
-}
-
-#welcome-text-p {
-  color: #cdbfe3;
-  font-size: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-/* implement CSS grid in wrapper */
-#wrapper {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto;
-}
-
-/* Style all className boxes */
-.classBox {
-  text-align: center;
-
-  margin: 0 20px 40px 20px;
-  height: 30vh;
-
-  border: 2px solid #2e2f7d;
-  border-radius: 12px;
-  box-shadow: 10px 10px lightgray;
-
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
-}
-
-.classBox:hover {
-  box-shadow: none;
-  cursor: pointer;
-
-  -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
-}
-
-/* Style all text for className boxes */
-.className {
-  font-size: 20px;
-  position: relative;
-  top: 10px;
-}
-
-#lowKey {
-  font-size: 20px;
-  margin-bottom: 40px;
-  color: darkgray;
-  position: relative;
-  bottom: 20px;
-}
-
-#numExams {
-  float: right;
-  padding-right: 15%;
-  font-size: 75px;
-  color: cornflowerblue;
-}
-
-#numStudents {
-  float: left;
-  padding-left: 15%;
-  font-size: 75px;
-  color: dodgerblue;
-}
-
-
-#hrInBetween {
-  transform: rotate(90deg);
-  display: inline-block;
-  width: 20%;
-  position: relative;
-  top: 30px;
-}
-
-hr {
-  border-color: darkgray;
-}
-
-/* Media Queries */
-
-@media only screen and (max-width: 1220px) {
-  #wrapper{
-    grid-template-columns: repeat(2, 1fr);
+  /* Style main body element */
+  body {
+    font-family: 'Nunito', sans-serif;
   }
-}
 
-@media only screen and (max-width: 815px) {
-  #wrapper{
-    grid-template-columns: repeat(1, 1fr);
+  /* NavBar */
+  #logo {
+    width: 75px;
+    height: 75px;
+    position: relative;
+    bottom: 25px;
   }
+
+  #profile {
+    width: 35px;
+    height: 35px;
+    border-radius: 100%;
+    float: right;
+    margin-top: 7px;
+  }
+
+  #welcome-div {
+    height: 30vh;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#563d7c),to(#6f5499));
+    margin-bottom: 35px;
+    position: relative;
+    bottom: 20px;
+    color: white;
+    text-align: center;
+    padding-top: 3%;
+  }
+
   #welcome-text-p {
-    font-size: 15px;
-    padding-top: 20px;
+    color: #cdbfe3;
+    font-size: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
-}
 
-@media only screen and (max-width: 600px) {
+  /* implement CSS grid in wrapper */
+  #wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+  }
+
+  /* Style all className boxes */
+  .classBox {
+    text-align: center;
+
+    margin: 0 20px 40px 20px;
+    height: 300px;
+
+    border: 2px solid #2e2f7d;
+    border-radius: 12px;
+    box-shadow: 10px 10px lightgray;
+
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+  }
+
+  .classBox:hover {
+    box-shadow: none;
+    cursor: pointer;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
+  /* Style all text for className boxes */
+  .className {
+    font-size: 20px;
+    position: relative;
+    top: 10px;
+  }
+
+  #lowKey {
+    font-size: 20px;
+    margin-bottom: 40px;
+    color: darkgray;
+    position: relative;
+    bottom: 20px;
+  }
+
   #numExams {
-    font-size: 50px;
-  }
-  #numStudents {
-    font-size: 50px;
+    float: right;
+    padding-right: 15%;
+    font-size: 75px;
+    color: cornflowerblue;
   }
 
-}
+  #numStudents {
+    float: left;
+    padding-left: 15%;
+    font-size: 75px;
+    color: dodgerblue;
+  }
+
+
+  #hrInBetween {
+    transform: rotate(90deg);
+    display: inline-block;
+    width: 150px;
+    position: relative;
+    top: 30px;
+  }
+
+  hr {
+    border-color: darkgray;
+  }
+
+  #jumbotron {
+    padding-left: 66px;
+    overflow: hidden;
+    background: white;
+    color: #2e2f7d;
+    border: 1.5px solid #2e2f7d;
+    border-radius: 10px;
+    margin: 25px;
+  }
+
+  #class-specific-data {
+    float: right;
+    margin-right: 10vw;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+  }
+
+  #class-specific-data span{
+    font-size: 100px;
+    padding-left: 55px;
+    padding-right: 55px;
+  }
+
+  /* Media Queries */
+
+  @media only screen and (max-width: 1400px) {
+    #wrapper{
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media only screen and (max-width: 815px) {
+    #wrapper{
+      grid-template-columns: repeat(1, 1fr);
+    }
+    #welcome-text-p {
+      font-size: 15px;
+      padding-top: 20px;
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    #numExams {
+      font-size: 50px;
+    }
+    #numStudents {
+      font-size: 50px;
+    }
+
+  }
