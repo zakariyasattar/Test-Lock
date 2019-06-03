@@ -47,6 +47,7 @@ function loadClass(name) {
   document.body.style.background = "#eeeeee";
   document.getElementById('welcome-div').style.display = "none";
   document.getElementById('wrapper').style.display = "none";
+  document.getElementById('classSpecific').style.display = "initial";
   document.getElementById('main-header').innerHTML = "Welcome to " + name;
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
