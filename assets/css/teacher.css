@@ -127,7 +127,7 @@
 
   #class-specific-data {
     float: right;
-    margin-right: 10vw;
+    margin-right: 40px;
     border-left: 1px solid gray;
     border-right: 1px solid gray;
   }
