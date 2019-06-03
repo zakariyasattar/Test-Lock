@@ -350,7 +350,7 @@ function gameOver() {
 	ctx.textBaseline = "middle";
 	ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
-	submitToLeaderboard(prompt("Would you like to report your score? Input name below!"));
+	submitToLeaderboard(prompt("Would you like to report your score? Input id below!"));
 
 	// Stop the Animation
 	cancelRequestAnimFrame(init);
@@ -362,13 +362,41 @@ function gameOver() {
 	restartBtn.draw();
 }
 
-function submitToLeaderboard(name) {
-	if(typeof name == 'string' && name != ""){
-		firebase.database().ref('leaderboard').push(name + ";" + points);
+function submitToLeaderboard(id) {
+	if(parseInt(id) && id.length == 5){
+		firebase.database().ref('leaderboard').push(id + ";" + points);
 
 		document.getElementById('pong').style.display = "none";
 		document.getElementById('leaderboard').style.display = "initial";
+		populateLeaderboard(id);
 	}
+	else{
+		swal("Error!", "hmmm, real name?", "error");
+		submitToLeaderboard(prompt("Would you like to report your score? Input id below!"));
+	}
+}
+
+function populateLeaderboard(id) {
+	var lb = document.getElementById('table');
+
+	firebase.database().ref('leaderboard').once('value', function(snapshot){
+		snapshot.forEach(function(childSnapshot) {
+			var tr = document.createElement('tr');
+
+			var name = document.createElement('td');
+			var score = document.createElement('td');
+			var status = document.createElement('td');
+
+			name.innerHTML = childSnapshot.val().split(";")[0];
+			score.innerHTML = childSnapshot.val().split(";")[1];
+			status.innerHTML = "student";
+
+			tr.appendChild(name);
+			tr.appendChild(score);
+			tr.appendChild(status);
+			lb.appendChild(tr);
+		});
+	});
 }
 
 // Function for running the whole animation

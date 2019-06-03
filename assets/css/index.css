@@ -12,6 +12,11 @@ body {
   overflow-y: hidden;
 }
 
+.table {
+  width: 70vw;
+  margin-right: 100px;
+}
+
 /* NavBar */
 #logo {
   width: 75px;
