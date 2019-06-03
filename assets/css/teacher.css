@@ -51,7 +51,7 @@
     text-align: center;
 
     margin: 0 20px 40px 20px;
-    height: 300px;
+    height: 30vh;
 
     border: 2px solid #2e2f7d;
     border-radius: 12px;
@@ -106,7 +106,7 @@
   #hrInBetween {
     transform: rotate(90deg);
     display: inline-block;
-    width: 150px;
+    width: 15vh;
     position: relative;
     top: 30px;
   }
