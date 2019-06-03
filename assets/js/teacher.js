@@ -64,6 +64,7 @@ function loadClass(name) {
     collectiveAvg = (collectiveAvg).toFixed(1)
     document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
   });
+  populateExamWrapper();
 }
 
 // Generate random exam code
@@ -76,6 +77,10 @@ function generateCode() {
   else {
     generateCode();
   }
+}
+
+function populateExamWrapper() {
+
 }
 
 // create div box for every class
