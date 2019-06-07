@@ -48,9 +48,12 @@
 
   .examBox {
     text-align: center;
+    color: #2e2f7d;
+    font-size: 24px;
 
     margin: 0 20px 40px 20px;
-    height: 30vh;
+    height: 35vh;
+    width: 20vw;
 
     border: 2px solid #2e2f7d;
     border-radius: 12px;
@@ -60,6 +63,16 @@
     -moz-transition: all .3s ease-in-out;
     -o-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;
+  }
+
+  .examBox:hover {
+    box-shadow: none;
+    cursor: pointer;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
   }
 
   /* Style all className boxes */

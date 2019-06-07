@@ -7,6 +7,7 @@ if(localStorage.getItem('userInfo') == null) {
 var examCodes = [];
 var examCodesTeachers = [];
 var arr = [];
+var exams = [];
 
 //when page loads, populateDashboard()
 window.onload = function() {
@@ -52,6 +53,7 @@ function loadClass(name) {
   document.getElementById('main-header').innerHTML = "Welcome to " + name;
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
+    exams.push(snapshot.val());
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(exam) {
         classCounter++;
@@ -67,7 +69,12 @@ function loadClass(name) {
     });
     collectiveAvg = collectiveAvg / examCounter;
     collectiveAvg = (collectiveAvg).toFixed(1)
-    document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
+    if(collectiveAvg == "NaN"){
+      document.getElementById('avg-grade-number').innerHTML = "No Exam Data";
+    }
+    else{
+      document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
+    }
   });
 }
 
@@ -83,8 +90,39 @@ function generateCode() {
   }
 }
 
+function displayExamData(name) {
+    document.getElementById('welcome-div').style.display = "none";
+    document.getElementById('wrapper').style.display = "none";
+    document.getElementById('classSpecific').style.display = "none";
+    document.getElementById('exam-wrapper').style.display = "none";
+    //document.getElementById('examSpecific').style.display = "initial";
+
+    var ref = firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + name);
+    for (var key in exams) {
+      // skip loop if the property is from prototype
+      if (!arr.hasOwnProperty(key)) continue;
+      var obj = exams[key];
+      for (var prop in obj) {
+
+        // skip loop if the property is from prototype
+        if(!obj.hasOwnProperty(prop)) continue;
+        console.log(prop);
+        if(prop == name) {
+          for (var exam in obj[prop]) {
+            console.log(obj[prop][exam]);
+            document.body.innerHTML += obj[prop][exam];
+          }
+        }
+      }
+    }
+
+}
+
 function createExamBox(name, classAvg) {
   var wrapper = document.getElementById('exam-wrapper');
+  wrapper.onclick = function() {
+    displayExamData(name);
+  };
 
   var classBox = document.createElement('div');
   classBox.className = "examBox";
@@ -105,6 +143,7 @@ function createClassBox(className, numStudentsInClass, numExamsInClass) {
 
   var classBox = document.createElement('div');
   classBox.onclick = function() {
+    localStorage.setItem('className', className);
     loadClass(className, numExamsInClass);
   };
 
