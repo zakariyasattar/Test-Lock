@@ -2,25 +2,26 @@ var examCodes = [];
 var stopEnter = false;
 var key = initKey();
 
-// 
-// var data;
-// 	$.ajax({
-// 	  type: "GET",
-// 	  url: "data.csv",
-// 	  dataType: "text",
-// 	  success: function(response)
-// 	  {
-//   		data = $.csv.toArrays(response);
-//       for(var i = 0; i < data.length; i++){
-//         var id = data[i][0];
-//         var name = data[i][3] + " " + data[i][2];
-//         var className = data[i][10];
-//
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).push(id + ";" + name);
-//         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
-//       }
-// 	  }
-// });
+
+var data;
+	$.ajax({
+	  type: "GET",
+	  url: "data.csv",
+	  dataType: "text",
+	  success: function(response)
+	  {
+  		data = $.csv.toArrays(response);
+      for(var i = 0; i < data.length; i++){
+        var id = data[i][0];
+        var name = data[i][3] + " " + data[i][2];
+        var className = data[i][10];
+
+        //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
+        firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams").push("hello");
+        //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
+      }
+	  }
+});
 
 
 // pull all exam codes then encrypt them
