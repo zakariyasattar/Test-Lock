@@ -46,6 +46,22 @@
     grid-template-rows: auto;
   }
 
+  .examBox {
+    text-align: center;
+
+    margin: 0 20px 40px 20px;
+    height: 30vh;
+
+    border: 2px solid #2e2f7d;
+    border-radius: 12px;
+    box-shadow: 10px 10px lightgray;
+
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+  }
+
   /* Style all className boxes */
   .classBox {
     text-align: center;

@@ -41,7 +41,8 @@ function createQuiz() {
 function loadClass(name) {
   var examCounter = 0;
   var collectiveAvg = 0;
-  var highestIndAvg = 0;
+  var classAvg = 0;
+  var classCounter = 0;
 
   //firebase.database().ref("Teachers/Zakariya Sattar/Classes/Algebra/Exams/mid-term").push("zaksat1:92")
   document.body.style.background = "#eeeeee";
@@ -53,18 +54,21 @@ function loadClass(name) {
   firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(exam) {
+        classCounter++;
         examCounter++;
         var grade = exam.val().split(":")[1];
         collectiveAvg += parseInt(grade);
 
-
+        classAvg += parseInt(grade);
       });
+      createExamBox(childSnapshot.key, (classAvg / classCounter).toFixed(1));
+      classAvg = 0;
+      classCounter = 0;
     });
     collectiveAvg = collectiveAvg / examCounter;
     collectiveAvg = (collectiveAvg).toFixed(1)
     document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
   });
-  populateExamWrapper();
 }
 
 // Generate random exam code
@@ -79,8 +83,20 @@ function generateCode() {
   }
 }
 
-function populateExamWrapper() {
+function createExamBox(name, classAvg) {
+  var wrapper = document.getElementById('exam-wrapper');
 
+  var classBox = document.createElement('div');
+  classBox.className = "examBox";
+
+  var span = document.createElement('span');
+  span.innerHTML = name;
+
+  classBox.appendChild(span);
+  classBox.appendChild(document.createElement('hr'));
+
+  wrapper.appendChild(classBox);
+  document.body.appendChild(wrapper);
 }
 
 // create div box for every class
