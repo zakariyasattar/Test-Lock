@@ -90,14 +90,37 @@ function generateCode() {
   }
 }
 
+// function to display all data in the table by className
 function displayExamData(name) {
+    var cumAvg = 0;
+    var classLength = 0;
+    var highest = "a:-1000";
+    var lowest = "a:1000";
+
     document.getElementById('welcome-div').style.display = "none";
     document.getElementById('wrapper').style.display = "none";
     document.getElementById('classSpecific').style.display = "none";
     document.getElementById('exam-wrapper').style.display = "none";
-    //document.getElementById('examSpecific').style.display = "initial";
+    document.getElementById('examSpecific').style.display = "initial";
+    document.getElementById('exam-name').innerHTML = "Welcome To " + name;
 
-    var ref = firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + name);
+    var i = document.createElement('i');
+    i.className = "glyphicon glyphicon-circle-arrow-up";
+    i.id = "topPage";
+
+    i.onclick = function() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    };
+
+    document.getElementById('sort-icon').onclick = function() {
+      document.getElementById('menu').style.display = "initial";
+    }
+
+    document.body.appendChild(document.createElement('br'));
+    document.body.appendChild(i);
+
+
     for (var key in exams) {
       // skip loop if the property is from prototype
       if (!arr.hasOwnProperty(key)) continue;
@@ -106,16 +129,102 @@ function displayExamData(name) {
 
         // skip loop if the property is from prototype
         if(!obj.hasOwnProperty(prop)) continue;
-        console.log(prop);
+
         if(prop == name) {
+          var table = document.createElement('table');
+          table.className = "table table-striped";
+          table.style.width = "100vw";
+
+          var init = document.createElement('tr');
+          init.style.color = "darkgray";
+
+          var initName = document.createElement('td');
+          initName.innerHTML = "Name";
+          initName.style.paddingLeft = "66px";
+
+          var initScore = document.createElement('td');
+          initScore.innerHTML = "Score (%)"
+
+          var initPercentile = document.createElement('td');
+          initPercentile.innerHTML = "Percentile";
+
+          init.appendChild(initName);
+          init.appendChild(initScore);
+          init.appendChild(initPercentile);
+
+          table.appendChild(init);
+
           for (var exam in obj[prop]) {
-            console.log(obj[prop][exam]);
-            document.body.innerHTML += obj[prop][exam];
+            cumAvg += parseInt(obj[prop][exam].split(":")[1]);
+            classLength = Object.keys(obj[prop]).length;
+
+            if(parseInt(obj[prop][exam].split(":")[1]) > parseInt(highest.split(":")[1])) {
+              highest = obj[prop][exam];
+            }
+
+            if(parseInt(obj[prop][exam].split(":")[1]) < parseInt(lowest.split(":")[1])) {
+              lowest = obj[prop][exam];
+            }
+
+            var tr = document.createElement('tr');
+            table.appendChild(document.createElement('br'));
+
+      			var name = document.createElement('td');
+            name.style.paddingLeft = "66px";
+      			var score = document.createElement('td');
+      			var percentile = document.createElement('td');
+
+      			name.innerHTML = obj[prop][exam].split(":")[0];
+      			score.innerHTML = obj[prop][exam].split(":")[1] + "%";
+      			percentile.innerHTML = getPercentile(obj[prop][exam], obj[prop]) + "th";
+
+      			tr.appendChild(name);
+      			tr.appendChild(score);
+      			tr.appendChild(percentile);
+      			table.appendChild(tr);
+            document.body.appendChild(table);
           }
         }
       }
     }
 
+    var overallData = document.getElementById('overall-data');
+
+    var avg = document.createElement('span');
+    avg.innerHTML = "Class Average: " + (cumAvg / classLength).toFixed(1) + '%';
+    avg.style.fontSize = "20px";
+    avg.style.marginLeft = "80px";
+
+    var highestScorer = document.createElement('span');
+    highestScorer.innerHTML = "Highest Scorer: " + highest.split(":")[0] + " (" + highest.split(":")[1] + "%)";
+    highestScorer.style.fontSize = "20px";
+    highestScorer.style.marginLeft = "30px";
+
+    var lowestScorer = document.createElement('span');
+    lowestScorer.innerHTML = "Lowest Scorer: " + lowest.split(":")[0] + " (" + lowest.split(":")[1] + "%)";
+    lowestScorer.style.fontSize = "20px";
+    lowestScorer.style.marginLeft = "80px";
+
+    overallData.appendChild(avg);
+    overallData.appendChild(highestScorer);
+    overallData.appendChild(document.createElement('br'));
+    overallData.appendChild(lowestScorer);
+}
+
+//function to calc perecntile range
+function getPercentile(val, exam) {
+  var numBelow = 0;
+  var numEqual = 0;
+
+  for(var student in exam) {
+    if(parseInt(val.split(":")[1]) > parseInt(exam[student].split(":")[1])) {
+      numBelow++;
+    }
+    else if(parseInt(val.split(":")[1]) == parseInt(exam[student].split(":")[1]) && val.split(":")[0] != exam[student].split(":")[0]) {
+      numEqual++;
+    }
+  }
+  return 100 * (numBelow / (Object.keys(exam).length)).toFixed(1);
 }
 
 function createExamBox(name, classAvg) {

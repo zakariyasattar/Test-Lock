@@ -22,7 +22,6 @@ var key = initKey();
 // 	  }
 // });
 
-
 // pull all exam codes then encrypt them
 firebase.database().ref('exam-codes').on('value', function(snapshot) {
   snapshot.forEach(function(childSnapshot) {

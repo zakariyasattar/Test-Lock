@@ -4,6 +4,7 @@
   <head>
     <!-- Misc -->
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Drip &#124; A secure, cheat-free testing solution for the web</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
@@ -73,7 +74,33 @@
 
         <div id="exam-wrapper">
         </div>
+
       </div>
+
+      <div id="examSpecific" style="display: none;">
+        <div id="jumbotron" class="jumbotron">
+          <div style="float: left">
+            <a href="javascript:location.reload(); "><i class="glyphicon glyphicon-arrow-left"></i> &nbsp Go Back To Classes</a>
+            <h1 id="exam-name"></h1>
+            <br/>
+          </div>
+
+          <div id="overall-data">
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <i style="float: right; margin-right: 35px; cursor: pointer; font-size: 17px;" class="glyphicon glyphicon-align-justify"></i>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+      </ul>
 
       <!-- The core Firebase JS SDK is always required and must be listed first -->
       <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
