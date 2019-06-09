@@ -8,6 +8,7 @@ var examCodes = [];
 var examCodesTeachers = [];
 var arr = [];
 var exams = [];
+var data = [];
 
 //when page loads, populateDashboard()
 window.onload = function() {
@@ -102,6 +103,7 @@ function displayExamData(name) {
     document.getElementById('classSpecific').style.display = "none";
     document.getElementById('exam-wrapper').style.display = "none";
     document.getElementById('examSpecific').style.display = "initial";
+    document.getElementById('sort-menu').style.display = "initial";
     document.getElementById('exam-name').innerHTML = "Welcome To " + name;
 
     var i = document.createElement('i');
@@ -113,9 +115,9 @@ function displayExamData(name) {
       document.documentElement.scrollTop = 0;
     };
 
-    document.getElementById('sort-icon').onclick = function() {
-      document.getElementById('menu').style.display = "initial";
-    }
+    $('.dropdown').click(function(){
+      $('.dropdown-menu').toggleClass('show');
+    });
 
     document.body.appendChild(document.createElement('br'));
     document.body.appendChild(i);
@@ -155,6 +157,7 @@ function displayExamData(name) {
           table.appendChild(init);
 
           for (var exam in obj[prop]) {
+            data.push(obj[prop][exam]);
             cumAvg += parseInt(obj[prop][exam].split(":")[1]);
             classLength = Object.keys(obj[prop]).length;
 

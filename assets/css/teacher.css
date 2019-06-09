@@ -46,6 +46,11 @@
     grid-template-rows: auto;
   }
 
+  #sort-menu {
+    float: right;
+    margin-right: 35px;
+  }
+
   #topPage {
     position: fixed;
     top: 92vh;
