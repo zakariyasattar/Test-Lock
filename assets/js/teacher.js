@@ -8,7 +8,7 @@ var examCodes = [];
 var examCodesTeachers = [];
 var arr = [];
 var exams = [];
-var data = [];
+var examData = [];
 
 //when page loads, populateDashboard()
 window.onload = function() {
@@ -104,7 +104,7 @@ function displayExamData(name) {
     document.getElementById('exam-wrapper').style.display = "none";
     document.getElementById('examSpecific').style.display = "initial";
     document.getElementById('sort-menu').style.display = "initial";
-    document.getElementById('exam-name').innerHTML = "Welcome To " + name;
+    document.getElementById('exam-name').innerHTML = name;
 
     var i = document.createElement('i');
     i.className = "glyphicon glyphicon-circle-arrow-up";
@@ -133,7 +133,10 @@ function displayExamData(name) {
         if(!obj.hasOwnProperty(prop)) continue;
 
         if(prop == name) {
+          var random = document.createElement('div');
+
           var table = document.createElement('table');
+          table.id = "random";
           table.className = "table table-striped";
           table.style.width = "100vw";
 
@@ -157,7 +160,7 @@ function displayExamData(name) {
           table.appendChild(init);
 
           for (var exam in obj[prop]) {
-            data.push(obj[prop][exam]);
+            examData.push(obj[prop][exam]);
             cumAvg += parseInt(obj[prop][exam].split(":")[1]);
             classLength = Object.keys(obj[prop]).length;
 
@@ -185,33 +188,36 @@ function displayExamData(name) {
       			tr.appendChild(score);
       			tr.appendChild(percentile);
       			table.appendChild(tr);
-            document.body.appendChild(table);
+
+            random.appendChild(table);
+            document.body.appendChild(random);
           }
         }
       }
     }
 
     var overallData = document.getElementById('overall-data');
+    var ul = document.createElement('ul');
+    ul.style.float = "right";
+    ul.style.marginRight = "15vw";
 
-    var avg = document.createElement('span');
+    var avg = document.createElement('li');
     avg.innerHTML = "Class Average: " + (cumAvg / classLength).toFixed(1) + '%';
     avg.style.fontSize = "20px";
-    avg.style.marginLeft = "80px";
 
-    var highestScorer = document.createElement('span');
+    var highestScorer = document.createElement('li');
     highestScorer.innerHTML = "Highest Scorer: " + highest.split(":")[0] + " (" + highest.split(":")[1] + "%)";
     highestScorer.style.fontSize = "20px";
-    highestScorer.style.marginLeft = "30px";
 
-    var lowestScorer = document.createElement('span');
+    var lowestScorer = document.createElement('li');
     lowestScorer.innerHTML = "Lowest Scorer: " + lowest.split(":")[0] + " (" + lowest.split(":")[1] + "%)";
     lowestScorer.style.fontSize = "20px";
-    lowestScorer.style.marginLeft = "80px";
 
-    overallData.appendChild(avg);
-    overallData.appendChild(highestScorer);
+    ul.appendChild(avg);
+    ul.appendChild(highestScorer);
     overallData.appendChild(document.createElement('br'));
-    overallData.appendChild(lowestScorer);
+    ul.appendChild(lowestScorer);
+    overallData.appendChild(ul);
 }
 
 //function to calc perecntile range
@@ -228,6 +234,267 @@ function getPercentile(val, exam) {
     }
   }
   return 100 * (numBelow / (Object.keys(exam).length)).toFixed(1);
+}
+
+// sort function
+function sort(func) {
+  var tables = document.getElementsByClassName('table table-striped');
+
+  for(var t = 0; t < tables.length; t++) {
+    tables[t].style.display = "none";
+  }
+  var testExamData = examData.slice();
+  testExamData.sort();
+
+  if(func == " Original") {
+    var table = document.createElement('table');
+    table.className = "table table-striped";
+    table.style.width = "100vw";
+
+    var init = document.createElement('tr');
+    init.style.color = "darkgray";
+
+    var initName = document.createElement('td');
+    initName.innerHTML = "Name";
+    initName.style.paddingLeft = "66px";
+
+    var initScore = document.createElement('td');
+    initScore.innerHTML = "Score (%)"
+
+    var initPercentile = document.createElement('td');
+    initPercentile.innerHTML = "Percentile";
+
+    init.appendChild(initName);
+    init.appendChild(initScore);
+    init.appendChild(initPercentile);
+
+    table.appendChild(init);
+
+    for(var i = 0; i < examData.length; i++){
+      var tr = document.createElement('tr');
+      table.appendChild(document.createElement('br'));
+
+      var name = document.createElement('td');
+      name.style.paddingLeft = "66px";
+      var score = document.createElement('td');
+      var percentile = document.createElement('td');
+
+      name.innerHTML = examData[i].split(":")[0];
+      score.innerHTML = examData[i].split(":")[1] + "%";
+      percentile.innerHTML = getPercentile(examData[i], examData) + "th";
+
+      tr.appendChild(name);
+      tr.appendChild(score);
+      tr.appendChild(percentile);
+      table.appendChild(tr);
+    }
+
+    document.body.appendChild(table);
+  }
+  else {
+    if(func == " Sort By Alphabet (A-Z)"){
+      testExamData.sort();
+
+      var table = document.createElement('table');
+      table.className = "table table-striped";
+      table.style.width = "100vw";
+
+      var init = document.createElement('tr');
+      init.style.color = "darkgray";
+
+      var initName = document.createElement('td');
+      initName.innerHTML = "Name";
+      initName.style.paddingLeft = "66px";
+
+      var initScore = document.createElement('td');
+      initScore.innerHTML = "Score (%)"
+
+      var initPercentile = document.createElement('td');
+      initPercentile.innerHTML = "Percentile";
+
+      init.appendChild(initName);
+      init.appendChild(initScore);
+      init.appendChild(initPercentile);
+
+      table.appendChild(init);
+
+      for(var i = 0; i < testExamData.length; i++){
+        var tr = document.createElement('tr');
+        table.appendChild(document.createElement('br'));
+
+        var name = document.createElement('td');
+        name.style.paddingLeft = "66px";
+        var score = document.createElement('td');
+        var percentile = document.createElement('td');
+
+        name.innerHTML = testExamData[i].split(":")[0];
+        score.innerHTML = testExamData[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
+
+        tr.appendChild(name);
+        tr.appendChild(score);
+        tr.appendChild(percentile);
+        table.appendChild(tr);
+      }
+
+      document.body.appendChild(table);
+
+    }
+    else if(func == " Sort By Alphabet (Z-A)") {
+      testExamData.sort();
+
+      var table = document.createElement('table');
+      table.className = "table table-striped";
+      table.style.width = "100vw";
+
+      var init = document.createElement('tr');
+      init.style.color = "darkgray";
+
+      var initName = document.createElement('td');
+      initName.innerHTML = "Name";
+      initName.style.paddingLeft = "66px";
+
+      var initScore = document.createElement('td');
+      initScore.innerHTML = "Score (%)"
+
+      var initPercentile = document.createElement('td');
+      initPercentile.innerHTML = "Percentile";
+
+      init.appendChild(initName);
+      init.appendChild(initScore);
+      init.appendChild(initPercentile);
+
+      table.appendChild(init);
+
+      for(var i = testExamData.length - 1; i >= 0; i--){
+        var tr = document.createElement('tr');
+        table.appendChild(document.createElement('br'));
+
+        var name = document.createElement('td');
+        name.style.paddingLeft = "66px";
+        var score = document.createElement('td');
+        var percentile = document.createElement('td');
+
+        name.innerHTML = testExamData[i].split(":")[0];
+        score.innerHTML = testExamData[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
+
+        tr.appendChild(name);
+        tr.appendChild(score);
+        tr.appendChild(percentile);
+        table.appendChild(tr);
+      }
+
+      document.body.appendChild(table);
+
+    }
+
+    else if(func == " Sort By Score (high-low)") {
+      var scores = [];
+      for(var n = 0; n < testExamData.length; n++) {
+        scores.push(examData[n].split(":")[1]);
+      }
+      scores.sort();
+      console.log(scores, testExamData.indexOf(":75"));
+
+      var table = document.createElement('table');
+      table.className = "table table-striped";
+      table.style.width = "100vw";
+
+      var init = document.createElement('tr');
+      init.style.color = "darkgray";
+
+      var initName = document.createElement('td');
+      initName.innerHTML = "Name";
+      initName.style.paddingLeft = "66px";
+
+      var initScore = document.createElement('td');
+      initScore.innerHTML = "Score (%)"
+
+      var initPercentile = document.createElement('td');
+      initPercentile.innerHTML = "Percentile";
+
+      init.appendChild(initName);
+      init.appendChild(initScore);
+      init.appendChild(initPercentile);
+
+      table.appendChild(init);
+
+      for(var i = 0; i < scores.length; i++){
+        var tr = document.createElement('tr');
+        table.appendChild(document.createElement('br'));
+
+        var name = document.createElement('td');
+        name.style.paddingLeft = "66px";
+        var score = document.createElement('td');
+        var percentile = document.createElement('td');
+
+        name.innerHTML = examData[i].split(":")[0];
+        score.innerHTML = examData[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
+
+        tr.appendChild(name);
+        tr.appendChild(score);
+        tr.appendChild(percentile);
+        table.appendChild(tr);
+      }
+
+      document.body.appendChild(table);
+
+    }
+    else if(func == " Sort By Score (low-high)") {
+      var scores = [];
+      for(var n = 0; n < testExamData.length; n++) {
+        scores.push(testExamData[n].split(":")[1]);
+      }
+      scores.sort();
+
+      var table = document.createElement('table');
+      table.className = "table table-striped";
+      table.style.width = "100vw";
+
+      var init = document.createElement('tr');
+      init.style.color = "darkgray";
+
+      var initName = document.createElement('td');
+      initName.innerHTML = "Name";
+      initName.style.paddingLeft = "66px";
+
+      var initScore = document.createElement('td');
+      initScore.innerHTML = "Score (%)"
+
+      var initPercentile = document.createElement('td');
+      initPercentile.innerHTML = "Percentile";
+
+      init.appendChild(initName);
+      init.appendChild(initScore);
+      init.appendChild(initPercentile);
+
+      table.appendChild(init);
+
+      for(var i = scores.length - 1; i >= 0; i--){
+        var tr = document.createElement('tr');
+        table.appendChild(document.createElement('br'));
+
+        var name = document.createElement('td');
+        name.style.paddingLeft = "66px";
+        var score = document.createElement('td');
+        var percentile = document.createElement('td');
+
+        name.innerHTML = testExamData[i].split(":")[0];
+        score.innerHTML = testExamData[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
+
+        tr.appendChild(name);
+        tr.appendChild(score);
+        tr.appendChild(percentile);
+        table.appendChild(tr);
+      }
+
+      document.body.appendChild(table);
+
+    }
+  }
 }
 
 function createExamBox(name, classAvg) {
