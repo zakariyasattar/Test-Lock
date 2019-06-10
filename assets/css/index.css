@@ -85,3 +85,21 @@ body {
   width: 100%;
   margin-bottom: 5px;
 }
+
+@media only screen and (max-width: 600px) {
+  .dropdown {
+    display: initial;
+    right: 60px;
+  }
+  #navButton {
+    display: none;
+  }
+  #google-signin-pointer {
+    left: 150px;
+    width: 300px;
+    margin-bottom: 30px;
+  }
+  #logo {
+    right: 40px;
+  }
+}

@@ -11,6 +11,7 @@
     height: 75px;
     position: relative;
     bottom: 25px;
+    right: 30px;
   }
 
   #profile {
@@ -186,6 +187,11 @@
     padding-right: 55px;
   }
 
+  .dropdown-toggle {
+    right: 45px;
+
+  }
+
   /* Media Queries */
 
   @media only screen and (max-width: 1400px) {
@@ -210,6 +216,21 @@
     }
     #numStudents {
       font-size: 50px;
+    }
+    .dropdown {
+      display: initial;
+    }
+    #navButton {
+      display: none;
+    }
+  }
+
+  @media only screen and (max-width: 380px) {
+    #hrInBetween {
+      width: 12vh;
+    }
+    #logo {
+      right: 40px;
     }
 
   }
