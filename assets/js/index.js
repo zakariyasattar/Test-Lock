@@ -90,7 +90,6 @@ function initKey() {
 //function to remove all class='active'
 function removeAllActive() {
   document.getElementsByTagName("LI")[0].className = "";
-  document.getElementsByTagName("LI")[1].className = "";
 }
 
 //function to switch displays based on what user clicks

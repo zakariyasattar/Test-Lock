@@ -27,6 +27,27 @@ var profileImg = (JSON.parse(localStorage.getItem("userInfo"))[2]);
 document.getElementById('welcome-text').innerHTML = "Welcome " + userName + "!";
 document.getElementById('profile').src = profileImg;
 
+
+// FOR SWITCHING TABS
+function display(title) {
+  $('.dropdown-menu').toggleClass('show');
+
+  if(title == '<a href="#">Ping-Pong</a>') {
+    document.getElementById('main').style.display = "none";
+    document.getElementById('pong').style.display = "initial";
+  }
+  else if(title == '<a href="#">Dashboard</a>') {
+    document.getElementById('main').style.display = "initial";
+    document.getElementById('pong').style.display = "initial";
+  }
+}
+
+function removeAllActive() {
+  document.getElementsByTagName("LI")[0].className = "";
+  document.getElementsByTagName("LI")[1].className = "";
+}
+
+
 function createQuiz() {
   if(examCodes.length == 0){
 
@@ -135,8 +156,8 @@ function displayExamData(name) {
       $('.dropdown-menu').toggleClass('show');
     });
 
-    document.body.appendChild(document.createElement('br'));
-    document.body.appendChild(i);
+    document.getElementById('main').appendChild;(document.createElement('br'));
+    document.getElementById('main').appendChild;(i);
 
 
     for (var key in exams) {
@@ -206,7 +227,7 @@ function displayExamData(name) {
       			table.appendChild(tr);
 
             random.appendChild(table);
-            document.body.appendChild(random);
+            document.getElementById('main').appendChild;(random);
           }
         }
       }
@@ -305,7 +326,7 @@ function sort(func) {
       table.appendChild(tr);
     }
 
-    document.body.appendChild(table);
+    document.getElementById('main').appendChild;(table);
   }
   else {
     if(func == " Sort By Alphabet (A-Z)"){
@@ -353,7 +374,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
+      document.getElementById('main').appendChild;(table);
 
     }
     else if(func == " Sort By Alphabet (Z-A)") {
@@ -401,7 +422,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
+      document.getElementById('main').appendChild;(table);
 
     }
 
@@ -450,7 +471,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
+      document.getElementById('main').appendChild;(table);
 
     }
     else if(func == " Sort By Score (low-high)") {
@@ -498,7 +519,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
+      document.getElementById('main').appendChild;(table);
 
     }
   }
@@ -556,7 +577,7 @@ function createExamBox(name, classAvg) {
   classBox.appendChild(document.createElement('hr'));
 
   wrapper.appendChild(classBox);
-  document.body.appendChild(wrapper);
+  document.getElementById('main').appendChild;(wrapper);
 }
 
 // create div box for every class
@@ -606,7 +627,7 @@ function createClassBox(className, numStudentsInClass, numExamsInClass) {
   classBox.appendChild(numExams);
 
   wrapper.appendChild(classBox);
-  document.body.appendChild(wrapper);
+  document.getElementById('main').appendChild;(wrapper);
 }
 
 //populate main dashboard of page when page loads

@@ -11,7 +11,6 @@
     height: 75px;
     position: relative;
     bottom: 25px;
-    right: 30px;
   }
 
   #profile {
@@ -219,6 +218,7 @@
     }
     .dropdown {
       display: initial;
+      right: 20px;
     }
     #navButton {
       display: none;
@@ -232,5 +232,16 @@
     #logo {
       right: 40px;
     }
+  }
 
+  @media only screen and (max-height: 650px) {
+    #numExams {
+      font-size: 50px;
+    }
+    #numStudents {
+      font-size: 50px;
+    }
+    #hrInBetween {
+      bottom: 20px;
+    }
   }
