@@ -30,21 +30,15 @@
             <a class="navbar-brand" href="index.html">
               <img id="logo" alt="Brand" src="assets/images/drip-logo.png">
             </a>
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
+            <li id="navButton" style="position: relative; top: 5px; left: 15px;" class="active" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
 
             <!-- DropDown incase screen size goes below 450px -->
             <li id="dropdown" class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span style="font-size: 25px" class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">One more separated link</a></li>
+              <a class="dropdown-toggle" id="nav-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span style="font-size: 25px" class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span></a>
+              <ul id="nav-menu" class="dropdown-menu">
+                <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Dashboard</a></li>
+                <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
               </ul>
             </li>
             <img id="profile"></img>
@@ -52,8 +46,7 @@
         </div>
     </nav>
 
-      <!-- <button onclick="createQuiz()">Create quiz!</button> -->
-
+    <div id="main">
       <div id="welcome-div">
         <h1 id="welcome-text"></h1>
         <p id="welcome-text-p">All of your classes have been preloaded below. Just click on one to start exploring!</p>
@@ -82,8 +75,13 @@
         </div>
         <br/>
 
-        <h1 style="margin-left: 25px;margin-right: 25px;"><hr style="float: left; width: 5vw;"/>&nbsp Previous Exams &nbsp <hr style="float: right; width: 70vw;"/></h1>
+        <h1 style="margin-left: 25px;margin-right: 25px;"><hr style="float: left; width: 5vw;"/>&nbsp Previous Exams &nbsp <hr id="right-hr" style="float: right; width: 70vw;"/></h1>
         <br/>
+
+        <div class="form-group">
+          <center><input id="exam-search" style="width: 80vw" type="text" placeholder='Search Through Exams...' onkeyup="searchExams()" class="form-control" id="usr" name="username"></input></center>
+          <br/>
+        </div>
 
         <div id="exam-wrapper">
         </div>
@@ -103,20 +101,20 @@
         </div>
 
         <div id="sort-menu" style="display: none" class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <button class="btn btn-default dropdown-toggle" type="button" id="sort-trigger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i style="font-size: 17px;" class="glyphicon glyphicon-align-justify"></i>
             &nbsp
             <span class="caret"></span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+          <ul id="sort-menu" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-alphabet"></i>&nbsp Sort By Alphabet (A-Z)</a></li>
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>&nbsp Sort By Alphabet (Z-A)</a></li>
-            <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes"></i>&nbsp Sort By Score (high-low)</a></li>
-            <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i>&nbsp Sort By Score (low-high)</a></li>
+            <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i>&nbsp Sort By Score (high-low)</a></li>
+            <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes"></i>&nbsp Sort By Score (low-high)</a></li>
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort"></i>&nbsp Original</a></li>
           </ul>
-      </div>
-      <br/>
+        </div>
+        <br/>
       </div>
 
       <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -137,6 +135,11 @@
         firebase.initializeApp(firebaseConfig);
       </script>
       <script src="assets/js/teacher.js"></script>
+    </div>
+
+    <div style="display: none; background: purple;" id="pong">
+      <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
+      <script src="assets/js/pong.js"></script>
     </div>
 
   </body>

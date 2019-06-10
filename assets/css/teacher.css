@@ -1,4 +1,4 @@
-  *{margin: 0; padding: 0}
+  * {margin: 0; padding: 0}
 
   /* Style main body element */
   body {
@@ -227,5 +227,4 @@
     #logo {
       right: 40px;
     }
-
   }

@@ -16,7 +16,7 @@ var key = initKey();
 //         var className = data[i][10];
 //
 //         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/Hello/").push(name + ":" + Math.floor((Math.random() * 25) + 75));
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/Final Exam/").push(name + ":" + Math.floor((Math.random() * 25) + 75));
 //         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
 //       }
 // 	  }

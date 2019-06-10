@@ -13,6 +13,10 @@ var examData = [];
 //when page loads, populateDashboard()
 window.onload = function() {
   populateDashboard();
+
+  $('.dropdown').click(function(){
+    $('.dropdown-menu').toggleClass('show');
+  });
 };
 
 // retrieve userName, img from localStorage
@@ -91,6 +95,19 @@ function generateCode() {
   }
 }
 
+// remove dropdown if screen size can handle navbar
+function removeDropDown(x) {
+ if (x.matches) { // If media query matches
+   document.getElementById('dropdown').style.display = "none";
+ } else {
+   document.getElementById('dropdown').style.display = "initial";
+ }
+}
+
+var x = window.matchMedia("(min-width: 601px)")
+removeDropDown(x) // Call listener function at run time
+x.addListener(removeDropDown) // Attach listener function on state changes
+
 // function to display all data in the table by className
 function displayExamData(name) {
     var cumAvg = 0;
@@ -115,12 +132,8 @@ function displayExamData(name) {
       document.documentElement.scrollTop = 0;
     };
 
-    $('.dropdown').click(function(){
-      $('.dropdown-menu').toggleClass('show');
-    });
-
-    document.body.appendChild(document.createElement('br'));
-    document.body.appendChild(i);
+    document.getElementById('main').appendChild(document.createElement('br'));
+    document.getElementById('main').appendChild(i);
 
 
     for (var key in exams) {
@@ -190,7 +203,7 @@ function displayExamData(name) {
       			table.appendChild(tr);
 
             random.appendChild(table);
-            document.body.appendChild(random);
+            document.getElementById('main').appendChild(random);
           }
         }
       }
@@ -289,7 +302,7 @@ function sort(func) {
       table.appendChild(tr);
     }
 
-    document.body.appendChild(table);
+    document.getElementById('main').appendChild(table);
   }
   else {
     if(func == " Sort By Alphabet (A-Z)"){
@@ -337,7 +350,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
+      document.getElementById('main').appendChild(table);
 
     }
     else if(func == " Sort By Alphabet (Z-A)") {
@@ -385,8 +398,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
-
+      document.getElementById('main').appendChild(table);
     }
 
     else if(func == " Sort By Score (high-low)") {
@@ -434,7 +446,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
+      document.getElementById('main').appendChild(table);
 
     }
     else if(func == " Sort By Score (low-high)") {
@@ -482,7 +494,7 @@ function sort(func) {
         table.appendChild(tr);
       }
 
-      document.body.appendChild(table);
+      document.getElementById('main').appendChild(table);
 
     }
   }
@@ -524,6 +536,28 @@ function merge (left, right) {
   return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
 }
 
+// search and parse through exams based on value
+function searchExams() {
+  var input, filter, ul, li, a, i, txtValue;
+
+  input = document.getElementById("exam-search");
+  filter = input.value.toUpperCase();
+
+  ul = document.getElementById("exam-wrapper");
+  li = ul.getElementsByClassName("examBox");
+
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName("span")[0];
+    txtValue = a.textContent || a.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        li[i].style.display = "";
+    } else {
+        li[i].style.display = "none";
+    }
+  }
+}
+
+// create div based on name and avg
 function createExamBox(name, classAvg) {
   var wrapper = document.getElementById('exam-wrapper');
   wrapper.onclick = function() {
@@ -532,6 +566,7 @@ function createExamBox(name, classAvg) {
 
   var classBox = document.createElement('div');
   classBox.className = "examBox";
+  classBox.style.background = "white";
 
   var span = document.createElement('span');
   span.innerHTML = name;
@@ -539,8 +574,40 @@ function createExamBox(name, classAvg) {
   classBox.appendChild(span);
   classBox.appendChild(document.createElement('hr'));
 
+  var letter = document.createElement('span');
+  letter.innerHTML = getLetter(classAvg);
+  letter.style.color = "black";
+  letter.style.fontSize = "90px";
+
+  var descriptor = document.createElement('span');
+  descriptor.innerHTML = "Class Average (" + classAvg + ")";
+
+  classBox.appendChild(letter);
+  classBox.appendChild(document.createElement('br'));
+  classBox.appendChild(descriptor);
+
   wrapper.appendChild(classBox);
-  document.body.appendChild(wrapper);
+  document.getElementById('main').appendChild(wrapper);
+}
+
+// return letter grade based on avg
+function getLetter(avg) {
+  if(avg >= 90.0) {
+    return "A";
+  }
+  else if(avg <= 90.0 && avg >= 80.0) {
+    return "B";
+  }
+  else if(avg <= 80.0 && avg >= 70.0) {
+    return "C";
+  }
+  else if(avg <= 70.0 && avg >= 60.0) {
+    return "D";
+  }
+  else {
+    return "F";
+  }
+
 }
 
 // create div box for every class
@@ -590,7 +657,7 @@ function createClassBox(className, numStudentsInClass, numExamsInClass) {
   classBox.appendChild(numExams);
 
   wrapper.appendChild(classBox);
-  document.body.appendChild(wrapper);
+  document.getElementById('main').appendChild(wrapper);
 }
 
 //populate main dashboard of page when page loads
