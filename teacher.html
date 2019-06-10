@@ -30,15 +30,21 @@
             <a class="navbar-brand" href="index.html">
               <img id="logo" alt="Brand" src="assets/images/drip-logo.png">
             </a>
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" class="active" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
+            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
+            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
 
             <!-- DropDown incase screen size goes below 450px -->
             <li id="dropdown" class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span style="font-size: 25px" class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li id="navButton"role="presentation" onclick="display(this.innerHTML)">Dashboard</li>
-                <li role="presentation" onclick="display(this.innerHTML)">Ping-Pong</li>
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
               </ul>
             </li>
             <img id="profile"></img>
@@ -46,7 +52,8 @@
         </div>
     </nav>
 
-    <div id="main">
+      <!-- <button onclick="createQuiz()">Create quiz!</button> -->
+
       <div id="welcome-div">
         <h1 id="welcome-text"></h1>
         <p id="welcome-text-p">All of your classes have been preloaded below. Just click on one to start exploring!</p>
@@ -108,8 +115,8 @@
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i>&nbsp Sort By Score (low-high)</a></li>
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort"></i>&nbsp Original</a></li>
           </ul>
-        </div>
-        <br/>
+      </div>
+      <br/>
       </div>
 
       <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -130,11 +137,6 @@
         firebase.initializeApp(firebaseConfig);
       </script>
       <script src="assets/js/teacher.js"></script>
-    </div>
-
-    <div style="display: none; background: purple;" id="pong">
-      <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
-      <script src="assets/js/pong.js"></script>
     </div>
 
   </body>
