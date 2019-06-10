@@ -233,6 +233,24 @@ function displayExamData(name) {
     overallData.appendChild(ul);
 }
 
+//function to remove all class='active'
+function removeAllActive() {
+  document.getElementsByTagName("LI")[0].className = "";
+  document.getElementsByTagName("LI")[1].className = "";
+}
+
+//function to switch displays based on what user clicks
+function display(title) {
+  if(title == '<a href="#">Ping-Pong</a>') {
+    document.getElementById('main').style.display = "none";
+    document.getElementById('pong').style.display = "initial";
+  }
+  else if(title == '<a href="#">Dashboard</a>') {
+    document.getElementById('main').style.display = "initial";
+    document.getElementById('pong').style.display = "none";
+  }
+}
+
 //function to calc perecntile range
 function getPercentile(val, exam) {
   var numBelow = 0;

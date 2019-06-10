@@ -137,7 +137,6 @@ function isValid(code) {
 
 // function to display quiz to student
 function displayQuiz(code, teacher) {
-  console.log(code, teacher);
   toggleFullScreen();
 }
 
@@ -201,4 +200,5 @@ document.addEventListener("keypress", function(e) {
   }
 }, false);
 
+//throw key away
 key = "";
