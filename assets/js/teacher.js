@@ -390,64 +390,7 @@ function sort(func) {
     }
 
     else if(func == " Sort By Score (high-low)") {
-      var scores = [];
-      for(var n = 0; n < testExamData.length; n++) {
-        scores.push(examData[n].split(":")[1]);
-      }
-      scores.sort();
-      console.log(scores, testExamData.indexOf(":75"));
-
-      var table = document.createElement('table');
-      table.className = "table table-striped";
-      table.style.width = "100vw";
-
-      var init = document.createElement('tr');
-      init.style.color = "darkgray";
-
-      var initName = document.createElement('td');
-      initName.innerHTML = "Name";
-      initName.style.paddingLeft = "66px";
-
-      var initScore = document.createElement('td');
-      initScore.innerHTML = "Score (%)"
-
-      var initPercentile = document.createElement('td');
-      initPercentile.innerHTML = "Percentile";
-
-      init.appendChild(initName);
-      init.appendChild(initScore);
-      init.appendChild(initPercentile);
-
-      table.appendChild(init);
-
-      for(var i = 0; i < scores.length; i++){
-        var tr = document.createElement('tr');
-        table.appendChild(document.createElement('br'));
-
-        var name = document.createElement('td');
-        name.style.paddingLeft = "66px";
-        var score = document.createElement('td');
-        var percentile = document.createElement('td');
-
-        name.innerHTML = examData[i].split(":")[0];
-        score.innerHTML = examData[i].split(":")[1] + "%";
-        percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
-
-        tr.appendChild(name);
-        tr.appendChild(score);
-        tr.appendChild(percentile);
-        table.appendChild(tr);
-      }
-
-      document.body.appendChild(table);
-
-    }
-    else if(func == " Sort By Score (low-high)") {
-      var scores = [];
-      for(var n = 0; n < testExamData.length; n++) {
-        scores.push(testExamData[n].split(":")[1]);
-      }
-      scores.sort();
+      var scores = mergeSort(testExamData);
 
       var table = document.createElement('table');
       table.className = "table table-striped";
@@ -481,9 +424,57 @@ function sort(func) {
         var score = document.createElement('td');
         var percentile = document.createElement('td');
 
-        name.innerHTML = testExamData[i].split(":")[0];
-        score.innerHTML = testExamData[i].split(":")[1] + "%";
-        percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
+        name.innerHTML = scores[i].split(":")[0];
+        score.innerHTML = scores[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(scores[i], scores) + "th";
+
+        tr.appendChild(name);
+        tr.appendChild(score);
+        tr.appendChild(percentile);
+        table.appendChild(tr);
+      }
+
+      document.body.appendChild(table);
+
+    }
+    else if(func == " Sort By Score (low-high)") {
+      var scores = mergeSort(testExamData);
+
+      var table = document.createElement('table');
+      table.className = "table table-striped";
+      table.style.width = "100vw";
+
+      var init = document.createElement('tr');
+      init.style.color = "darkgray";
+
+      var initName = document.createElement('td');
+      initName.innerHTML = "Name";
+      initName.style.paddingLeft = "66px";
+
+      var initScore = document.createElement('td');
+      initScore.innerHTML = "Score (%)"
+
+      var initPercentile = document.createElement('td');
+      initPercentile.innerHTML = "Percentile";
+
+      init.appendChild(initName);
+      init.appendChild(initScore);
+      init.appendChild(initPercentile);
+
+      table.appendChild(init);
+
+      for(var i = 0; i < scores.length; i++){
+        var tr = document.createElement('tr');
+        table.appendChild(document.createElement('br'));
+
+        var name = document.createElement('td');
+        name.style.paddingLeft = "66px";
+        var score = document.createElement('td');
+        var percentile = document.createElement('td');
+
+        name.innerHTML = scores[i].split(":")[0];
+        score.innerHTML = scores[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(scores[i], scores) + "th";
 
         tr.appendChild(name);
         tr.appendChild(score);
@@ -495,6 +486,42 @@ function sort(func) {
 
     }
   }
+}
+
+//implement merge sort
+function mergeSort (arr) {
+  if (arr.length === 1) {
+    // return once we hit an array with a single item
+    return arr
+  }
+
+  const middle = Math.floor(arr.length / 2) // get the middle item of the array rounded down
+  const left = arr.slice(0, middle) // items on the left side
+  const right = arr.slice(middle) // items on the right side
+
+  return merge(
+    mergeSort(left),
+    mergeSort(right)
+  )
+}
+
+// compare the arrays item by item and return the concatenated result
+function merge (left, right) {
+  let result = []
+  let indexLeft = 0
+  let indexRight = 0
+
+  while (indexLeft < left.length && indexRight < right.length) {
+    if (left[indexLeft].split(":")[1] < right[indexRight].split(":")[1]) {
+      result.push(left[indexLeft])
+      indexLeft++
+    } else {
+      result.push(right[indexRight])
+      indexRight++
+    }
+  }
+
+  return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
 }
 
 function createExamBox(name, classAvg) {
