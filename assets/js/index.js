@@ -22,12 +22,6 @@ var key = initKey();
 // 	  }
 // });
 
-window.onload = function() {
-  $('.dropdown-toggle').click(function(){
-    $('.dropdown-menu').toggleClass('show');
-  });
-};
-
 // pull all exam codes then encrypt them
 firebase.database().ref('exam-codes').on('value', function(snapshot) {
   snapshot.forEach(function(childSnapshot) {
@@ -58,19 +52,6 @@ function signOut() {
   });
 }
 
-// remove dropdown if screen size can handle navbar
-function removeDropDown(x) {
- if (x.matches) { // If media query matches
-   document.getElementById('dropdown').style.display = "none";
- } else {
-   document.getElementById('dropdown').style.display = "initial";
- }
-}
-
-var x = window.matchMedia("(min-width: 601px)")
-removeDropDown(x) // Call listener function at run time
-x.addListener(removeDropDown) // Attach listener function on state changes
-
 function initKey() {
   var finalString;
   var i, arr = [];
@@ -94,8 +75,6 @@ function removeAllActive() {
 
 //function to switch displays based on what user clicks
 function display(title) {
-  $('.dropdown-menu').toggleClass('show');
-
   if(title == '<a href="#">Ping-Pong</a>') {
     document.getElementById('main').style.display = "none";
     document.getElementById('pong').style.display = "initial";

@@ -32,18 +32,10 @@
             <a class="navbar-brand" href="#">
               <img id="logo" alt="Brand" src="assets/images/drip-logo.png">
             </a>
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
 
-            <!-- DropDown incase screen size goes below 450px -->
-            <li id="dropdown" class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span style="font-size: 25px" class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li role="presentation" onclick="display(this.innerHTML);"><a href="#">Home</a></li>
-                <li role="separator" class="divider"></li>
-                <li role="presentation" onclick="display(this.innerHTML);"><a href="#">Ping-Pong</a></li>
-              </ul>
-            </li>
+            <li style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
+            <li style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
+
             <div id="google-signin-pointer" style="position: absolute; right: 175px; top: 15px">
               <span >Wait, I'm actually a teacher! </span> &nbsp
               <span class="glyphicon glyphicon-hand-right"></span>

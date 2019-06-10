@@ -13,10 +13,6 @@ var examData = [];
 //when page loads, populateDashboard()
 window.onload = function() {
   populateDashboard();
-
-  $('.dropdown-toggle').click(function(){
-    $('.dropdown-menu').toggleClass('show');
-  });
 };
 
 // retrieve userName, img from localStorage
@@ -59,22 +55,10 @@ function createQuiz() {
       });
     });
   }
+
   // get randomCode
   var randomCode = generateCode();
 }
-
- // remove dropdown if screen size can handle navbar
-function removeDropDown(x) {
-  if (x.matches) { // If media query matches
-    document.getElementById('dropdown').style.display = "none";
-  } else {
-    document.getElementById('dropdown').style.display = "initial";
-  }
-}
-
-var x = window.matchMedia("(min-width: 601px)")
-removeDropDown(x) // Call listener function at run time
-x.addListener(removeDropDown) // Attach listener function on state changes
 
 //load class based on name
 function loadClass(name) {
