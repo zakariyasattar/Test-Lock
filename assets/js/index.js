@@ -1,4 +1,4 @@
-var examCodes = [];
+var examCodes = [], students = [];
 var stopEnter = false;
 var key = initKey();
 
@@ -16,6 +16,7 @@ var key = initKey();
 //         var className = data[i][10];
 //
 //         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
+//         //firebase.database().ref("Students").push(id + ";" + name);
 //         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/Final Exam/").push(name + ":" + Math.floor((Math.random() * 25) + 75));
 //         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
 //       }
@@ -27,6 +28,14 @@ firebase.database().ref('exam-codes').on('value', function(snapshot) {
   snapshot.forEach(function(childSnapshot) {
     var code = CryptoJS.AES.encrypt(childSnapshot.val(), key);
     examCodes.push(code);
+  });
+});
+
+// pull all students then encrypt them
+firebase.database().ref('Students').on('value', function(snapshot) {
+  snapshot.forEach(function(childSnapshot) {
+    // no need for encryption because no active storage
+    students.push(childSnapshot.val());
   });
 });
 
@@ -52,6 +61,7 @@ function signOut() {
   });
 }
 
+//initialize key with random val
 function initKey() {
   var finalString;
   var i, arr = [];
@@ -86,36 +96,77 @@ function display(title) {
   }
 }
 
+function getStudent(id) {
+  students = mergeSort(students);
+  //binary search for finding ID pos
+  var low  = 0 , high = students.length -1 ,mid ;
+  while (low <= high){
+      mid = Math.floor((low+high)/2);
+      if(students[mid].split(";")[0]==id) return students[mid];
+      else if (students[mid].split(";")[0]<id) low = mid+1;
+      else high = mid-1;
+  }
+  return -1 ;
+}
+
+//implement merge sort
+function mergeSort (arr) {
+  if (arr.length === 1) {
+    // return once we hit an array with a single item
+    return arr
+  }
+
+  const middle = Math.floor(arr.length / 2) // get the middle item of the array rounded down
+  const left = arr.slice(0, middle) // items on the left side
+  const right = arr.slice(middle) // items on the right side
+
+  return merge(
+    mergeSort(left),
+    mergeSort(right)
+  )
+}
+
+// compare the arrays item by item and return the concatenated result
+function merge (left, right) {
+  let result = []
+  let indexLeft = 0
+  let indexRight = 0
+
+  while (indexLeft < left.length && indexRight < right.length) {
+    if (left[indexLeft].split(";")[0] < right[indexRight].split(";")[0]) {
+      result.push(left[indexLeft])
+      indexLeft++
+    } else {
+      result.push(right[indexRight])
+      indexRight++
+    }
+  }
+
+  return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
+}
+
 // function to retieve and analyze code
 function submitExamCode() {
   var code = document.getElementById('inputExamCode').value.toUpperCase();
 
   if(isValid(code)) {
-    var i = 0;
-    localStorage.setItem('ExamCode', code);
-    document.getElementById('main').style.display = "none";
-    document.getElementById('navigation').style.display = "none";
-
-    for(var x = 0; x < examCodes.length; x++){
-      var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
-      var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-      if(plaintext.split(";")[0] == code){
-        i = x;
-        break;
-      }
-    }
-
-    var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
-    var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-    displayQuiz(code, plaintext.split(";")[1]);
+    document.getElementById('id-input').style.display = 'initial';
     stopEnter = true;
   }
   else {
     if(code.length > 0) {
       swal("Invalid exam code!", "Check for special characters and make sure the length is at least 5", "error");
     }
+  }
+}
+
+function retrieveName() {
+  var id = document.getElementsByClassName("ID")[0].value;
+  if(id.length == 5) {
+    document.getElementById('userName').innerHTML = getStudent(id).split(";")[1];
+    document.getElementById('proceed').style.display = "initial";
+    
+    displayQuiz(code);
   }
 }
 
@@ -136,7 +187,25 @@ function isValid(code) {
 }
 
 // function to display quiz to student
-function displayQuiz(code, teacher) {
+function displayQuiz(code) {
+  var i = 0;
+  localStorage.setItem('ExamCode', code);
+
+  for(var x = 0; x < examCodes.length; x++){
+    var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
+    var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+    if(plaintext.split(";")[0] == code){
+      i = x;
+      break;
+    }
+  }
+
+  var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
+  var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+  document.getElementById('main').style.display = "none";
+  document.getElementById('navigation').style.display = "none";
   toggleFullScreen();
 }
 

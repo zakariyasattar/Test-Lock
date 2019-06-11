@@ -52,12 +52,22 @@
       <div id="initiator">
         <center><div style="width: 100%; position: absolute; top: 30%;">
           <!-- Input test code to find exam -->
-          <g style="font-size: 20px">Exam Code:</g> <input id="inputExamCode" type="text" maxlength="5" name="ExamCode" placeholder="Ex: QYZZA">
-          <input id="submit" type="submit" value="Find Exam" onclick="submitExamCode()">
+          <g style="font-size: 20px; position: relative; bottom: 45px;">Exam Code:</g> <input id="inputExamCode" type="text" maxlength="5" name="ExamCode" placeholder="Ex: QYZZA">
+          <input id="submit" type="submit" value="Find Exam" onclick="submitExamCode()"><br/><br/>
+
+          <div style="display:none" id="id-input">
+            <g style="font-size: 20px;position: relative; bottom: 45px;">ID Number:</g> <input class="ID" id="inputExamCode" onkeyup="retrieveName()" type="text" maxlength="5" name="IDNum" placeholder="Ex: 12345">
+            &nbsp <span id="userName" style="font-size: 20px; padding-left: 5px; padding-right: 5px; position: relative; bottom: 45px;"></span>
+          </div>
+          <br/><br/>
+
+          <button id="proceed" onclick="displayQuiz()"> Proceed! <span class="glyphicon glyphicon-arrow-right"></span></button>
 
           <!-- Recognition -->
-          <hr style="position: relative; "/>
-          <p style="position: relative;">Developed by Zakariya Sattar</p>
+          <div id="recognition">
+            <hr style="position: relative; "/>
+            <p style="position: relative; font-size: 15px;">Developed by Zakariya Sattar</p>
+          </div>
         </div></center>
       </div>
 
