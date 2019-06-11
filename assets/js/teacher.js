@@ -27,6 +27,10 @@ var profileImg = (JSON.parse(localStorage.getItem("userInfo"))[2]);
 document.getElementById('welcome-text').innerHTML = "Welcome " + userName + "!";
 document.getElementById('profile').src = profileImg;
 
+$('#profile').click(function(){
+  swal("Sign Out", "Are You Sure You Want To Sign Out?", "warning")
+});
+
 function createQuiz() {
   if(examCodes.length == 0){
 
@@ -586,15 +590,21 @@ function createExamBox(name, classAvg) {
   classBox.className = "examBox";
   classBox.style.background = "white";
 
+  var difBackground = document.createElement('div')
+  difBackground.style.background = "cornflowerblue";
+  difBackground.style.borderRadius= "10px 10px 0 0";
+
   var span = document.createElement('span');
   span.innerHTML = name;
+  span.style.color = "white";
 
-  classBox.appendChild(span);
-  classBox.appendChild(document.createElement('hr'));
+  difBackground.appendChild(span);
+  difBackground.appendChild(document.createElement('hr'));
+  classBox.appendChild(difBackground);
 
   var letter = document.createElement('span');
   letter.innerHTML = getLetter(classAvg);
-  letter.style.color = "black";
+  letter.style.color = "#2e2f7d";
   letter.style.fontSize = "90px";
 
   var descriptor = document.createElement('span');

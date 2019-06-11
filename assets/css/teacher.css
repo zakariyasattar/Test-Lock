@@ -20,6 +20,23 @@
     border-radius: 100%;
     float: right;
     margin-top: 7px;
+    cursor: pointer;
+  }
+
+  .hoverable:not(:hover) + .show-on-hover {
+    display: none;
+  }
+
+  .show-on-hover {
+    float:right;
+    position: relative;
+    color: white;
+    top: 65px;
+    left: 50px;
+    z-index: 10000;
+    background: gray;
+    padding: 3px;
+    border-radius: 3px
   }
 
   #welcome-div {

@@ -384,6 +384,12 @@ function submitToLeaderboard(id) {
 }
 
 function populateLeaderboard() {
+	var trs = document.getElementsByClassName('tr');
+
+	for(var k = 1; k < trs.length; k++) {
+		document.getElementById('table').parentNode.removeChild(trs[k]);
+	}
+
 	var leaderboard = [];
 	var lb = document.getElementById('table');
 
@@ -398,10 +404,10 @@ function populateLeaderboard() {
 
 	setTimeout(function(){
 		leaderboard = leaderboardSort(leaderboard);
-		console.log(leaderboard);
 
 		for(var i = leaderboard.length - 1; i >= 0; i--) {
 			var tr = document.createElement('tr');
+			tr.className="tr";
 
 			var index = document.createElement('td');
 			var name = document.createElement('td');

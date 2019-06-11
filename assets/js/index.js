@@ -82,17 +82,39 @@ function initKey() {
 function removeAllActive() {
   document.getElementsByTagName("LI")[0].className = "";
   document.getElementsByTagName("LI")[1].className = "";
+  document.getElementsByTagName("LI")[2].className = "";
 }
+
+// remove dropdown if screen size can handle navbar
+function removeDropDown(x) {
+ if (x.matches) { // If media query matches
+   document.getElementById('dropdown').style.display = "none";
+ } else {
+   document.getElementById('dropdown').style.display = "initial";
+ }
+}
+
+var x = window.matchMedia("(min-width: 601px)")
+removeDropDown(x) // Call listener function at run time
+x.addListener(removeDropDown) // Attach listener function on state changes
 
 //function to switch displays based on what user clicks
 function display(title) {
   if(title == '<a href="#">Ping-Pong</a>') {
     document.getElementById('main').style.display = "none";
     document.getElementById('pong').style.display = "initial";
+    document.getElementById('leaderboard').style.display = "none";
   }
   else if(title == '<a href="#">Home</a>') {
     document.getElementById('main').style.display = "initial";
-    document.getElementById('pong').style.display = "initial";
+    document.getElementById('pong').style.display = "none";
+    document.getElementById('leaderboard').style.display = "none";
+  }
+  else if(title == '<a href="#">Leaderboard</a>') {
+    document.getElementById('main').style.display = "none";
+    document.getElementById('pong').style.display = "none";
+    document.getElementById('leaderboard').style.display = "initial";
+    populateLeaderboard();
   }
 }
 
@@ -243,7 +265,7 @@ document.onfullscreenchange = function ( event ) {
       onBeforeOpen: () => {
         timerInterval = setInterval(() => {
           Swal.getContent().querySelector('strong')
-            .textContent = Swal.getTimerLeft()
+            .textContent = Swal.getTimerLeft() / 1000
         }, 100)
       },
       onClose: () => {
