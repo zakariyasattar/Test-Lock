@@ -1,6 +1,6 @@
 // RequestAnimFrame: a browser API for getting smooth animations
 window.requestAnimFrame = (function(){
-	return  window.requestAnimationFrame       ||
+	return  window.requestAnimationFrame ||
 		window.webkitRequestAnimationFrame ||
 		window.mozRequestAnimationFrame    ||
 		window.oRequestAnimationFrame      ||
@@ -11,10 +11,10 @@ window.requestAnimFrame = (function(){
 })();
 
 window.cancelRequestAnimFrame = ( function() {
-	return window.cancelAnimationFrame          ||
+	return window.cancelAnimationFrame            ||
 		window.webkitCancelRequestAnimationFrame    ||
 		window.mozCancelRequestAnimationFrame       ||
-		window.oCancelRequestAnimationFrame     ||
+		window.oCancelRequestAnimationFrame         ||
 		window.msCancelRequestAnimationFrame        ||
 		clearTimeout
 } )();
@@ -350,7 +350,13 @@ function gameOver() {
 	ctx.textBaseline = "middle";
 	ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
-	submitToLeaderboard(prompt("Would you like to report your score? Input id below!"));
+	if(points > 5) {
+		var id = prompt("Would you like to report your score? Input id below!");
+
+		if(id) {
+			submitToLeaderboard(id);
+		}
+	}
 
 	// Stop the Animation
 	cancelRequestAnimFrame(init);
@@ -364,40 +370,155 @@ function gameOver() {
 
 function submitToLeaderboard(id) {
 	if(parseInt(id) && id.length == 5){
-		firebase.database().ref('leaderboard').push(id + ";" + points);
-
-		document.getElementById('pong').style.display = "none";
-		document.getElementById('leaderboard').style.display = "initial";
-		populateLeaderboard(id);
+		firebase.database().ref('leaderboard').push(getStudent(id).split(";")[1] + ";" + points);
+		populateLeaderboard();
 	}
 	else{
 		swal("Error!", "hmmm, real name?", "error");
-		submitToLeaderboard(prompt("Would you like to report your score? Input id below!"));
+		var id = prompt("Would you like to report your score? Input id below!");
+
+		if(id) {
+			submitToLeaderboard(id);
+		}
 	}
 }
 
-function populateLeaderboard(id) {
+function populateLeaderboard() {
+	var leaderboard = [];
 	var lb = document.getElementById('table');
+
+	document.getElementById('pong').style.display = "none";
+	document.getElementById('leaderboard').style.display = "initial";
 
 	firebase.database().ref('leaderboard').once('value', function(snapshot){
 		snapshot.forEach(function(childSnapshot) {
+			leaderboard.push(childSnapshot.val());
+		});
+	});
+
+	setTimeout(function(){
+		leaderboard = leaderboardSort(leaderboard);
+		console.log(leaderboard);
+
+		for(var i = leaderboard.length - 1; i >= 0; i--) {
 			var tr = document.createElement('tr');
 
+			var index = document.createElement('td');
 			var name = document.createElement('td');
 			var score = document.createElement('td');
 			var status = document.createElement('td');
 
-			name.innerHTML = childSnapshot.val().split(";")[0];
-			score.innerHTML = childSnapshot.val().split(";")[1];
-			status.innerHTML = "student";
+			index.innerHTML = leaderboard.length - i;
+			index.style.paddingLeft = "20px";
 
+			name.innerHTML = leaderboard[i].split(";")[0];
+			name.style.paddingLeft = "10px";
+
+			score.innerHTML = leaderboard[i].split(";")[1];
+			score.style.paddingLeft = "10px";
+
+			status.innerHTML = "Student";
+			status.style.paddingLeft = "10px";
+
+			if(i == leaderboard.length - 1) {
+				lb.appendChild(document.createElement('br'));
+			}
+			tr.appendChild(index);
 			tr.appendChild(name);
 			tr.appendChild(score);
 			tr.appendChild(status);
 			lb.appendChild(tr);
-		});
-	});
+			lb.appendChild(document.createElement('br'));
+		}
+	}, 58);
+
 }
+
+//implement merge sort for leaderboard
+function leaderboardSort (arr) {
+  if (arr.length == 1) {
+    // return once we hit an array with a single item
+    return arr;
+  }
+
+  const middle = Math.floor(arr.length / 2) // get the middle item of the array rounded down
+  const left = arr.slice(0, middle) // items on the left side
+  const right = arr.slice(middle) // items on the right side
+
+  return leaderboardMerge(
+    leaderboardSort(left),
+    leaderboardSort(right)
+  )
+}
+
+// compare the arrays item by item and return the concatenated result
+function leaderboardMerge (left, right) {
+  let result = []
+  let indexLeft = 0
+  let indexRight = 0
+
+  while (indexLeft < left.length && indexRight < right.length) {
+    if (parseInt(left[indexLeft].split(";")[1]) < parseInt(right[indexRight].split(";")[1])) {
+      result.push(left[indexLeft])
+      indexLeft++
+    } else {
+      result.push(right[indexRight])
+      indexRight++
+    }
+  }
+
+  return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
+}
+
+function getStudent(id) {
+  students = mergeSort(students);
+  //binary search for finding ID pos
+  var low  = 0 , high = students.length -1 ,mid ;
+  while (low <= high){
+      mid = Math.floor((low+high)/2);
+      if(students[mid].split(";")[0]==id) return students[mid];
+      else if (students[mid].split(";")[0]<id) low = mid+1;
+      else high = mid-1;
+  }
+  return -1 ;
+}
+
+//implement merge sort
+function mergeSort (arr) {
+  if (arr.length === 1) {
+    // return once we hit an array with a single item
+    return arr
+  }
+
+  const middle = Math.floor(arr.length / 2) // get the middle item of the array rounded down
+  const left = arr.slice(0, middle) // items on the left side
+  const right = arr.slice(middle) // items on the right side
+
+  return merge(
+    mergeSort(left),
+    mergeSort(right)
+  )
+}
+
+// compare the arrays item by item and return the concatenated result
+function merge (left, right) {
+  let result = []
+  let indexLeft = 0
+  let indexRight = 0
+
+  while (indexLeft < left.length && indexRight < right.length) {
+    if (left[indexLeft].split(";")[0] < right[indexRight].split(";")[0]) {
+      result.push(left[indexLeft])
+      indexLeft++
+    } else {
+      result.push(right[indexRight])
+      indexRight++
+    }
+  }
+
+  return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
+}
+
 
 // Function for running the whole animation
 function animloop() {

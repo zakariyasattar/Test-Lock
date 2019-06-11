@@ -151,6 +151,7 @@ function submitExamCode() {
 
   if(isValid(code)) {
     document.getElementById('id-input').style.display = 'initial';
+    localStorage.setItem('ExamCode', code);
     stopEnter = true;
   }
   else {
@@ -165,7 +166,7 @@ function retrieveName() {
   if(id.length == 5) {
     document.getElementById('userName').innerHTML = getStudent(id).split(";")[1];
     document.getElementById('proceed').style.display = "initial";
-    
+
     displayQuiz(code);
   }
 }
@@ -189,7 +190,6 @@ function isValid(code) {
 // function to display quiz to student
 function displayQuiz(code) {
   var i = 0;
-  localStorage.setItem('ExamCode', code);
 
   for(var x = 0; x < examCodes.length; x++){
     var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
@@ -212,6 +212,7 @@ function displayQuiz(code) {
 //toggleFullScreen
 function toggleFullScreen() {
   if (!document.fullscreenElement) {
+    document.addEventListener('contextmenu', event => event.preventDefault());
     document.documentElement.requestFullscreen();
   }
   else {
@@ -229,34 +230,41 @@ function endTest() {
 //code to call when document leaves full screen
 document.onfullscreenchange = function ( event ) {
   if(document.fullscreenElement == null) {
-    var time = 5;
-    var x = setInterval(function(){
-        if(time != 0) {
-          time--;
+    let timerInterval;
+    Swal.fire({
+      title: 'Are You Sure You Want To Leave?',
+      html: 'You have <strong></strong> seconds to go back to your test or the test ends and your score is recorded!',
+      confirmButtonText: 'Yes, end it!',
+      cancelButtonText: 'No, Go Back!',
+      showCancelButton: true,
+      showConfirmButton: true,
+      allowEscapeKey: false,
+      timer: 10000,
+      onBeforeOpen: () => {
+        timerInterval = setInterval(() => {
+          Swal.getContent().querySelector('strong')
+            .textContent = Swal.getTimerLeft()
+        }, 100)
+      },
+      onClose: () => {
+        clearInterval(timerInterval)
+      }
+      }).then((result) => {
+        if (!result.value) {
+          toggleFullScreen();
         }
-        else {
-          clearInterval(x);
+        else if(result.value) {
           endTest();
         }
-     }, 1000);
-    swal({
-      title: "Are you sure?",
-      text: "Once you leave the test, you can no longer come back. Your final score will be recorded. YOU HAVE " + time + " SECONDS BEFORE THIS AUTOMATICALLY CLOSES AND ENDS TEST",
-      icon: "warning",
-      buttons: ["Take me back!", "Ok, end my test"],
-      dangerMode: true,
-    })
-    .then((willDelete) => {
-      if (willDelete) {
-        swal("Success! Your score has been recorded and sent to your teacher!", {
-          icon: "success",
-        });
-      } else {
-        toggleFullScreen();
-      }
-    });
+        if (
+          // Read more about handling dismissals
+          result.dismiss === Swal.DismissReason.timer
+        ) {
+          endTest();
+        }
+      });
+    };
   }
-};
 
 // window.onbeforeunload = function() {
 //    return "Dude, are you sure you want to leave? Think of the kittens!";
