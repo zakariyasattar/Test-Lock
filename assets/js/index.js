@@ -261,6 +261,7 @@ document.onfullscreenchange = function ( event ) {
       showCancelButton: true,
       showConfirmButton: true,
       allowEscapeKey: false,
+      allowEnterKey: false,
       timer: 10000,
       onBeforeOpen: () => {
         timerInterval = setInterval(() => {

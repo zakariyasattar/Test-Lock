@@ -593,10 +593,12 @@ function createExamBox(name, classAvg) {
   var difBackground = document.createElement('div')
   difBackground.style.background = "cornflowerblue";
   difBackground.style.borderRadius= "10px 10px 0 0";
+  difBackground.className = 'wave';
 
   var span = document.createElement('span');
   span.innerHTML = name;
   span.style.color = "white";
+  span.className = 'examName';
 
   difBackground.appendChild(span);
   difBackground.appendChild(document.createElement('hr'));
