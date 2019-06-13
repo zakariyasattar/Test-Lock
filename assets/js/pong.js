@@ -436,7 +436,7 @@ function populateLeaderboard() {
 			lb.appendChild(tr);
 			lb.appendChild(document.createElement('br'));
 		}
-	}, 58);
+	}, 150);
 
 }
 

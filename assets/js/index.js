@@ -185,11 +185,30 @@ function submitExamCode() {
 
 function retrieveName() {
   var id = document.getElementsByClassName("ID")[0].value;
-  if(id.length == 5) {
-    document.getElementById('userName').innerHTML = getStudent(id).split(";")[1];
-    document.getElementById('proceed').style.display = "initial";
+  if(id.length == 5){
+    var i = 0;
+    for(var x = 0; x < examCodes.length; x++){
+      var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
+      var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
-    displayQuiz(code);
+      if(plaintext.split(";")[0] == localStorage.getItem('ExamCode')){
+        i = x;
+        break;
+      }
+    }
+
+    var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
+    var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+    firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        if(childSnapshot.val().split(";")[0] == id) {
+          document.getElementById('userName').innerHTML = childSnapshot.val().split(";")[1];
+          document.getElementById('proceed').style.display = "initial";
+        }
+      });
+    });
+
   }
 }
 
