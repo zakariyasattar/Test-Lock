@@ -118,6 +118,8 @@ function displayExamData(name) {
     var classLength = 0;
     var highest = "a:-1000";
     var lowest = "a:1000";
+    var quickest = "a:1000";
+    var slowest = "a:-1000";
 
     document.getElementById('welcome-div').style.display = "none";
     document.getElementById('wrapper').style.display = "none";
@@ -170,9 +172,13 @@ function displayExamData(name) {
           var initPercentile = document.createElement('td');
           initPercentile.innerHTML = "Percentile";
 
+          var initTime = document.createElement('td');
+          initPercentile.innerHTML = "Time";
+
           init.appendChild(initName);
           init.appendChild(initScore);
           init.appendChild(initPercentile);
+          init.appendChild(initTime);
 
           table.appendChild(init);
 
@@ -196,14 +202,17 @@ function displayExamData(name) {
             name.style.paddingLeft = "66px";
       			var score = document.createElement('td');
       			var percentile = document.createElement('td');
+            var time = document.createElement('td');
 
       			name.innerHTML = obj[prop][exam].split(":")[0];
       			score.innerHTML = obj[prop][exam].split(":")[1] + "%";
+            time.innerHTML = obj[prop][exam].split(":")[2] + "mins";
       			percentile.innerHTML = getPercentile(obj[prop][exam], obj[prop]) + "th";
 
       			tr.appendChild(name);
       			tr.appendChild(score);
       			tr.appendChild(percentile);
+            tr.appendChild(time);
       			table.appendChild(tr);
 
             random.appendChild(table);
@@ -229,6 +238,7 @@ function displayExamData(name) {
     var lowestScorer = document.createElement('li');
     lowestScorer.innerHTML = "Lowest Scorer: " + lowest.split(":")[0] + " (" + lowest.split(":")[1] + "%)";
     lowestScorer.style.fontSize = "20px";
+
 
     ul.appendChild(avg);
     ul.appendChild(highestScorer);
@@ -540,12 +550,13 @@ function mergeSort (arr) {
 }
 
 // compare the arrays item by item and return the concatenated result
-function merge (left, right) {
+function merge(left, right) {
   let result = []
   let indexLeft = 0
   let indexRight = 0
 
   while (indexLeft < left.length && indexRight < right.length) {
+    console.log("hello");
     if (left[indexLeft].split(":")[1] < right[indexRight].split(":")[1]) {
       result.push(left[indexLeft])
       indexLeft++

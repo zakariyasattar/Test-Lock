@@ -477,7 +477,7 @@ function leaderboardMerge (left, right) {
 }
 
 function getStudent(id) {
-  students = mergeSort(students);
+  students = studentMerge(students);
   //binary search for finding ID pos
   var low  = 0 , high = students.length -1 ,mid ;
   while (low <= high){
@@ -490,7 +490,7 @@ function getStudent(id) {
 }
 
 //implement merge sort
-function mergeSort (arr) {
+function studentMerge (arr) {
   if (arr.length === 1) {
     // return once we hit an array with a single item
     return arr
@@ -500,14 +500,14 @@ function mergeSort (arr) {
   const left = arr.slice(0, middle) // items on the left side
   const right = arr.slice(middle) // items on the right side
 
-  return merge(
-    mergeSort(left),
-    mergeSort(right)
+  return mergeStudents(
+    studentMerge(left),
+    studentMerge(right)
   )
 }
 
 // compare the arrays item by item and return the concatenated result
-function merge (left, right) {
+function mergeStudents(left, right) {
   let result = []
   let indexLeft = 0
   let indexRight = 0
