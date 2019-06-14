@@ -315,6 +315,7 @@ function sort(func) {
 
   if(func == " Original") {
     var table = document.createElement('table');
+    table.id = "random";
     table.className = "table table-striped";
     table.style.width = "100vw";
 
@@ -328,13 +329,20 @@ function sort(func) {
 
     var initScore = document.createElement('td');
     initScore.innerHTML = "Score (%)"
+    initScore.id = "score";
 
     var initPercentile = document.createElement('td');
     initPercentile.innerHTML = "Percentile";
+    initPercentile.id = "percentile";
+
+    var initTime = document.createElement('td');
+    initTime.innerHTML = "Time";
+    initTime.id = "time";
 
     init.appendChild(initName);
     init.appendChild(initScore);
     init.appendChild(initPercentile);
+    init.appendChild(initTime);
 
     table.appendChild(init);
 
@@ -351,9 +359,14 @@ function sort(func) {
       score.innerHTML = examData[i].split(":")[1] + "%";
       percentile.innerHTML = getPercentile(examData[i], examData) + "th";
 
+      var time = document.createElement('td');
+      time.innerHTML = examData[i].split(":")[2] + " Mins";
+      time.id = "time";
+
       tr.appendChild(name);
       tr.appendChild(score);
       tr.appendChild(percentile);
+      tr.appendChild(time);
       table.appendChild(tr);
     }
 
@@ -364,6 +377,7 @@ function sort(func) {
       testExamData.sort();
 
       var table = document.createElement('table');
+      table.id = "random";
       table.className = "table table-striped";
       table.style.width = "100vw";
 
@@ -373,16 +387,24 @@ function sort(func) {
       var initName = document.createElement('td');
       initName.innerHTML = "Name";
       initName.style.paddingLeft = "66px";
+      initName.id = "name";
 
       var initScore = document.createElement('td');
       initScore.innerHTML = "Score (%)"
+      initScore.id = "score";
 
       var initPercentile = document.createElement('td');
       initPercentile.innerHTML = "Percentile";
+      initPercentile.id = "percentile";
+
+      var initTime = document.createElement('td');
+      initTime.innerHTML = "Time";
+      initTime.id = "time";
 
       init.appendChild(initName);
       init.appendChild(initScore);
       init.appendChild(initPercentile);
+      init.appendChild(initTime);
 
       table.appendChild(init);
 
@@ -399,9 +421,14 @@ function sort(func) {
         score.innerHTML = testExamData[i].split(":")[1] + "%";
         percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
 
+        var time = document.createElement('td');
+        time.innerHTML = testExamData[i].split(":")[2] + " Mins";
+        time.id = "time";
+
         tr.appendChild(name);
         tr.appendChild(score);
         tr.appendChild(percentile);
+        tr.appendChild(time);
         table.appendChild(tr);
       }
 
@@ -412,6 +439,7 @@ function sort(func) {
       testExamData.sort();
 
       var table = document.createElement('table');
+      table.id = "random";
       table.className = "table table-striped";
       table.style.width = "100vw";
 
@@ -421,16 +449,24 @@ function sort(func) {
       var initName = document.createElement('td');
       initName.innerHTML = "Name";
       initName.style.paddingLeft = "66px";
+      initName.id = "name";
 
       var initScore = document.createElement('td');
       initScore.innerHTML = "Score (%)"
+      initScore.id = "score";
 
       var initPercentile = document.createElement('td');
       initPercentile.innerHTML = "Percentile";
+      initPercentile.id = "percentile";
+
+      var initTime = document.createElement('td');
+      initTime.innerHTML = "Time";
+      initTime.id = "time";
 
       init.appendChild(initName);
       init.appendChild(initScore);
       init.appendChild(initPercentile);
+      init.appendChild(initTime);
 
       table.appendChild(init);
 
@@ -447,9 +483,14 @@ function sort(func) {
         score.innerHTML = testExamData[i].split(":")[1] + "%";
         percentile.innerHTML = getPercentile(testExamData[i], testExamData) + "th";
 
+        var time = document.createElement('td');
+        time.innerHTML = testExamData[i].split(":")[2] + " Mins";
+        time.id = "time";
+
         tr.appendChild(name);
         tr.appendChild(score);
         tr.appendChild(percentile);
+        tr.appendChild(time);
         table.appendChild(tr);
       }
 
@@ -460,6 +501,7 @@ function sort(func) {
       var scores = mergeSort(testExamData);
 
       var table = document.createElement('table');
+      table.id = "random";
       table.className = "table table-striped";
       table.style.width = "100vw";
 
@@ -469,16 +511,24 @@ function sort(func) {
       var initName = document.createElement('td');
       initName.innerHTML = "Name";
       initName.style.paddingLeft = "66px";
+      initName.id = "name";
 
       var initScore = document.createElement('td');
       initScore.innerHTML = "Score (%)"
+      initScore.id = "score";
 
       var initPercentile = document.createElement('td');
       initPercentile.innerHTML = "Percentile";
+      initPercentile.id = "percentile";
+
+      var initTime = document.createElement('td');
+      initTime.innerHTML = "Time";
+      initTime.id = "time";
 
       init.appendChild(initName);
       init.appendChild(initScore);
       init.appendChild(initPercentile);
+      init.appendChild(initTime);
 
       table.appendChild(init);
 
@@ -495,9 +545,14 @@ function sort(func) {
         score.innerHTML = scores[i].split(":")[1] + "%";
         percentile.innerHTML = getPercentile(scores[i], scores) + "th";
 
+        var time = document.createElement('td');
+        time.innerHTML = testExamData[i].split(":")[2] + " Mins";
+        time.id = "time";
+
         tr.appendChild(name);
         tr.appendChild(score);
         tr.appendChild(percentile);
+        tr.appendChild(time);
         table.appendChild(tr);
       }
 
@@ -508,6 +563,7 @@ function sort(func) {
       var scores = mergeSort(testExamData);
 
       var table = document.createElement('table');
+      table.id = "random";
       table.className = "table table-striped";
       table.style.width = "100vw";
 
@@ -517,16 +573,24 @@ function sort(func) {
       var initName = document.createElement('td');
       initName.innerHTML = "Name";
       initName.style.paddingLeft = "66px";
+      initName.id = "name";
 
       var initScore = document.createElement('td');
       initScore.innerHTML = "Score (%)"
+      initScore.id = "score";
 
       var initPercentile = document.createElement('td');
       initPercentile.innerHTML = "Percentile";
+      initPercentile.id = "percentile";
+
+      var initTime = document.createElement('td');
+      initTime.innerHTML = "Time";
+      initTime.id = "time";
 
       init.appendChild(initName);
       init.appendChild(initScore);
       init.appendChild(initPercentile);
+      init.appendChild(initTime);
 
       table.appendChild(init);
 
@@ -543,14 +607,141 @@ function sort(func) {
         score.innerHTML = scores[i].split(":")[1] + "%";
         percentile.innerHTML = getPercentile(scores[i], scores) + "th";
 
+        var time = document.createElement('td');
+        time.innerHTML = testExamData[i].split(":")[2] + " Mins";
+        time.id = "time";
+
         tr.appendChild(name);
         tr.appendChild(score);
         tr.appendChild(percentile);
+        tr.appendChild(time);
         table.appendChild(tr);
       }
 
       document.getElementById('main').appendChild(table);
 
+    }
+    else if(func == " Sort By Time (high-low)") {
+      var times = mergeSortTime(testExamData);
+
+      var table = document.createElement('table');
+      table.id = "random";
+      table.className = "table table-striped";
+      table.style.width = "100vw";
+
+      var init = document.createElement('tr');
+      init.style.color = "darkgray";
+
+      var initName = document.createElement('td');
+      initName.innerHTML = "Name";
+      initName.style.paddingLeft = "66px";
+      initName.id = "name";
+
+      var initScore = document.createElement('td');
+      initScore.innerHTML = "Score (%)"
+      initScore.id = "score";
+
+      var initPercentile = document.createElement('td');
+      initPercentile.innerHTML = "Percentile";
+      initPercentile.id = "percentile";
+
+      var initTime = document.createElement('td');
+      initTime.innerHTML = "Time";
+      initTime.id = "time";
+
+      init.appendChild(initName);
+      init.appendChild(initScore);
+      init.appendChild(initPercentile);
+      init.appendChild(initTime);
+
+      table.appendChild(init);
+
+      for(var i = times.length - 1; i >= 0; i--){
+        var tr = document.createElement('tr');
+        table.appendChild(document.createElement('br'));
+
+        var name = document.createElement('td');
+        name.style.paddingLeft = "66px";
+        var score = document.createElement('td');
+        var percentile = document.createElement('td');
+
+        name.innerHTML = times[i].split(":")[0];
+        score.innerHTML = times[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(times[i], times) + "th";
+
+        var time = document.createElement('td');
+        time.innerHTML = times[i].split(":")[2] + " Mins";
+        time.id = "time";
+
+        tr.appendChild(name);
+        tr.appendChild(score);
+        tr.appendChild(percentile);
+        tr.appendChild(time);
+        table.appendChild(tr);
+      }
+
+      document.getElementById('main').appendChild(table);
+    }
+    else if(func == " Sort By Time (low-high)") {
+      var times = mergeSortTime(testExamData);
+
+      var table = document.createElement('table');
+      table.id = "random";
+      table.className = "table table-striped";
+      table.style.width = "100vw";
+
+      var init = document.createElement('tr');
+      init.style.color = "darkgray";
+
+      var initName = document.createElement('td');
+      initName.innerHTML = "Name";
+      initName.style.paddingLeft = "66px";
+      initName.id = "name";
+
+      var initScore = document.createElement('td');
+      initScore.innerHTML = "Score (%)"
+      initScore.id = "score";
+
+      var initPercentile = document.createElement('td');
+      initPercentile.innerHTML = "Percentile";
+      initPercentile.id = "percentile";
+
+      var initTime = document.createElement('td');
+      initTime.innerHTML = "Time";
+      initTime.id = "time";
+
+      init.appendChild(initName);
+      init.appendChild(initScore);
+      init.appendChild(initPercentile);
+      init.appendChild(initTime);
+
+      table.appendChild(init);
+
+      for(var i = 0; i < times.length; i++){
+        var tr = document.createElement('tr');
+        table.appendChild(document.createElement('br'));
+
+        var name = document.createElement('td');
+        name.style.paddingLeft = "66px";
+        var score = document.createElement('td');
+        var percentile = document.createElement('td');
+
+        name.innerHTML = times[i].split(":")[0];
+        score.innerHTML = times[i].split(":")[1] + "%";
+        percentile.innerHTML = getPercentile(times[i], times) + "th";
+
+        var time = document.createElement('td');
+        time.innerHTML = times[i].split(":")[2] + " Mins";
+        time.id = "time";
+
+        tr.appendChild(name);
+        tr.appendChild(score);
+        tr.appendChild(percentile);
+        tr.appendChild(time);
+        table.appendChild(tr);
+      }
+
+      document.getElementById('main').appendChild(table);
     }
   }
 }
@@ -579,8 +770,43 @@ function merge(left, right) {
   let indexRight = 0
 
   while (indexLeft < left.length && indexRight < right.length) {
-    console.log("hello");
     if (left[indexLeft].split(":")[1] < right[indexRight].split(":")[1]) {
+      result.push(left[indexLeft])
+      indexLeft++
+    } else {
+      result.push(right[indexRight])
+      indexRight++
+    }
+  }
+
+  return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
+}
+
+//implement merge sort
+function mergeSortTime (arr) {
+  if (arr.length === 1) {
+    // return once we hit an array with a single item
+    return arr
+  }
+
+  const middle = Math.floor(arr.length / 2) // get the middle item of the array rounded down
+  const left = arr.slice(0, middle) // items on the left side
+  const right = arr.slice(middle) // items on the right side
+
+  return mergeTime(
+    mergeSortTime(left),
+    mergeSortTime(right)
+  )
+}
+
+// compare the arrays item by item and return the concatenated result
+function mergeTime(left, right) {
+  let result = []
+  let indexLeft = 0
+  let indexRight = 0
+
+  while (indexLeft < left.length && indexRight < right.length) {
+    if (left[indexLeft].split(":")[2] < right[indexRight].split(":")[2]) {
       result.push(left[indexLeft])
       indexLeft++
     } else {
