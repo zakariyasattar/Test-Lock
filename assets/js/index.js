@@ -41,7 +41,7 @@ firebase.database().ref('Students').on('value', function(snapshot) {
 
 // code to run when google user signs in
 function onSignIn(googleUser) {
-  if(document.URL.indexOf("?") == -1 && document.URL.substring(document.URL.indexOf('?') + 1) != "noRedirect"){
+  if(document.URL.indexOf("?") == -1){
     window.location = "teacher.html";
 
     var profile = googleUser.getBasicProfile();
@@ -49,6 +49,7 @@ function onSignIn(googleUser) {
   }
   else {
     window.location.href = document.URL.substring(0, document.URL.indexOf("?"));
+    localStorage.setItem("userInfo", "");
     signOut();
   }
 }

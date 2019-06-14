@@ -28,7 +28,17 @@ document.getElementById('welcome-text').innerHTML = "Welcome " + userName + "!";
 document.getElementById('profile').src = profileImg;
 
 $('#profile').click(function(){
-  swal("Sign Out", "Are You Sure You Want To Sign Out?", "warning")
+  swal({
+    title: "Sign Out",
+    text: "Are You Sure You Want To Sign Out?",
+    icon: "warning",
+    button: "Sign Me Out",
+  })
+  .then((value) => {
+    if(value) {
+      window.location.href = "index.html?noRedirect";
+    }
+  });
 });
 
 function createQuiz() {
@@ -215,7 +225,7 @@ function displayExamData(name) {
       			score.innerHTML = obj[prop][exam].split(":")[1] + "%";
             score.id = "score";
 
-            time.innerHTML = obj[prop][exam].split(":")[2] + "mins";
+            time.innerHTML = obj[prop][exam].split(":")[2] + " Mins";
             time.id = "time";
 
       			percentile.innerHTML = getPercentile(obj[prop][exam], obj[prop]) + "th";
