@@ -57,6 +57,11 @@
         <p id="welcome-text-p">All of your classes have been preloaded below. Just click on one to start exploring!</p>
       </div>
 
+      <center><div id="doesNotExist" style="display: none">
+        <p style="font-size: 100px;">&#129300;</p>
+        <h1>Hmmm, Looks Like Your Not In Our Database...</h1>
+      </div></center>
+
       <!-- Wrapper for all css grid class boxes -->
       <div id="wrapper">
       </div>
@@ -114,6 +119,8 @@
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>&nbsp Sort By Alphabet (Z-A)</a></li>
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i>&nbsp Sort By Score (high-low)</a></li>
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes"></i>&nbsp Sort By Score (low-high)</a></li>
+            <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i>&nbsp Sort By Time (high-low)</a></li>
+            <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort-by-attributes"></i>&nbsp Sort By Time (low-high)</a></li>
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort"></i>&nbsp Original</a></li>
           </ul>
         </div>

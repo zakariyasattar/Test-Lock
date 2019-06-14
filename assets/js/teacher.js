@@ -748,6 +748,9 @@ function populateDashboard() {
           }
         }
       }
+      else {
+        document.getElementById('doesNotExist').style.display = "initial";
+      }
     });
   });
 
