@@ -165,15 +165,19 @@ function displayExamData(name) {
           var initName = document.createElement('td');
           initName.innerHTML = "Name";
           initName.style.paddingLeft = "66px";
+          initName.id = "name";
 
           var initScore = document.createElement('td');
           initScore.innerHTML = "Score (%)"
+          initScore.id = "score";
 
           var initPercentile = document.createElement('td');
           initPercentile.innerHTML = "Percentile";
+          initPercentile.id = "percentile";
 
           var initTime = document.createElement('td');
-          initPercentile.innerHTML = "Time";
+          initTime.innerHTML = "Time";
+          initTime.id = "time";
 
           init.appendChild(initName);
           init.appendChild(initScore);
@@ -200,14 +204,22 @@ function displayExamData(name) {
 
       			var name = document.createElement('td');
             name.style.paddingLeft = "66px";
+            name.id = "name";
       			var score = document.createElement('td');
       			var percentile = document.createElement('td');
             var time = document.createElement('td');
 
       			name.innerHTML = obj[prop][exam].split(":")[0];
+            name.id = "name";
+
       			score.innerHTML = obj[prop][exam].split(":")[1] + "%";
+            score.id = "score";
+
             time.innerHTML = obj[prop][exam].split(":")[2] + "mins";
+            time.id = "time";
+
       			percentile.innerHTML = getPercentile(obj[prop][exam], obj[prop]) + "th";
+            percentile.id = "percentile";
 
       			tr.appendChild(name);
       			tr.appendChild(score);
@@ -302,6 +314,7 @@ function sort(func) {
     var initName = document.createElement('td');
     initName.innerHTML = "Name";
     initName.style.paddingLeft = "66px";
+    initName.id = "name";
 
     var initScore = document.createElement('td');
     initScore.innerHTML = "Score (%)"
