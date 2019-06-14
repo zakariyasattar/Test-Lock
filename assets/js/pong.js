@@ -40,6 +40,7 @@ var canvas = document.getElementById("pong-canvas"),
 		over = 0, // flag varialbe, cahnged when the game is over
 		init, // variable to initialize animation
 		paddleHit,
+		students = [],
 		isPaused = false;
 
 		document.body.onkeyup = function(e){
@@ -54,6 +55,12 @@ var canvas = document.getElementById("pong-canvas"),
 				}
 		   }
 		 }
+
+	 firebase.database().ref('Students').on('value', function(snapshot) {
+	 	snapshot.forEach(function(childSnapshot) {
+	 		students.push(childSnapshot.val());
+	 	});
+	 });
 
 // Add mousemove and mousedown events to the canvas
 canvas.addEventListener("mousemove", trackPosition, true);
@@ -351,7 +358,7 @@ function gameOver() {
 	ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
 	if(points > 5) {
-		var id = prompt("Would you like to report your score? Input id below!");
+		var id = prompt("Would you like to report your score? Input id below! (Double tap space bar to reopen if closed)");
 
 		if(id) {
 			submitToLeaderboard(id);
@@ -374,8 +381,8 @@ function submitToLeaderboard(id) {
 		populateLeaderboard();
 	}
 	else{
-		swal("Error!", "hmmm, real name?", "error");
-		var id = prompt("Would you like to report your score? Input id below!");
+		swal("Error!", "hmmm, real ID?", "error");
+		var id = prompt("Would you like to report your score? Input id below! (Double tap space bar to reopen if closed)");
 
 		if(id) {
 			submitToLeaderboard(id);
@@ -384,17 +391,15 @@ function submitToLeaderboard(id) {
 }
 
 function populateLeaderboard() {
-	var trs = document.getElementsByClassName('tr');
-
-	for(var k = 1; k < trs.length; k++) {
-		document.getElementById('table').parentNode.removeChild(trs[k]);
-	}
+	jQuery('.tr').remove();
+	jQuery('.br').remove();
 
 	var leaderboard = [];
 	var lb = document.getElementById('table');
 
 	document.getElementById('pong').style.display = "none";
 	document.getElementById('leaderboard').style.display = "initial";
+  document.getElementById('main').style.display = "none";
 
 	firebase.database().ref('leaderboard').once('value', function(snapshot){
 		snapshot.forEach(function(childSnapshot) {
@@ -427,14 +432,18 @@ function populateLeaderboard() {
 			status.style.paddingLeft = "10px";
 
 			if(i == leaderboard.length - 1) {
-				lb.appendChild(document.createElement('br'));
+				var br = document.createElement('br');
+				br.className = "br";
+				lb.appendChild(br);
 			}
 			tr.appendChild(index);
 			tr.appendChild(name);
 			tr.appendChild(score);
 			tr.appendChild(status);
 			lb.appendChild(tr);
-			lb.appendChild(document.createElement('br'));
+			var br = document.createElement('br');
+			br.className = "br";
+			lb.appendChild(br);
 		}
 	}, 150);
 
@@ -478,6 +487,7 @@ function leaderboardMerge (left, right) {
 
 function getStudent(id) {
   students = studentMerge(students);
+
   //binary search for finding ID pos
   var low  = 0 , high = students.length -1 ,mid ;
   while (low <= high){

@@ -273,6 +273,7 @@ function displayExamData(name) {
 function removeAllActive() {
   document.getElementsByTagName("LI")[0].className = "";
   document.getElementsByTagName("LI")[1].className = "";
+  document.getElementsByTagName("LI")[2].className = "";
 }
 
 //function to switch displays based on what user clicks
@@ -280,10 +281,15 @@ function display(title) {
   if(title == '<a href="#">Ping-Pong</a>') {
     document.getElementById('main').style.display = "none";
     document.getElementById('pong').style.display = "initial";
+    document.getElementById('leaderboard').style.display = "none";
   }
   else if(title == '<a href="#">Dashboard</a>') {
     document.getElementById('main').style.display = "initial";
     document.getElementById('pong').style.display = "none";
+    document.getElementById('leaderboard').style.display = "none";
+  }
+  else if(title == '<a href="#">Leaderboard</a>') {
+    populateLeaderboard();
   }
 }
 

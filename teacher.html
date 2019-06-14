@@ -32,6 +32,7 @@
             </a>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" class="active" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
+            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Leaderboard</a></li>
 
             <!-- DropDown incase screen size goes below 450px -->
             <li id="dropdown" class="dropdown">
@@ -39,6 +40,7 @@
               <ul id="nav-menu" class="dropdown-menu">
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Dashboard</a></li>
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
+                <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Leaderboard</a></li>
               </ul>
             </li>
             <img class="hoverable" id="profile"></img>
@@ -151,6 +153,21 @@
     <div style="display: none; background: purple;" id="pong">
       <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
       <script src="assets/js/pong.js"></script>
+    </div>
+
+    <div style="display: none;" id="leaderboard">
+      <center><h1>Leaderboard</h1></center>
+      <br/>
+      <center><table id="table" class="table table-bordered">
+        <tr>
+          <th>Place</th>
+          <th>Name</th>
+          <th>Score</th>
+          <th>Status</th>
+        </tr>
+        <div id="extra">
+        </div>
+      </table></center>
     </div>
 
   </body>
