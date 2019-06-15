@@ -55,6 +55,8 @@ function createQuiz() {
 
   // get randomCode
   var randomCode = generateCode();
+  document.getElementById('create-quiz-dashboard').style.display = "initial";
+
 }
 
 //load class based on name
@@ -99,9 +101,23 @@ function loadClass(name) {
 
 // Generate random exam code
 function generateCode() {
-  var code = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
+  var code = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+  var className = "";
+
+  var string = document.getElementById('main-header').innerHTML.substring(document.getElementById('main-header')).split(" ");
+  string.shift(); string.shift();
+
+  for(var i = 0; i < string.length; i++) {
+    if(i != string.length - 1) {
+      className += string[i] + " "
+    }
+    else{
+      className += string[i];
+    }
+  }
+
   if(examCodes.indexOf(code) == -1){
-    firebase.database().ref("exam-codes").push(randomCode.toUpperCase() + ";" + userName); //+ ";" + object.innerHTML);
+    firebase.database().ref("exam-codes").push(code.toUpperCase() + ";" + userName + ";" + className);
     return code;
   }
   else {

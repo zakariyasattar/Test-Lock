@@ -74,7 +74,7 @@
             <a href="javascript:location.reload(); localStorage.setItem('className', '')"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp Go Back To Classes</a>
             <h1 id="main-header"></h1>
             <br/>
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">
+            <p><a class="btn btn-primary btn-lg" href="#" role="button" onclick="createQuiz()">
               <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
               Create Quiz
             </a></p>
@@ -83,8 +83,12 @@
           <div id="class-specific-data">
             <span id="avg-grade-number"></span>
             <center><h6 style="font-size: 35px; color: #d6dbd6">Overall Class Average</h6></center>
-          </div>
         </div>
+        </div>
+          <div id="create-quiz-dashboard">
+            Hello
+          </h1>
+
           <br/>
           <h1 style="margin-left: 25px;margin-right: 25px;"><hr style="float: left; width: 5vw;"/>&nbsp Previous Exams &nbsp <hr id="right-hr" style="float: right; width: 70vw;"/></h1>
           <br/>
@@ -95,6 +99,7 @@
           </div>
 
           <div id="exam-wrapper">
+            
           </div>
       </div>
 
@@ -165,8 +170,6 @@
           <th>Score</th>
           <th>Status</th>
         </tr>
-        <div id="extra">
-        </div>
       </table></center>
     </div>
 
