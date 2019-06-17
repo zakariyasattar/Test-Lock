@@ -17,6 +17,21 @@ window.onload = function() {
   $('.dropdown').click(function(){
     $('.dropdown-menu').toggleClass('show');
   });
+
+  $("#nameOfExam").focus(function() {
+    $("#nameOfExam").css("text-align", "left");
+    $("#nameOfExam").css("border-bottom", "1px solid #458ec1");
+  }).blur(function() {
+    $("#nameOfExam").css("text-align", "center");
+    $("#nameOfExam").css("border-bottom", "1px solid lightgray");
+  });
+
+  $("#description").focus(function() {
+    $("#description").css("border", "1px solid #458ec1");
+  }).blur(function() {
+    $("#description").css("border", "1px solid lightgray");
+  });
+
 };
 
 // retrieve userName, img from localStorage
@@ -840,6 +855,23 @@ function mergeTime(left, right) {
   return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
 }
 
+// decide what to display based on selected value
+function examTypeReactor(value) {
+  switch(value) {
+    case 'partner':
+      document.getElementById('partner-chooser').style.display = "initial";
+      document.getElementById('group-chooser').style.display = "none";
+      break;
+    case 'group':
+      document.getElementById('group-chooser').style.display = "initial";
+      document.getElementById('partner-chooser').style.display = "none";
+      break;
+    default:
+      document.getElementById('partner-chooser').style.display = "none";
+      document.getElementById('group-chooser').style.display = "none";
+  }
+}
+
 // search and parse through exams based on value
 function searchExams() {
   var input, filter, ul, li, a, i, txtValue;
@@ -902,18 +934,26 @@ function createExamBox(name, classAvg) {
   document.getElementById('main').appendChild(wrapper);
 }
 
+// function to create HTML question
+function createQuestion() {
+  var exam = document.getElementById('exam');
+  var question = document.createElement('div');
+
+
+}
+
 // return letter grade based on avg
 function getLetter(avg) {
   if(avg >= 90.0) {
     return "A";
   }
-  else if(avg <= 90.0 && avg >= 80.0) {
+  else if(avg < 90.0 && avg >= 80.0) {
     return "B";
   }
-  else if(avg <= 80.0 && avg >= 70.0) {
+  else if(avg < 80.0 && avg >= 70.0) {
     return "C";
   }
-  else if(avg <= 70.0 && avg >= 60.0) {
+  else if(avg < 70.0 && avg >= 60.0) {
     return "D";
   }
   else {

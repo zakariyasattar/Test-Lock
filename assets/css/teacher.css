@@ -168,6 +168,186 @@
     transition: all .2s ease-in-out;
   }
 
+  /* Create Exam Dashboard */
+
+  #nameOfExam {
+    border: none;
+    border-bottom: 1px solid lightgray;
+    color: #777061;
+    text-align: center;
+  }
+
+  #partner-chooser {
+    border: 1px solid;
+    border-radius: 5px;
+  }
+
+  #type-of-exam {
+    float: right;
+  }
+
+  #score {
+    display: inline;
+    float: right;
+    width: 5vw;
+    border: none;
+    border-bottom: 1px solid;
+    margin-bottom: 2px;
+    text-align: center;
+    font-size: 15px; 
+  }
+
+  #time {
+    display: inline;
+  }
+
+  #question {
+    width: 70vw;
+    padding: 30px;
+  }
+
+  #question-title {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid lightgray;
+    display: inline-block;
+
+  }
+
+  #answer-choices {
+    margin: 33px;
+    padding-top: 5px;
+  }
+
+  #create-question-button {
+    background: white;
+    border: 2px solid #ed3b3e;
+    color: #ed3b3e;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
+  #create-question-button:hover {
+    background: #ed3b3e;
+    border: 2px solid black;
+    color: white;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
+  #description {
+    resize: none;
+    display: block;
+    font-size: 15px;
+    border-radius: 3px;
+    margin-top: 10px;
+    border: 1px solid lightgray;
+    width: 40vw;
+    height: 15vh;
+    padding: 10px;
+  }
+
+  #create-exam-dashboard {
+    background: white;
+    padding: 66px;
+    font-size: 20px;
+  }
+
+  @keyframes click-wave {
+    0% {
+      height: 40px;
+      width: 40px;
+      opacity: 0.35;
+      position: relative;
+    }
+    100% {
+      height: 200px;
+      width: 200px;
+      margin-left: -87px;
+      margin-top: -93px;
+      opacity: 0;
+    }
+  }
+
+  .option-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    position: relative;
+    top: 7px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    width: 30px;
+    transition: all 0.15s ease-out 0s;
+    background: #cbd1d8;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 0.5rem;
+    outline: none;
+    position: relative;
+    z-index: 1000;
+  }
+
+  #label:hover {
+    cursor: pointer;
+    -webkit-transform: translateX(10px);
+    transform: translateX(10px);
+    -webkit-transition: all .25s ease;
+    transition: all .25s ease;
+  }
+
+  #label {
+    -webkit-transition: all .25s ease;
+    transition: all .25s ease;
+  }
+  .option-input:hover {
+    background: #9faab7;
+  }
+  .option-input:checked {
+    background: #40e0d0;
+  }
+  .option-input:checked::before {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    display: inline-block;
+    font-size: 26.66667px;
+    text-align: center;
+    line-height: 40px;
+  }
+  .option-input:checked::after {
+    -webkit-animation: click-wave 0.65s;
+    -moz-animation: click-wave 0.65s;
+    animation: click-wave 0.65s;
+    background: #40e0d0;
+    content: '';
+    display: block;
+    position: relative;
+    z-index: 100;
+  }
+  .option-input.radio {
+    border-radius: 50%;
+  }
+  .option-input.radio::after {
+    border-radius: 50%;
+  }
+
+  .option {
+    padding-left: 20px;
+  }
+
   /* Style all text for className boxes */
   .className {
     font-size: 20px;
