@@ -61,7 +61,7 @@
 
       <center><div id="doesNotExist" style="display: none">
         <p style="font-size: 100px;">&#129300;</p>
-        <h1>Hmmm, Looks Like Your Not In Our Database...</h1>
+        <h1>Hmmm, Looks Like You Aren't In Our Database...</h1>
       </div></center>
 
       <!-- Wrapper for all css grid class boxes -->
@@ -92,10 +92,9 @@
               <div id="type-of-exam">
                 <p style="display: inline-block;">Type Of Exam: </p>
                 &nbsp
-                <label class="radio-inline">
-                  <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="single" onchange="examTypeReactor(this.value)" checked> Single
+                  <label class="radio-inline">
+                    <input style="outline: none" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="single" onchange="examTypeReactor(this.value)" checked> Single
                   </label>
-
 
                   <label class="radio-inline">
                     <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="partner" onchange="examTypeReactor(this.value)"> Partner
@@ -117,9 +116,9 @@
               <br/>
               <br/>
 
-              <div style="float: right;">Total Points Possible: &nbsp <input type="text" id="score" placeholder="Ex: 25"></div>
-              Description (optional): <textarea id="description" placeholder="Ex: This Exam Is Going To Be So Much Fun!"></textarea>
               <div style="float: right">Total Time Alloted (Mins): &nbsp <input type="text" id="score" placeholder="Ex: 25"></div>
+              Description (optional): <textarea id="description" placeholder="Ex: This Exam Is Going To Be So Much Fun!"></textarea>
+              <div style="float: right;">Total Points Possible: &nbsp <input type="text" id="score" placeholder="Ex: 25"></div>
             </div>
 
             <br/>
