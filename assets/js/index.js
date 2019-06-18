@@ -208,8 +208,12 @@ function retrieveName() {
           document.getElementById('proceed').style.display = "initial";
         }
       });
+
     });
 
+    if(document.getElementById('userName').innerHTML == "") {
+      document.getElementById('userName').innerHTML = "Not Found!"
+    }
   }
 }
 
