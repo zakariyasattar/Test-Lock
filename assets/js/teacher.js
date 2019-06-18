@@ -47,7 +47,7 @@ $('#profile').click(function(){
     title: "Sign Out",
     text: "Are You Sure You Want To Sign Out?",
     icon: "warning",
-    button: "Sign Me Out",
+     buttons: ["Cancel", "Sign Me Out!"],
   })
   .then((value) => {
     if(value) {

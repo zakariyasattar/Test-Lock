@@ -185,6 +185,7 @@
 
   #type-of-exam {
     float: right;
+    color: black;
   }
 
   #maxScore {
@@ -198,15 +199,18 @@
     font-size: 15px;
   }
 
-  #time {
+  #numPoints {
     display: inline;
-    float: right;
     width: 5vw;
     border: none;
     border-bottom: 1px solid;
     margin-bottom: 2px;
     text-align: center;
     font-size: 15px;
+  }
+
+  #numPoints:focus {
+    border-bottom: 1px solid dodgerblue;
   }
 
   #time {
@@ -216,14 +220,18 @@
   #question {
     width: 70vw;
     padding: 30px;
+    color: black;
   }
 
   #question-title {
-    width: 100%;
+    width: 97%;
     border: none;
     border-bottom: 1px solid lightgray;
-    display: inline-block;
+    display: inline;
+  }
 
+  #question-title:focus {
+    border-bottom: 1px solid #458ec1;
   }
 
   #answer-choices {
@@ -269,6 +277,7 @@
     background: white;
     padding: 66px;
     font-size: 20px;
+    color: #42a4f4;
   }
 
   @keyframes click-wave {
@@ -324,7 +333,11 @@
   #label {
     -webkit-transition: all .25s ease;
     transition: all .25s ease;
+    width: 100%;
+    padding-left: 5px;
+    padding-bottom: 10px;
   }
+
   .option-input:hover {
     background: #9faab7;
   }
@@ -359,6 +372,7 @@
 
   .option {
     padding-left: 20px;
+    font-weight: normal
   }
 
   /* Style all text for className boxes */

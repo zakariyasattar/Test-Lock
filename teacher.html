@@ -85,12 +85,13 @@
             <center><h6 style="font-size: 35px; color: #d6dbd6">Overall Class Average</h6></center>
         </div>
         </div>
+
           <div id="create-exam-dashboard">
             <div id="init-setup">
               Title: <input type="text" id="nameOfExam" placeholder="Ex: Final Exam">
 
               <div id="type-of-exam">
-                <p style="display: inline-block;">Type Of Exam: </p>
+                <p style="display: inline-block; color: #42a4f4;">Type Of Exam: </p>
                 &nbsp
                   <label class="radio-inline">
                     <input style="outline: none" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="single" onchange="examTypeReactor(this.value)" checked> Single
@@ -118,7 +119,7 @@
 
               <div style="float: right">Total Time Alloted (Mins): &nbsp <input type="text" id="maxScore" placeholder="Ex: 25"></div>
               Description (optional): <textarea id="description" placeholder="Ex: This Exam Is Going To Be So Much Fun!"></textarea>
-              <div style="float: right;">Total Points Possible: &nbsp <input type="text" id="time" placeholder="Ex: 25"></div>
+              <div style="float: right;">Total Points Possible: &nbsp <input type="text" id="maxScore" placeholder="Ex: 25"></div>
             </div>
 
             <br/>
@@ -126,22 +127,27 @@
 
             <div id="exam">
               <div id="question">
-                 <p>1.</p><input type="text" id="question-title" placeholder="Ex: What's Your Name?">
+                 <span style="color: #97a5aa;">1.</span> &nbsp <input type="text" id="question-title" placeholder="Ex: What's Your Name?"> (<input id="numPoints" type="text" placeholder="Ex: 4"></input> points)
 
                 <div id="answer-choices">
                   <label id="label">
-                    <input type="radio" class="option-input radio" name="example" checked />
+                    <input style="outline: none" type="radio" class="option-input radio" name="example" checked />
                     <span class="option">John</span>
                   </label>
                   <br/>
                   <label id="label">
-                    <input type="radio" class="option-input radio" name="example" />
+                    <input style="outline: none" type="radio" class="option-input radio" name="example" />
                     <span class="option">Max</span>
                   </label>
                   <br/>
                   <label id="label">
-                    <input type="radio" class="option-input radio" name="example" />
+                    <input style="outline: none" type="radio" class="option-input radio" name="example" />
                     <span class="option">Hello</span>
+                  </label>
+                  <br/>
+                  <label id="label">
+                    <input style="outline: none" type="radio" class="option-input radio" name="example" />
+                    <span class="option">Zak</span>
                   </label>
                 </div>
               </div>
