@@ -89,21 +89,21 @@
           <div id="create-exam-dashboard">
             <div id="init-setup">
               Title: <input type="text" id="nameOfExam" placeholder="Ex: Final Exam">
+              <span style="float: right;">Description (optional): &nbsp<textarea id="description" placeholder="Ex: This Exam Is Going To Be So Much Fun!"></textarea></span>
 
+              <br/><br/><br/>
+
+              
               <div id="type-of-exam">
                 <p style="display: inline-block; color: #42a4f4;">Type Of Exam: </p>
                 &nbsp
-                  <label class="radio-inline">
-                    <input style="outline: none" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="single" onchange="examTypeReactor(this.value)" checked> Single
-                  </label>
 
-                  <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="partner" onchange="examTypeReactor(this.value)"> Partner
-                  </label>
+                <select onchange="examTypeReactor(this.value)" id="question-type">
+                  <option value="single">Single</option>
+                  <option value="partner">Partner</option>
+                  <option value="group">Group</option>
+                </select>
 
-                  <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="group" onchange="examTypeReactor(this.value)"> Group
-                  </label>
 
                   <div style="display: none" id="partner-chooser">
                     <center><input type="checkbox" value="randomize"> Randomize</center>
@@ -114,11 +114,8 @@
                   </div>
               </div>
 
-              <br/>
-              <br/>
 
               <div style="float: right">Total Time Alloted (Mins): &nbsp <input type="text" id="maxScore" placeholder="Ex: 25"></div>
-              Description (optional): <textarea id="description" placeholder="Ex: This Exam Is Going To Be So Much Fun!"></textarea>
               <div style="float: right;">Total Points Possible: &nbsp <input type="text" id="maxScore" placeholder="Ex: 25"></div>
             </div>
 
@@ -127,30 +124,40 @@
 
             <div id="exam">
               <div id="question">
-                 <span style="color: #97a5aa;">1.</span> &nbsp <input type="text" id="question-title" placeholder="Ex: What's Your Name?"> (<input id="numPoints" type="text" placeholder="Ex: 4"></input> points)
+                 <span style="color: #97a5aa;">1.</span> &nbsp <input type="text" id="question-title" placeholder="Ex: What's Your Name?">
+
+                <select id="question-type">
+                  <option value="mc">Multiple Choice</option>
+                  <option value="fr">Free Response</option>
+                  <option value="tf">True | False</option>
+                  <option value="matching">Matching</option>
+                </select>
+
+                 (&nbsp <input id="numPoints" type="text" placeholder="Ex: 4"></input> points)
 
                 <div id="answer-choices">
                   <label id="label">
                     <input style="outline: none" type="radio" class="option-input radio" name="example" checked />
-                    <span class="option">John</span>
+                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
                   </label>
                   <br/>
                   <label id="label">
                     <input style="outline: none" type="radio" class="option-input radio" name="example" />
-                    <span class="option">Max</span>
+                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
                   </label>
                   <br/>
                   <label id="label">
                     <input style="outline: none" type="radio" class="option-input radio" name="example" />
-                    <span class="option">Hello</span>
+                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
                   </label>
                   <br/>
                   <label id="label">
                     <input style="outline: none" type="radio" class="option-input radio" name="example" />
-                    <span class="option">Zak</span>
+                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
                   </label>
                 </div>
               </div>
+              <hr/>
             </div>
 
             <center><p><a id="create-question-button" class="btn btn-primary btn-lg" href="#" role="button" onclick="createQuestion()">

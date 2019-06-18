@@ -57,6 +57,30 @@
     top: 15px;
   }
 
+  /* STYLE PLACEHOLDERS */
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #a5af95;
+  }
+  :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+     color:    #a5af95;
+     opacity:  1;
+  }
+  ::-moz-placeholder { /* Mozilla Firefox 19+ */
+     color: #a5af95;
+     opacity:  1;
+  }
+  :-ms-input-placeholder { /* Internet Explorer 10-11 */
+     color: #a5af95;
+  }
+  ::-ms-input-placeholder { /* Microsoft Edge */
+     color: #a5af95;
+  }
+
+  ::placeholder { /* Most modern browsers support this now. */
+     color: #a5af95;
+  }
+
+
   /* Scroll down indicator (bouncing) */
   @-webkit-keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
@@ -102,6 +126,10 @@
   #sort-menu {
     float: right;
     margin-right: 35px;
+  }
+
+  tr:hover {
+    background: white;
   }
 
   #topPage {
@@ -184,7 +212,6 @@
   }
 
   #type-of-exam {
-    float: right;
     color: black;
   }
 
@@ -197,20 +224,21 @@
     margin-bottom: 2px;
     text-align: center;
     font-size: 15px;
+    color: black;
   }
 
   #numPoints {
     display: inline;
     width: 5vw;
     border: none;
-    border-bottom: 1px solid;
-    margin-bottom: 2px;
+    border-bottom: 1px solid dodgerblue;
+    margin-top: 25px;
     text-align: center;
     font-size: 15px;
   }
 
   #numPoints:focus {
-    border-bottom: 1px solid dodgerblue;
+    border-bottom: 1px solid #ffcd1f;
   }
 
   #time {
@@ -218,20 +246,39 @@
   }
 
   #question {
-    width: 70vw;
+    width: 100%;
     padding: 30px;
     color: black;
   }
 
   #question-title {
-    width: 97%;
+    width: 65%;
     border: none;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid #458ec1;
     display: inline;
   }
 
   #question-title:focus {
-    border-bottom: 1px solid #458ec1;
+    border-bottom: 1px solid #ffcd1f;
+  }
+
+  #question-choice {
+    border: none;
+  }
+  #question-choice:focus {
+    border: none;
+    border-bottom: 1px solid black;
+  }
+
+  #question-type {
+    border: 1px solid cornflowerblue;
+    border-radius: 3px;
+    font-size: 15px;
+    text-align: center;
+    padding: 3px;
+    outline: none;
+    margin-left: 33px;
+    margin-right: 33px;
   }
 
   #answer-choices {
@@ -263,21 +310,21 @@
 
   #description {
     resize: none;
-    display: block;
     font-size: 15px;
     border-radius: 3px;
-    margin-top: 10px;
     border: 1px solid lightgray;
     width: 40vw;
-    height: 15vh;
     padding: 10px;
+    float: right;
+    color: black;
+    display: inline;
   }
 
   #create-exam-dashboard {
     background: white;
     padding: 66px;
     font-size: 20px;
-    color: #42a4f4;
+    color: cornflowerblue;
   }
 
   @keyframes click-wave {
@@ -344,6 +391,7 @@
   .option-input:checked {
     background: #40e0d0;
   }
+
   .option-input:checked::before {
     height: 40px;
     width: 40px;
