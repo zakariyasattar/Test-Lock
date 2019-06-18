@@ -940,6 +940,21 @@ function createQuestion() {
   var question = document.createElement('div');
 
 
+
+  // <label id="label">
+  //   <input type="radio" class="option-input radio" name="example" checked />
+  //   <span class="option">John</span>
+  // </label>
+  // <br/>
+  // <label id="label">
+  //   <input type="radio" class="option-input radio" name="example" />
+  //   <span class="option">Max</span>
+  // </label>
+  // <br/>
+  // <label id="label">
+  //   <input type="radio" class="option-input radio" name="example" />
+  //   <span class="option">Hello</span>
+  // </label>
 }
 
 // return letter grade based on avg

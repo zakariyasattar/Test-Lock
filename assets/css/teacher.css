@@ -187,7 +187,18 @@
     float: right;
   }
 
-  #score {
+  #maxScore {
+    display: inline;
+    float: right;
+    width: 5vw;
+    border: none;
+    border-bottom: 1px solid;
+    margin-bottom: 2px;
+    text-align: center;
+    font-size: 15px;
+  }
+
+  #time {
     display: inline;
     float: right;
     width: 5vw;
