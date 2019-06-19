@@ -174,23 +174,27 @@ function submitExamCode() {
   var data = findCode(code);
 
   if(code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code))) {
-    if(data.split(";")[0] == code) {
+    document.getElementById('exam-info').innerHTML = "";
+    if(data == null) {
+      swal("Invalid exam code!", "Check for special characters and make sure the length is at least 5", "error");
+    }
+
+    else if(data.split(";")[0] == code) {
       document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[1];
       document.getElementById('id-input').style.display = 'initial';
+      document.getElementById('id-input').select();
+
       localStorage.setItem('ExamCode', code);
       stopEnter = true;
-    }
-    else {
-      if(code.length > 0) {
-        swal("Invalid exam code!", "Check for special characters and make sure the length is at least 5", "error");
-      }
     }
   }
 }
 
 function retrieveName() {
   var id = document.getElementsByClassName("ID")[0].value;
+
   if(id.length == 5){
+    document.getElementById('userName').innerHTML = "";
     var i = 0;
     for(var x = 0; x < examCodes.length; x++){
       var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
@@ -213,7 +217,6 @@ function retrieveName() {
           document.getElementById('recognition').style.bottom = "50px";
         }
       });
-
     });
 
     if(document.getElementById('userName').innerHTML == "") {
