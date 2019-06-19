@@ -61,18 +61,20 @@
       <h1 id="welcome-header">Welcome to drip!</h1>
 
       <div id="initiator">
-        <center><div style="width: 100%; position: absolute; top: 30%;">
+        <div style="width: 100%; position: absolute; top: 30%;">
           <!-- Input test code to find exam -->
-          <g style="font-size: 20px; position: relative; bottom: 45px;">Exam Code:</g> <input id="inputExamCode" type="text" maxlength="5" name="ExamCode" placeholder="Ex: QYZZA">
-          <input id="submit" type="submit" value="Find Exam" onclick="submitExamCode()"><br/><br/>
+          <g style="color: cornflowerblue; font-size: 20px; position: relative; bottom: 45px; margin-left: 66px">Exam Code:</g> <input id="inputExamCode" onkeyup="submitExamCode()" taype="text" maxlength="5" name="ExamCode" placeholder="Ex: QYZZA">
+          <span id="exam-info" style=" font-size: 15px; margin-left: 20px; position: relative; bottom: 45px;"></span>
+
+          <br/><br/>
 
           <div style="display:none" id="id-input">
-            <g style="font-size: 20px;position: relative; bottom: 45px;">ID Number:</g> <input class="ID" id="inputExamCode" onkeyup="retrieveName()" type="text" maxlength="5" name="IDNum" placeholder="Ex: 12345">
-            &nbsp <span id="userName" style="font-size: 20px; padding-left: 5px; padding-right: 5px; position: relative; bottom: 45px;"></span>
+            <g style="color: cornflowerblue; font-size: 20px; position: relative; bottom: 45px; margin-left: 66px">ID Number:</g> <input class="ID" id="inputExamCode" style="position: relative; left: 3.5px;" onkeyup="retrieveName()" type="text" maxlength="5" name="IDNum" placeholder="Ex: 12345">
+            &nbsp <span id="userName" style="font-size: 15px; margin-left: 18px; position: relative; bottom: 45px;"></span>
           </div>
           <br/><br/>
 
-          <button style="display:none" id="proceed" onclick="displayQuiz()"> Proceed! <span class="glyphicon glyphicon-arrow-right"></span></button>
+          <center><button style="display:none" id="proceed" onclick="displayQuiz()"> Proceed! <span class="glyphicon glyphicon-arrow-right"></span></button>
 
           <!-- Recognition -->
           <div id="recognition">

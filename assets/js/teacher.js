@@ -18,14 +18,6 @@ window.onload = function() {
     $('.dropdown-menu').toggleClass('show');
   });
 
-  $("#nameOfExam").focus(function() {
-    $("#nameOfExam").css("text-align", "left");
-    $("#nameOfExam").css("border-bottom", "1px solid #458ec1");
-  }).blur(function() {
-    $("#nameOfExam").css("text-align", "center");
-    $("#nameOfExam").css("border-bottom", "1px solid lightgray");
-  });
-
   $("#description").focus(function() {
     $("#description").css("border", "1px solid #458ec1");
   }).blur(function() {
@@ -70,8 +62,12 @@ function createQuiz() {
 
   // get randomCode
   var randomCode = generateCode();
-  document.getElementById('create-quiz-dashboard').style.display = "initial";
 
+  document.getElementById('create-exam').style.display = "initial";
+  document.getElementById('main').style.display = "none";
+  document.body.style.background = "white";
+
+  createQuestion();
 }
 
 //load class based on name
@@ -859,11 +855,11 @@ function mergeTime(left, right) {
 function examTypeReactor(value) {
   switch(value) {
     case 'partner':
-      document.getElementById('partner-chooser').style.display = "initial";
+      document.getElementById('partner-chooser').style.display = "inline";
       document.getElementById('group-chooser').style.display = "none";
       break;
     case 'group':
-      document.getElementById('group-chooser').style.display = "initial";
+      document.getElementById('group-chooser').style.display = "inline";
       document.getElementById('partner-chooser').style.display = "none";
       break;
     default:
@@ -936,25 +932,178 @@ function createExamBox(name, classAvg) {
 
 // function to create HTML question
 function createQuestion() {
+
   var exam = document.getElementById('exam');
+
   var question = document.createElement('div');
+  question.className = "question";
+  question.id = document.getElementsByClassName('question').length + 1;
 
+  var num = document.createElement('span');
+  num.innerHTML = document.getElementsByClassName('question').length + 1 + ". ";
+  num.style.color = "#97a5aa";
 
+  var question_title = document.createElement('input');
+  question_title.type = "text";
+  question_title.placeholder = "Ex: What's Your Name?";
+  question_title.id = "question-title";
 
-  // <label id="label">
-  //   <input type="radio" class="option-input radio" name="example" checked />
-  //   <span class="option">John</span>
-  // </label>
-  // <br/>
-  // <label id="label">
-  //   <input type="radio" class="option-input radio" name="example" />
-  //   <span class="option">Max</span>
-  // </label>
-  // <br/>
-  // <label id="label">
-  //   <input type="radio" class="option-input radio" name="example" />
-  //   <span class="option">Hello</span>
-  // </label>
+  var question_type = document.createElement('select');
+    var mc = document.createElement('option'); mc.value = "mc"; mc.innerHTML = "Multiple Choice";
+    var fr = document.createElement('option'); fr.value = "mc"; fr.innerHTML = "Free Response";
+    var tf = document.createElement('option'); tf.value = "mc"; tf.innerHTML = "True | False";
+    var matching = document.createElement('option'); matching.value = "mc"; matching.innerHTML = "Matching"
+
+  question_type.appendChild(mc); question_type.appendChild(fr); question_type.appendChild(tf); question_type.appendChild(matching);
+  question_type.id = "question-type";
+
+  question.appendChild(num);
+  question.appendChild(question_title);
+  question.appendChild(question_type);
+
+  var points = document.createElement('div');
+
+  var span = document.createElement('span');
+  span.innerHTML = "( ";
+
+  var numPoints = document.createElement('input');
+  numPoints.type = "text";
+  numPoints.id = "numPoints";
+  numPoints.placeholder = "Ex: 4";
+
+  var finishingSpan =  document.createElement('span');
+  finishingSpan.innerHTML = " points)";
+
+  points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
+
+  question.appendChild(points);
+
+  var answer_choices = document.createElement('div');
+
+  for(var i = 0; i < 4; i++) {
+    var label = document.createElement('label');
+    label.id = "label";
+
+    if(i == 0) {
+      var input = document.createElement('input');
+      input.style.outline = "none";
+      input.type = "radio";
+      input.className = "option-input radio";
+      input.checked = true;
+      input.name = "example";
+    }
+    else{
+      var input = document.createElement('input');
+      input.style.outline = "none";
+      input.type = "radio";
+      input.className = "option-input radio";
+      input.name = "example";
+    }
+
+    var answer_choice = document.createElement('input');
+    answer_choice.className = "option";
+    answer_choice.id = "question-choice";
+    answer_choice.type="text";
+    answer_choice.placeholder = " Answer Choice...";
+
+    label.appendChild(input);
+    label.appendChild(answer_choice);
+    answer_choices.appendChild(label);
+
+  }
+
+  var plus = document.createElement('span');
+  plus.className = "glyphicon glyphicon-plus";
+
+  var createNewAnswerChoice = document.createElement('a');
+  createNewAnswerChoice.id = "createNewAnswerChoice";
+  createNewAnswerChoice.href = "javascript:createNewOptionChoice(" +  num.innerHTML + ")";
+  createNewAnswerChoice.appendChild(plus);
+  createNewAnswerChoice.innerHTML += ' New Answer Choice'
+
+  answer_choices.appendChild(createNewAnswerChoice);
+
+  question.appendChild(answer_choices);
+  exam.appendChild(question);
+
+  exam.appendChild(document.createElement('br'));
+  exam.appendChild(document.createElement('hr'));
+
+  //   <div id="exam">
+  //     <div id="question">
+  //        <span style="color: #97a5aa;">1.</span> &nbsp <input type="text" id="question-title" placeholder="Ex: What's Your Name?">
+  //
+  //       <select id="question-type">
+  //         <option value="mc">Multiple Choice</option>
+  //         <option value="fr">Free Response</option>
+  //         <option value="tf">True | False</option>
+  //         <option value="matching">Matching</option>
+  //       </select>
+  //
+  //        (&nbsp <input id="numPoints" type="text" placeholder="Ex: 4"></input> points)
+  //
+  //       <div id="answer-choices">
+  //         <label id="label">
+  //           <input style="outline: none" type="radio" class="option-input radio" name="example" checked />
+  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
+  //         </label>
+  //         <br/>
+  //         <label id="label">
+  //           <input style="outline: none" type="radio" class="option-input radio" name="example" />
+  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
+  //         </label>
+  //         <br/>
+  //         <label id="label">
+  //           <input style="outline: none" type="radio" class="option-input radio" name="example" />
+  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
+  //         </label>
+  //         <br/>
+  //         <label id="label">
+  //           <input style="outline: none" type="radio" class="option-input radio" name="example" />
+  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
+  //         </label>
+  //
+  //         <!-- <a href="#" onclick="createNewOptionChoice(this.parentElement.parentElement)">New Answer Choice</a> -->
+  //       </div>
+  //     </div>
+  //     <hr/>
+  //   </div>
+
+  setTimeout(function(){ question.scrollIntoView({behavior: "smooth"}); }, 30);
+}
+
+function createNewOptionChoice(num) {
+  var val = document.getElementById(num);
+
+  var label = document.createElement('label');
+  label.id = "label";
+
+  var input = document.createElement('input');
+  input.style.outline = "none";
+  input.type = "radio";
+  input.className = "option-input radio";
+  input.name = "example";
+
+  var answer_choice = document.createElement('input');
+  answer_choice.className = "option";
+  answer_choice.id = "question-choice";
+  answer_choice.type="text";
+  answer_choice.placeholder = " Answer Choice...";
+
+  label.appendChild(input);
+  label.appendChild(answer_choice);
+  val.appendChild(label);
+
+  var plus = document.createElement('span');
+  plus.className = "glyphicon glyphicon-plus";
+
+  var createNewAnswerChoice = document.createElement('a');
+  createNewAnswerChoice.id = "createNewAnswerChoice";
+  createNewAnswerChoice.href = "javascript:createNewOptionChoice(" +  num + ")";
+  createNewAnswerChoice.appendChild(plus);
+  createNewAnswerChoice.innerHTML += ' New Answer Choice'
+
+  val.appendChild(createNewAnswerChoice);
 }
 
 // return letter grade based on avg

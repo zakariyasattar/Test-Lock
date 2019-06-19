@@ -84,102 +84,20 @@
             <span id="avg-grade-number"></span>
             <center><h6 style="font-size: 35px; color: #d6dbd6">Overall Class Average</h6></center>
         </div>
-        </div>
-
-          <div id="create-exam-dashboard">
-            <div id="init-setup">
-              Title: <input type="text" id="nameOfExam" placeholder="Ex: Final Exam">
-              <span style="float: right;">Description (optional): &nbsp<textarea id="description" placeholder="Ex: This Exam Is Going To Be So Much Fun!"></textarea></span>
-
-              <br/><br/><br/>
-
-              
-              <div id="type-of-exam">
-                <p style="display: inline-block; color: #42a4f4;">Type Of Exam: </p>
-                &nbsp
-
-                <select onchange="examTypeReactor(this.value)" id="question-type">
-                  <option value="single">Single</option>
-                  <option value="partner">Partner</option>
-                  <option value="group">Group</option>
-                </select>
-
-
-                  <div style="display: none" id="partner-chooser">
-                    <center><input type="checkbox" value="randomize"> Randomize</center>
-                  </div>
-
-                  <div style="display: none" id="group-chooser">
-                    <h1>He;p</h1>
-                  </div>
-              </div>
-
-
-              <div style="float: right">Total Time Alloted (Mins): &nbsp <input type="text" id="maxScore" placeholder="Ex: 25"></div>
-              <div style="float: right;">Total Points Possible: &nbsp <input type="text" id="maxScore" placeholder="Ex: 25"></div>
-            </div>
-
-            <br/>
-            <hr>
-
-            <div id="exam">
-              <div id="question">
-                 <span style="color: #97a5aa;">1.</span> &nbsp <input type="text" id="question-title" placeholder="Ex: What's Your Name?">
-
-                <select id="question-type">
-                  <option value="mc">Multiple Choice</option>
-                  <option value="fr">Free Response</option>
-                  <option value="tf">True | False</option>
-                  <option value="matching">Matching</option>
-                </select>
-
-                 (&nbsp <input id="numPoints" type="text" placeholder="Ex: 4"></input> points)
-
-                <div id="answer-choices">
-                  <label id="label">
-                    <input style="outline: none" type="radio" class="option-input radio" name="example" checked />
-                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-                  </label>
-                  <br/>
-                  <label id="label">
-                    <input style="outline: none" type="radio" class="option-input radio" name="example" />
-                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-                  </label>
-                  <br/>
-                  <label id="label">
-                    <input style="outline: none" type="radio" class="option-input radio" name="example" />
-                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-                  </label>
-                  <br/>
-                  <label id="label">
-                    <input style="outline: none" type="radio" class="option-input radio" name="example" />
-                    <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-                  </label>
-                </div>
-              </div>
-              <hr/>
-            </div>
-
-            <center><p><a id="create-question-button" class="btn btn-primary btn-lg" href="#" role="button" onclick="createQuestion()">
-              <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
-              Create Question
-            </a></p></center>
-
-          </div>
-
-          <br/>
-          <h1 style="margin-left: 25px;margin-right: 25px;"><hr style="float: left; width: 5vw;"/>&nbsp Previous Exams &nbsp <hr id="right-hr" style="float: right; width: 70vw;"/></h1>
-          <br/>
-
-          <div class="form-group">
-            <center><input id="exam-search" style="width: 80vw" type="text" placeholder='Search Through Exams...' onkeyup="searchExams()" class="form-control" id="usr" name="username"></input></center>
-            <br/>
-          </div>
-
-          <div id="exam-wrapper">
-
-          </div>
       </div>
+
+      <br/>
+      <h1 style="margin-left: 25px;margin-right: 25px;"><hr style="float: left; width: 5vw;"/>&nbsp Previous Exams &nbsp <hr id="right-hr" style="float: right; width: 70vw;"/></h1>
+      <br/>
+
+      <div class="form-group">
+        <center><input id="exam-search" style="width: 80vw" type="text" placeholder='Search Through Exams...' onkeyup="searchExams()" class="form-control" id="usr" name="username"></input></center>
+        <br/>
+      </div>
+
+      <div id="exam-wrapper"></div>
+      </div>
+
 
       <div id="examSpecific" style="display: none;">
         <div id="jumbotron" class="jumbotron">
@@ -231,6 +149,49 @@
         firebase.initializeApp(firebaseConfig);
       </script>
       <script src="assets/js/teacher.js"></script>
+    </div>
+
+    <!-- CREATE EXAM -->
+
+    <div id="create-exam" style="display:none" >
+        <div id="init-setup">
+          <div style="float: right;">Date Of Exam: <input type="date" id="date" name="trip-start"></div>
+
+          <div id="type-of-exam">
+            <select onchange="examTypeReactor(this.value)" id="question-type">
+              <option value="single">Single</option>
+              <option value="partner">Partner</option>
+              <option value="group">Group</option>
+            </select>
+
+
+              <div style="display: none" id="partner-chooser">
+                <center><input type="checkbox" value="randomize"> Randomize</center>
+              </div>
+
+              <div style="display: none" id="group-chooser">
+                <h1>He;p</h1>
+              </div>
+          </div>
+
+          <br/>
+          <center><input type="text" id="nameOfExam" placeholder="Exam Title">
+            <br/>
+            (<input type="text" id="maxScore" placeholder="Ex: 25"> points, <input type="text" id="maxScore" placeholder="Ex: 42"> minutes)
+            <br/>
+            <textarea id="description" placeholder="Optional Description..."></textarea>
+          </center>
+        </div>
+        <hr/>
+
+        <div id="exam"></div>
+
+        <br/><br/>
+          <center><p><a id="create-question-button" class="btn btn-primary btn-lg" href="javascript:void(0)" role="button" onclick="createQuestion();">
+            <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
+            Create Question
+          </a></p></center>
+
     </div>
 
     <div style="display: none; background: purple;" id="pong">

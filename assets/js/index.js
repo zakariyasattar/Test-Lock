@@ -171,15 +171,19 @@ function merge (left, right) {
 // function to retieve and analyze code
 function submitExamCode() {
   var code = document.getElementById('inputExamCode').value.toUpperCase();
+  var data = findCode(code);
 
-  if(isValid(code)) {
-    document.getElementById('id-input').style.display = 'initial';
-    localStorage.setItem('ExamCode', code);
-    stopEnter = true;
-  }
-  else {
-    if(code.length > 0) {
-      swal("Invalid exam code!", "Check for special characters and make sure the length is at least 5", "error");
+  if(code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code))) {
+    if(data.split(";")[0] == code) {
+      document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[1];
+      document.getElementById('id-input').style.display = 'initial';
+      localStorage.setItem('ExamCode', code);
+      stopEnter = true;
+    }
+    else {
+      if(code.length > 0) {
+        swal("Invalid exam code!", "Check for special characters and make sure the length is at least 5", "error");
+      }
     }
   }
 }
@@ -206,6 +210,7 @@ function retrieveName() {
         if(childSnapshot.val().split(";")[0] == id) {
           document.getElementById('userName').innerHTML = childSnapshot.val().split(";")[1];
           document.getElementById('proceed').style.display = "initial";
+          document.getElementById('recognition').style.bottom = "50px";
         }
       });
 
@@ -218,19 +223,20 @@ function retrieveName() {
 }
 
 //function to make sure exam code is valid
-function isValid(code) {
+function findCode(code) {
   var exists = false;
+  var data = "";
 
   for(var x = 0; x < examCodes.length; x++){
     var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
     var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
     if(plaintext.split(";")[0] == code){
-      exists = true;
+      return plaintext;
     }
   }
 
-  return exists && code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code));
+  return null;
 }
 
 // function to display quiz to student

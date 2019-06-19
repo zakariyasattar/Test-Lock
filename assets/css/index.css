@@ -34,14 +34,14 @@ body {
 
 #initiator {
   width: 50vw;
-  height: 30vh;
+  height: 40vh;
   border: 1px solid;
   position: absolute;
   background: white;
   border-radius: 10px;
 
-  top: 40vh;
-  left: 27vw;
+  margin-left: 25vw;
+  margin-top: 25vh;
 }
 
 #inputExamCode {
@@ -113,9 +113,7 @@ body {
 
 #recognition {
   position: relative;
-  bottom: 50px;
   width: 100%;
-  padding-bottom: 5px;
 }
 
 @media only screen and (max-width: 600px) {
@@ -124,5 +122,11 @@ body {
   }
   #navButton {
     display: none;
+  }
+}
+
+@media only screen and (max-height: 400px) {
+  #initiator {
+    height: 45vh;
   }
 }
