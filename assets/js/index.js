@@ -17,7 +17,7 @@ var key = initKey();
 //
 //         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
 //         //firebase.database().ref("Students").push(id + ";" + name);
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/Final Exam/").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/Final Exam/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
 //         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
 //       }
 // 	  }
