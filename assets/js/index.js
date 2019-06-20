@@ -182,7 +182,6 @@ function submitExamCode() {
     else if(data.split(";")[0] == code) {
       document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[1];
       document.getElementById('id-input').style.display = 'initial';
-      document.getElementById('id-input').select();
 
       localStorage.setItem('ExamCode', code);
       stopEnter = true;
@@ -214,7 +213,7 @@ function retrieveName() {
         if(childSnapshot.val().split(";")[0] == id) {
           document.getElementById('userName').innerHTML = childSnapshot.val().split(";")[1];
           document.getElementById('proceed').style.display = "initial";
-          document.getElementById('recognition').style.bottom = "50px";
+          document.getElementById('recognition').style.bottom = "-10px";
         }
       });
     });
