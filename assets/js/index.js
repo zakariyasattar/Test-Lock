@@ -111,7 +111,7 @@ function display(title) {
     document.getElementById('main').style.display = "initial";
     document.getElementById('pong').style.display = "none";
     document.getElementById('leaderboard').style.display = "none";
-    document.body.style.background = 'black';
+    document.body.style.background = '#1b1b1d';
   }
   else if(title == '<a href="#">Leaderboard</a>') {
     document.getElementById('main').style.display = "none";
