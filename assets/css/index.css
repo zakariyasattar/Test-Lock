@@ -216,6 +216,11 @@ body {
     left: 15vw;
     bottom: 100px;
   }
+  .ID {
+    position: absolute;
+    left: 15vw;
+    bottom: 100px;
+  }
   #initiator {
     height: 48vh;
   }

@@ -943,6 +943,35 @@ function createQuestion() {
   num.innerHTML = document.getElementsByClassName('question').length + 1 + ". ";
   num.style.color = "#97a5aa";
 
+  var hr = document.createElement('hr');
+
+  var trash = document.createElement('span');
+  trash.className = "glyphicon glyphicon-trash";
+  trash.style.display = "none";
+  trash.style.marginRight = "10px";
+  trash.style.fontSize = "12px;"
+
+  $(trash).click(function(){
+      question.remove();
+      hr.remove();
+  });
+
+  $(question).hover(function(){
+    num.style.display = "none";
+    trash.style.display = "initial";
+    num.style.cursor = "pointer";
+
+  }, function(){
+    num.style.display = "initial";
+    trash.style.display = "none";
+  });
+
+  $(trash).hover(function(){
+    trash.style.cursor="pointer";
+
+  }, function(){
+  });
+
   var question_title = document.createElement('input');
   question_title.type = "text";
   question_title.placeholder = "Ex: What's Your Name?";
@@ -958,6 +987,7 @@ function createQuestion() {
   question_type.id = "question-type";
 
   question.appendChild(num);
+  question.appendChild(trash);
   question.appendChild(question_title);
   question.appendChild(question_type);
 
@@ -1027,7 +1057,7 @@ function createQuestion() {
   exam.appendChild(question);
 
   exam.appendChild(document.createElement('br'));
-  exam.appendChild(document.createElement('hr'));
+  exam.appendChild(hr);
 
   //   <div id="exam">
   //     <div id="question">
