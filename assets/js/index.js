@@ -99,6 +99,7 @@ var x = window.matchMedia("(min-width: 601px)")
 removeDropDown(x) // Call listener function at run time
 x.addListener(removeDropDown) // Attach listener function on state changes
 
+
 //function to switch displays based on what user clicks
 function display(title) {
   if(title == '<a href="#">Ping-Pong</a>') {
@@ -110,11 +111,13 @@ function display(title) {
     document.getElementById('main').style.display = "initial";
     document.getElementById('pong').style.display = "none";
     document.getElementById('leaderboard').style.display = "none";
+    document.body.style.background = 'black';
   }
   else if(title == '<a href="#">Leaderboard</a>') {
     document.getElementById('main').style.display = "none";
     document.getElementById('pong').style.display = "none";
     document.getElementById('leaderboard').style.display = "initial";
+    document.body.style.background = 'white';
     populateLeaderboard();
   }
 }
@@ -193,7 +196,6 @@ function retrieveName() {
   var id = document.getElementsByClassName("ID")[0].value;
 
   if(id.length == 5){
-    document.getElementById('userName').innerHTML = "";
     var i = 0;
     for(var x = 0; x < examCodes.length; x++){
       var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
@@ -207,6 +209,8 @@ function retrieveName() {
 
     var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
     var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+    document.getElementById('userName').innerHTML = "";
 
     firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
       snapshot.forEach(function(childSnapshot) {

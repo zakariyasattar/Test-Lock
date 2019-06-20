@@ -20,6 +20,7 @@ body {
 }
 
 /* NavBar */
+
 #logo {
   width: 75px;
   height: 75px;
@@ -121,9 +122,6 @@ body {
 
 
 @media only screen and (max-width: 400px) {
-  body {
-    background: black;
-  }
   #welcome-header {
     font-size: 15px;
     left: 22vw;
@@ -140,6 +138,12 @@ body {
   #initiator {
     width: 65vw;
     margin-left: 20vw;
+  }
+}
+
+@media only screen and (max-width: 1366px) {
+  #initiator {
+    height: 40vh;
   }
 }
 
