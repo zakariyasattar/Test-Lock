@@ -170,6 +170,7 @@ function loadClass(name) {
             document.getElementById('main').style.display = "none";
             document.body.style.background = "white";
             createQuestion();
+
             populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
           }
         }
@@ -992,10 +993,22 @@ function createExamBox(name, classAvg) {
 
   var span = document.createElement('span');
   span.innerHTML = name;
+  span.style.marginLeft = "40px";
   span.style.color = "white";
   span.className = 'examName';
 
+  var option_vertical = document.createElement('span');
+  option_vertical.className = "glyphicon glyphicon-option-vertical";
+  option_vertical.style.float = "right";
+  option_vertical.style.padding = "10px";
+  option_vertical.style.display = "inline";
+
+  option_vertical.onclick = function () {
+    alert("hello");
+  }
+
   difBackground.appendChild(span);
+  difBackground.appendChild(option_vertical);
   difBackground.appendChild(document.createElement('hr'));
   classBox.appendChild(difBackground);
 
