@@ -295,55 +295,52 @@ function displayExamData(name) {
               init.appendChild(initTime);
 
               table.appendChild(init);
+            }
+          }
+          else{
+            for(var response in obj[prop].responses){
+              examData.push(obj[prop].responses[response]);
+              cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
+              classLength = Object.keys(obj[prop].responses).length;
 
-              for (var exam in obj[prop]) {
-
-                for(var response in obj[prop][exam]){
-                  console.log(response);
-                  examData.push(obj[prop][exam][response]);
-                  cumAvg += parseInt(obj[prop][exam][response].split(":")[1]);
-                  classLength = Object.keys(obj[prop][exam]).length;
-
-                  if(parseInt(obj[prop][exam][response].split(":")[1]) > parseInt(highest.split(":")[1])) {
-                    highest = obj[prop][exam][response];
-                  }
-
-                  if(parseInt(obj[prop][exam][response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
-                    lowest = obj[prop][exam][response];
-                  }
-
-                  var tr = document.createElement('tr');
-                  table.appendChild(document.createElement('br'));
-
-            			var name = document.createElement('td');
-                  name.style.paddingLeft = "66px";
-                  name.id = "name";
-            			var score = document.createElement('td');
-            			var percentile = document.createElement('td');
-                  var time = document.createElement('td');
-
-            			name.innerHTML = obj[prop][exam][response].split(":")[0];
-                  name.id = "name";
-
-            			score.innerHTML = obj[prop][exam][response].split(":")[1] + "%";
-                  score.id = "score";
-
-                  time.innerHTML = obj[prop][exam][response].split(":")[2] + " Mins";
-                  time.id = "time";
-
-            			percentile.innerHTML = getPercentile(obj[prop][exam][response], obj[prop][exam]) + "th";
-                  percentile.id = "percentile";
-
-            			tr.appendChild(name);
-            			tr.appendChild(score);
-            			tr.appendChild(percentile);
-                  tr.appendChild(time);
-            			table.appendChild(tr);
-
-                  random.appendChild(table);
-                  document.getElementById('main').appendChild(random);
-                }
+              if(parseInt(obj[prop].responses[response].split(":")[1]) > parseInt(highest.split(":")[1])) {
+                highest = obj[prop].responses[response];
               }
+
+              if(parseInt(obj[prop].responses[response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
+                lowest = obj[prop].responses[response];
+              }
+
+              var tr = document.createElement('tr');
+              table.appendChild(document.createElement('br'));
+
+        			var name = document.createElement('td');
+              name.style.paddingLeft = "66px";
+              name.id = "name";
+        			var score = document.createElement('td');
+        			var percentile = document.createElement('td');
+              var time = document.createElement('td');
+
+        			name.innerHTML = obj[prop].responses[response].split(":")[0];
+              name.id = "name";
+
+        			score.innerHTML = obj[prop].responses[response].split(":")[1] + "%";
+              score.id = "score";
+
+              time.innerHTML = obj[prop].responses[response].split(":")[2] + " Mins";
+              time.id = "time";
+
+        			percentile.innerHTML = getPercentile(obj[prop].responses[response], obj[prop].responses) + "th";
+              percentile.id = "percentile";
+
+        			tr.appendChild(name);
+        			tr.appendChild(score);
+        			tr.appendChild(percentile);
+              tr.appendChild(time);
+        			table.appendChild(tr);
+
+              random.appendChild(table);
+              document.getElementById('main').appendChild(random);
             }
           }
         }
