@@ -7,11 +7,8 @@
 
   /* NavBar */
   #logo {
-    width: 75px;
-    height: 75px;
-    position: relative;
-    bottom: 25px;
-    right: 30px;
+    font-size: 20px;
+    color: black;
   }
 
   #profile {
@@ -200,16 +197,21 @@
 
   #nameOfExam {
     border: none;
-    border-bottom: 1px solid lightgray;
     color: #777061;
     outline: none;
     text-align: center;
     width: 50%;
+    font-size: 30px;
   }
 
   #nameOfExam:focus {
     text-align: left;
     border-bottom: 1px solid #ffcd1f;
+  }
+
+  #nameOfExam:hover {
+    text-align: left;
+    border-bottom: 1px solid black;
   }
 
   #exam {
@@ -591,9 +593,6 @@
   @media only screen and (max-width: 380px) {
     #hrInBetween {
       width: 12vh;
-    }
-    #logo {
-      right: 40px;
     }
   }
 

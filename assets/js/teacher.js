@@ -49,6 +49,8 @@ $('#profile').click(function(){
 });
 
 function createQuiz() {
+  var randomCode = localStorage.getItem("CreatedExamCode");
+
   if(examCodes.length == 0){
     // Pull all exam codes and seperate the datapoints from each other
     firebase.database().ref('exam-codes').on('value', function(snapshot) {
@@ -60,37 +62,76 @@ function createQuiz() {
   }
 
   // get randomCode
-  var randomCode = generateCode();
+  if(randomCode == "") {
+    randomCode = generateCode();
+
+    var examInit = {
+      examCode: randomCode.toUpperCase(),
+      examTitle: "",
+      examType: "",
+      examTotalPoints: "",
+      examTotalMins: "",
+      examDate: "",
+      examDescription: "",
+      questions: [
+        {
+          title:  document.getElementById('question-title').value,
+          type:   '',
+          points: '',
+          choices: [
+            {value: ""},
+            {value: ""},
+            {value: ""},
+            {value: ""},
+          ]
+        }
+      ]
+    };
+
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
+
+  }
+  else {
+    populateExam(randomCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + randomCode.toUpperCase());
+  }
+
   createQuestion();
-
-  var examInit = {
-    examCode: randomCode.toUpperCase(),
-    examTitle: "",
-    examType: "",
-    examTotalPoints: "",
-    examTotalMins: "",
-    examDate: "",
-    examDescription: "",
-    questions: [
-      {
-        title:  document.getElementById('question-title').value,
-        type:   '',
-        points: '',
-        choices: [
-          {value: ""},
-          {value: ""},
-          {value: ""},
-          {value: ""},
-        ]
-      }
-    ]
-  };
-
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
 
   document.getElementById('create-exam').style.display = "initial";
   document.getElementById('main').style.display = "none";
   document.body.style.background = "white";
+}
+
+
+//populate exam for autosave
+function populateExam(code, ref) {
+
+  firebase.database().ref(ref).once('value').then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      var val = childSnapshot.val();
+      if(val.examCode != undefined){
+        document.getElementById('exam-code').innerHTML = val.examCode;
+        document.getElementById('date').value = val.examDate;
+        document.getElementById('description').value = val.examDescription;
+        document.getElementById('nameOfExam').value = val.examTitle;
+        document.getElementsByClassName('points')[0].value = val.examTotalPoints;
+        document.getElementsByClassName('time')[0].value = val.examTotalMins;
+        document.getElementById('type-of-exam').value = val.examType;
+
+        for(var questions in childSnapshot.val().questions) {
+          var question = childSnapshot.val().questions[questions];
+
+          document.getElementById('question-title').value = question.title;
+          document.getElementById('numPoints').value = question.points;
+          document.getElementById('question-type').value = question.type;
+
+          for(var i = 0; i < Object.keys(question.choices).length; i++){
+            document.getElementsByClassName('option')[i].value = (question.choices[i].value);
+          }
+        }
+      }
+    });
+  });
 }
 
 //load class based on name
@@ -99,6 +140,7 @@ function loadClass(name) {
   var collectiveAvg = 0;
   var classAvg = 0;
   var classCounter = 0;
+  var counter = -1
 
   //firebase.database().ref("Teachers/Zakariya Sattar/Classes/Algebra/Exams/mid-term").push("zaksat1:92")
   document.body.style.background = "#eeeeee";
@@ -110,6 +152,7 @@ function loadClass(name) {
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
     exams.push(snapshot.val());
+    counter++;
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.child('responses').forEach(function(exam) {
         classCounter++;
@@ -119,7 +162,11 @@ function loadClass(name) {
 
         classAvg += parseInt(grade);
       });
-      createExamBox(childSnapshot.key, (classAvg / classCounter).toFixed(1));
+
+      for(var key in childSnapshot.val()) {
+        createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1));
+        break;
+      }
       classAvg = 0;
       classCounter = 0;
     });
@@ -153,6 +200,7 @@ function generateCode() {
 
   if(examCodes.indexOf(code) == -1){
     firebase.database().ref("exam-codes").push(code.toUpperCase() + ";" + userName + ";" + className);
+    localStorage.setItem("CreatedExamCode", code);
     return code;
   }
   else {
@@ -208,89 +256,94 @@ function displayExamData(name) {
       if (!arr.hasOwnProperty(key)) continue;
       var obj = exams[key];
       for (var prop in obj) {
+        for(var initData in obj[prop]){
+          if(obj[prop][initData].examCode != undefined) {
+            // skip loop if the property is from prototype
+            if(!obj.hasOwnProperty(prop)) continue;
 
-        // skip loop if the property is from prototype
-        if(!obj.hasOwnProperty(prop)) continue;
+            if(obj[prop][initData].examTitle == name) {
+              var random = document.createElement('div');
 
-        if(prop == name) {
-          var random = document.createElement('div');
+              var table = document.createElement('table');
+              table.id = "random";
+              table.className = "table table-striped";
+              table.style.width = "100vw";
 
-          var table = document.createElement('table');
-          table.id = "random";
-          table.className = "table table-striped";
-          table.style.width = "100vw";
+              var init = document.createElement('tr');
+              init.style.color = "darkgray";
 
-          var init = document.createElement('tr');
-          init.style.color = "darkgray";
+              var initName = document.createElement('td');
+              initName.innerHTML = "Name";
+              initName.style.paddingLeft = "66px";
+              initName.id = "name";
 
-          var initName = document.createElement('td');
-          initName.innerHTML = "Name";
-          initName.style.paddingLeft = "66px";
-          initName.id = "name";
+              var initScore = document.createElement('td');
+              initScore.innerHTML = "Score (%)"
+              initScore.id = "score";
 
-          var initScore = document.createElement('td');
-          initScore.innerHTML = "Score (%)"
-          initScore.id = "score";
+              var initPercentile = document.createElement('td');
+              initPercentile.innerHTML = "Percentile";
+              initPercentile.id = "percentile";
 
-          var initPercentile = document.createElement('td');
-          initPercentile.innerHTML = "Percentile";
-          initPercentile.id = "percentile";
+              var initTime = document.createElement('td');
+              initTime.innerHTML = "Time";
+              initTime.id = "time";
 
-          var initTime = document.createElement('td');
-          initTime.innerHTML = "Time";
-          initTime.id = "time";
+              init.appendChild(initName);
+              init.appendChild(initScore);
+              init.appendChild(initPercentile);
+              init.appendChild(initTime);
 
-          init.appendChild(initName);
-          init.appendChild(initScore);
-          init.appendChild(initPercentile);
-          init.appendChild(initTime);
+              table.appendChild(init);
 
-          table.appendChild(init);
+              for (var exam in obj[prop]) {
 
-          for (var exam in obj[prop]) {
-            for(var response in obj[prop][exam]){
-              examData.push(obj[prop][exam][response]);
-              cumAvg += parseInt(obj[prop][exam][response].split(":")[1]);
-              classLength = Object.keys(obj[prop][exam]).length;
+                for(var response in obj[prop][exam]){
+                  console.log(response);
+                  examData.push(obj[prop][exam][response]);
+                  cumAvg += parseInt(obj[prop][exam][response].split(":")[1]);
+                  classLength = Object.keys(obj[prop][exam]).length;
 
-              if(parseInt(obj[prop][exam][response].split(":")[1]) > parseInt(highest.split(":")[1])) {
-                highest = obj[prop][exam][response];
+                  if(parseInt(obj[prop][exam][response].split(":")[1]) > parseInt(highest.split(":")[1])) {
+                    highest = obj[prop][exam][response];
+                  }
+
+                  if(parseInt(obj[prop][exam][response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
+                    lowest = obj[prop][exam][response];
+                  }
+
+                  var tr = document.createElement('tr');
+                  table.appendChild(document.createElement('br'));
+
+            			var name = document.createElement('td');
+                  name.style.paddingLeft = "66px";
+                  name.id = "name";
+            			var score = document.createElement('td');
+            			var percentile = document.createElement('td');
+                  var time = document.createElement('td');
+
+            			name.innerHTML = obj[prop][exam][response].split(":")[0];
+                  name.id = "name";
+
+            			score.innerHTML = obj[prop][exam][response].split(":")[1] + "%";
+                  score.id = "score";
+
+                  time.innerHTML = obj[prop][exam][response].split(":")[2] + " Mins";
+                  time.id = "time";
+
+            			percentile.innerHTML = getPercentile(obj[prop][exam][response], obj[prop][exam]) + "th";
+                  percentile.id = "percentile";
+
+            			tr.appendChild(name);
+            			tr.appendChild(score);
+            			tr.appendChild(percentile);
+                  tr.appendChild(time);
+            			table.appendChild(tr);
+
+                  random.appendChild(table);
+                  document.getElementById('main').appendChild(random);
+                }
               }
-
-              if(parseInt(obj[prop][exam][response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
-                lowest = obj[prop][exam][response];
-              }
-
-              var tr = document.createElement('tr');
-              table.appendChild(document.createElement('br'));
-
-        			var name = document.createElement('td');
-              name.style.paddingLeft = "66px";
-              name.id = "name";
-        			var score = document.createElement('td');
-        			var percentile = document.createElement('td');
-              var time = document.createElement('td');
-
-        			name.innerHTML = obj[prop][exam][response].split(":")[0];
-              name.id = "name";
-
-        			score.innerHTML = obj[prop][exam][response].split(":")[1] + "%";
-              score.id = "score";
-
-              time.innerHTML = obj[prop][exam][response].split(":")[2] + " Mins";
-              time.id = "time";
-
-        			percentile.innerHTML = getPercentile(obj[prop][exam][response], obj[prop][exam]) + "th";
-              percentile.id = "percentile";
-
-        			tr.appendChild(name);
-        			tr.appendChild(score);
-        			tr.appendChild(percentile);
-              tr.appendChild(time);
-        			table.appendChild(tr);
-
-              random.appendChild(table);
-              document.getElementById('main').appendChild(random);
             }
           }
         }

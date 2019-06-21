@@ -21,11 +21,13 @@ body {
 
 /* NavBar */
 
+.navbar {
+  border-radius: 0;
+}
+
 #logo {
-  width: 75px;
-  height: 75px;
-  position: relative;
-  bottom: 25px;
+  font-size: 20px;
+  color: black;
 }
 
 #welcome-header {

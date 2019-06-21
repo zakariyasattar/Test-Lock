@@ -27,8 +27,8 @@
     <nav id="navigation" class="navbar navbar-default">
       <div class="container-fluid">
           <ul id="tabs" class="nav nav-tabs">
-            <a class="navbar-brand" href="index.html">
-              <img id="logo" alt="Brand" src="assets/images/drip-logo.png">
+            <a class="navbar-brand" href="teacher.html">
+              <span id="logo" alt="Logo" class="glyphicon glyphicon-tint"></span>
             </a>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" class="active" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
@@ -157,13 +157,14 @@
         <div id="init-setup">
           <div style="float: right;">Date Of Exam: <input type="date" id="date" name="trip-start"></div>
 
+          <p style="margin-left: 35px;">Your Exam Code Is: <span id="exam-code"></span></p>
+
           <div id="type-of-exam">
             <select onchange="examTypeReactor(this.value)" id="question-type">
               <option value="single">Single</option>
               <option value="partner">Partner</option>
               <option value="group">Group</option>
             </select>
-
 
               <div style="display: none" id="partner-chooser">
                 <center><input type="checkbox" value="randomize"> Randomize</center>
@@ -177,7 +178,7 @@
           <br/>
           <center><input type="text" id="nameOfExam" placeholder="Exam Title">
             <br/>
-            (<input type="text" id="maxScore" placeholder="Ex: 25"> points, <input type="text" id="maxScore" placeholder="Ex: 42"> minutes)
+            (<input class="points" type="text" id="maxScore" placeholder="Ex: 25"> points, <input type="text" class="time" id="maxScore" placeholder="Ex: 42"> minutes)
             <br/>
             <textarea id="description" placeholder="Optional Description..."></textarea>
           </center>
