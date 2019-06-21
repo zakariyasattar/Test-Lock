@@ -49,7 +49,6 @@ $('#profile').click(function(){
 });
 
 function createQuiz() {
-  var randomCode = localStorage.getItem("CreatedExamCode");
 
   if(examCodes.length == 0){
     // Pull all exam codes and seperate the datapoints from each other
@@ -61,39 +60,32 @@ function createQuiz() {
     });
   }
 
-  // get randomCode
-  if(randomCode == "") {
-    randomCode = generateCode();
+  var randomCode = generateCode();
 
-    var examInit = {
-      examCode: randomCode.toUpperCase(),
-      examTitle: "",
-      examType: "",
-      examTotalPoints: "",
-      examTotalMins: "",
-      examDate: "",
-      examDescription: "",
-      questions: [
-        {
-          title:  document.getElementById('question-title').value,
-          type:   '',
-          points: '',
-          choices: [
-            {value: ""},
-            {value: ""},
-            {value: ""},
-            {value: ""},
-          ]
-        }
-      ]
-    };
+  var examInit = {
+    examCode: randomCode.toUpperCase(),
+    examTitle: "",
+    examType: "",
+    examTotalPoints: "",
+    examTotalMins: "",
+    examDate: "",
+    examDescription: "",
+    questions: [
+      {
+        title:  document.getElementById('question-title').value,
+        type:   '',
+        points: '',
+        choices: [
+          {value: ""},
+          {value: ""},
+          {value: ""},
+          {value: ""},
+        ]
+      }
+    ]
+  };
 
-    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
-
-  }
-  else {
-    populateExam(randomCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + randomCode.toUpperCase());
-  }
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
 
   createQuestion();
 
@@ -165,6 +157,23 @@ function loadClass(name) {
 
       for(var key in childSnapshot.val()) {
         createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1));
+
+        if(localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
+          var button = document.getElementById('cached-code');
+          button.id = "cached-exam-button";
+          button.style.display = "inline";
+
+          document.getElementById('cached-exam-code').innerHTML = "Edit " + childSnapshot.val()[key].examTitle;
+
+          button.onclick = function() {
+            document.getElementById('create-exam').style.display = "initial";
+            document.getElementById('main').style.display = "none";
+            document.body.style.background = "white";
+            createQuestion();
+            populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
+          }
+        }
+
         break;
       }
       classAvg = 0;
