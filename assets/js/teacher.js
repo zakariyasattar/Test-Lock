@@ -65,6 +65,7 @@ function createQuiz() {
   var examInit = {
     examCode: randomCode.toUpperCase(),
     examTitle: "",
+    lastSaved: "",
     examType: "",
     examTotalPoints: "",
     examTotalMins: "",
@@ -72,7 +73,7 @@ function createQuiz() {
     examDescription: "",
     questions: [
       {
-        title:  document.getElementById('question-title').value,
+        title: '',
         type:   '',
         points: '',
         choices: [
@@ -92,8 +93,66 @@ function createQuiz() {
   document.getElementById('create-exam').style.display = "initial";
   document.getElementById('main').style.display = "none";
   document.body.style.background = "white";
+  document.getElementById('exam-code').innerHTML = randomCode.toUpperCase();
+
+  var dbRef = firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + randomCode.toUpperCase());
+
 }
 
+function saveExam() {
+  var newSave = new Date().toLocaleString().replace(",", " @");
+  document.getElementById('last-saved').innerHTML = "Last Saved: " + newSave;
+
+  var examInit = {
+    examCode: document.getElementById('exam-code').value,
+    examTitle: document.getElementById('nameOfExam').value,
+    lastSaved: newSave,
+    examType: document.getElementById('type-of-exam').value,
+    examTotalPoints: document.getElementsByClassName('points')[0].value,
+    examTotalMins: document.getElementsByClassName('time')[0].value,
+    examDate: document.getElementById('date').value,
+    examDescription: document.getElementById('description').value,
+    questions: [
+      {
+        title: '',
+        type:   '',
+        points: '',
+        choices: [
+          {value: ""},
+          {value: ""},
+          {value: ""},
+          {value: ""},
+        ]
+      }
+    ]
+  };
+
+  var questions = document.getElementsByClassName('question');
+
+  for(var i = 0; i < questions.length; i++) {
+    var question = questions[i];
+    var children = question.childNodes;
+    console.log(children)
+
+    var x = $.extend(examInit.questions, {
+      0: {
+        title: children[2].value,
+        type: children[3].value,
+        points: children[3].childNodes[1].value,
+      }
+    });
+
+    console.log(children[5].childNodes.length);
+
+    for(var i = 0; i < children[5].childNodes.length - 1; i++){
+      $.extend(x, {
+          value: children[5].childNodes[i].value,
+      });
+    }
+  }
+
+  console.log(examInit);
+}
 
 //populate exam for autosave
 function populateExam(code, ref) {
@@ -159,11 +218,17 @@ function loadClass(name) {
         createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1));
 
         if(localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
+          var val = childSnapshot.val()[key].examTitle;
+
           var button = document.getElementById('cached-code');
           button.id = "cached-exam-button";
           button.style.display = "inline";
 
-          document.getElementById('cached-exam-code').innerHTML = "Edit " + childSnapshot.val()[key].examTitle;
+          if(childSnapshot.val()[key].examTitle == ""){
+            val = "Unnamed";
+          }
+
+          document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
 
           button.onclick = function() {
             document.getElementById('create-exam').style.display = "initial";
@@ -992,6 +1057,10 @@ function createExamBox(name, classAvg) {
   difBackground.className = 'wave';
 
   var span = document.createElement('span');
+  if(name == "") {
+    name = "Unnamed";
+  }
+
   span.innerHTML = name;
   span.style.marginLeft = "40px";
   span.style.color = "white";
@@ -1003,26 +1072,43 @@ function createExamBox(name, classAvg) {
   option_vertical.style.padding = "10px";
   option_vertical.style.display = "inline";
 
-  option_vertical.onclick = function () {
-    alert("hello");
-  }
-
   difBackground.appendChild(span);
   difBackground.appendChild(option_vertical);
   difBackground.appendChild(document.createElement('hr'));
   classBox.appendChild(difBackground);
 
-  var letter = document.createElement('span');
-  letter.innerHTML = getLetter(classAvg);
-  letter.style.color = "#2e2f7d";
-  letter.style.fontSize = "90px";
+  if(classAvg == 'NaN') {
 
-  var descriptor = document.createElement('span');
-  descriptor.innerHTML = "Class Average (" + classAvg + ")";
+    var descriptor = document.createElement('span');
+    descriptor.innerHTML = "No Responses!";
 
-  classBox.appendChild(letter);
-  classBox.appendChild(document.createElement('br'));
-  classBox.appendChild(descriptor);
+    var button = document.createElement('button');
+    button.style.border = "none";
+    button.style.borderRadius = "5px";
+    button.style.padding = "10px";
+    button.innerHTML = "Administer Test";
+
+    button.onclick = function() {
+      alert("x");
+    }
+
+    classBox.appendChild(descriptor);
+    classBox.appendChild(document.createElement('br'));
+    classBox.appendChild(button);
+  }
+  else {
+    var letter = document.createElement('span');
+    letter.innerHTML = getLetter(classAvg);
+    letter.style.color = "#2e2f7d";
+    letter.style.fontSize = "90px";
+
+    var descriptor = document.createElement('span');
+    descriptor.innerHTML = "Class Average (" + classAvg + ")";
+
+    classBox.appendChild(letter);
+    classBox.appendChild(document.createElement('br'));
+    classBox.appendChild(descriptor);
+  }
 
   wrapper.appendChild(classBox);
   document.getElementById('main').appendChild(wrapper);
@@ -1315,10 +1401,12 @@ function createClassBox(className, numStudentsInClass, numExamsInClass) {
 function populateDashboard() {
   var ref = firebase.database().ref('Teachers');
   var counter = 0;
+  var exists = false;
 
   ref.once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.key == userName) {
+        exists = true;
         arr.push(childSnapshot.child("Classes").val());
 
         for (var key in arr) {
@@ -1335,10 +1423,10 @@ function populateDashboard() {
           }
         }
       }
-      else {
-        document.getElementById('doesNotExist').style.display = "initial";
-      }
     });
+    if(!exists) {
+      document.getElementById('doesNotExist').style.display = "initial";
+    }
   });
 
 }
