@@ -112,43 +112,33 @@ function saveExam() {
     examTotalMins: document.getElementsByClassName('time')[0].value,
     examDate: document.getElementById('date').value,
     examDescription: document.getElementById('description').value,
-    questions: [
-      {
-        title: '',
-        type:   '',
-        points: '',
-        choices: [
-          {value: ""},
-          {value: ""},
-          {value: ""},
-          {value: ""},
-        ]
-      }
-    ]
+    questions: []
   };
 
-  var questions = document.getElementsByClassName('question');
+  var localQuestions = document.getElementsByClassName('question');
 
-  for(var i = 0; i < questions.length; i++) {
-    var question = questions[i];
+  var pluginArrayArg = new Array();
+
+  for(var i = 0; i < localQuestions.length; i++) {
+    var question = localQuestions[i];
     var children = question.childNodes;
-    console.log(children)
 
-    var x = $.extend(examInit.questions, {
-      0: {
-        title: children[2].value,
-        type: children[3].value,
-        points: children[3].childNodes[1].value,
-      }
-    });
-
-    console.log(children[5].childNodes.length);
+    var jsonArg1 = new Object();
+    jsonArg1.title = children[2].value;
+    jsonArg1.type = children[3].value;
+    jsonArg1.points = children[4].childNodes[1].value
+    jsonArg1.choices = [];
 
     for(var i = 0; i < children[5].childNodes.length - 1; i++){
-      $.extend(x, {
-          value: children[5].childNodes[i].value,
-      });
+      jsonArg1.choices.push(children[5].childNodes[i].childNodes[1].value);
     }
+    console.log(jsonArg1);
+
+    pluginArrayArg.push(jsonArg1);
+
+    var questions = JSON.parse(JSON.stringify(pluginArrayArg))
+
+    $.extend(examInit, { questions });
   }
 
   console.log(examInit);
