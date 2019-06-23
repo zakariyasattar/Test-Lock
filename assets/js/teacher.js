@@ -104,7 +104,7 @@ function saveExam() {
   document.getElementById('last-saved').innerHTML = "Last Saved: " + newSave;
 
   var examInit = {
-    examCode: document.getElementById('exam-code').value,
+    examCode: document.getElementById('exam-code').innerHTML,
     examTitle: document.getElementById('nameOfExam').value,
     lastSaved: newSave,
     examType: document.getElementById('type-of-exam').value,
@@ -116,7 +116,6 @@ function saveExam() {
   };
 
   var localQuestions = document.getElementsByClassName('question');
-
   var pluginArrayArg = new Array();
 
   for(var i = 0; i < localQuestions.length; i++) {
@@ -129,28 +128,35 @@ function saveExam() {
     jsonArg1.points = children[4].childNodes[1].value
     jsonArg1.choices = [];
 
-    for(var i = 0; i < children[5].childNodes.length - 1; i++){
-      jsonArg1.choices.push(children[5].childNodes[i].childNodes[1].value);
+    for(var j = 0; j < children[5].childNodes.length - 1; j++){
+      jsonArg1.choices.push(children[5].childNodes[j].childNodes[1].value);
     }
-    console.log(jsonArg1);
 
     pluginArrayArg.push(jsonArg1);
-
     var questions = JSON.parse(JSON.stringify(pluginArrayArg))
-
     $.extend(examInit, { questions });
   }
 
-  console.log(examInit);
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).once('value').then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      if(childSnapshot.key != "responses") {
+        firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).child(childSnapshot.key).remove();
+      }
+    });
+  });
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).push(examInit);
 }
 
 //populate exam for autosave
 function populateExam(code, ref) {
-
   firebase.database().ref(ref).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       var val = childSnapshot.val();
       if(val.examCode != undefined){
+        var counter = 0;
+        var localQuestions = document.getElementsByClassName('question');
+
+        document.getElementById('last-saved').innerHTML = "Last Saved: " + val.lastSaved;
         document.getElementById('exam-code').innerHTML = val.examCode;
         document.getElementById('date').value = val.examDate;
         document.getElementById('description').value = val.examDescription;
@@ -160,14 +166,17 @@ function populateExam(code, ref) {
         document.getElementById('type-of-exam').value = val.examType;
 
         for(var questions in childSnapshot.val().questions) {
+          counter++;
+
+          createQuestion();
           var question = childSnapshot.val().questions[questions];
 
-          document.getElementById('question-title').value = question.title;
-          document.getElementById('numPoints').value = question.points;
-          document.getElementById('question-type').value = question.type;
+          localQuestions[counter].value = question.title;
+          localQuestions[counter].value = question.points;
+          localQuestions[counter].value = question.type;
 
           for(var i = 0; i < Object.keys(question.choices).length; i++){
-            document.getElementsByClassName('option')[i].value = (question.choices[i].value);
+            document.getElementsByClassName('option')[i].value = (question.choices[i]);
           }
         }
       }
@@ -211,23 +220,24 @@ function loadClass(name) {
           var val = childSnapshot.val()[key].examTitle;
 
           var button = document.getElementById('cached-code');
-          button.id = "cached-exam-button";
-          button.style.display = "inline";
+          if(button != null) {
+            button.id = "cached-exam-button";
+            button.style.display = "inline";
+
+            button.onclick = function() {
+              document.getElementById('create-exam').style.display = "initial";
+              document.getElementById('main').style.display = "none";
+              document.body.style.background = "white";
+
+              populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
+            }
+          }
 
           if(childSnapshot.val()[key].examTitle == ""){
             val = "Unnamed";
           }
 
           document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
-
-          button.onclick = function() {
-            document.getElementById('create-exam').style.display = "initial";
-            document.getElementById('main').style.display = "none";
-            document.body.style.background = "white";
-            createQuestion();
-
-            populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
-          }
         }
 
         break;
@@ -1149,14 +1159,6 @@ function createQuestion() {
   question_title.type = "text";
   question_title.placeholder = "Ex: What's Your Name?";
   question_title.id = "question-title";
-
-  $(question_title).keyup(function() {
-    if(document.getElementById('nameOfExam').value != ""){
-
-    }
-
-    else {firebase.database().ref('Teachers/ ' + userName + '/Classes/' + localStorage.getItem('createQuizClass') + "/Exams/Unnamed").push(question_title.value) }
-  });
 
   var question_type = document.createElement('select');
     var mc = document.createElement('option'); mc.value = "mc"; mc.innerHTML = "Multiple Choice";
