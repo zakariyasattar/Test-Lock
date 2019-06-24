@@ -136,12 +136,6 @@ body {
   }
 }
 
-@media only screen and (max-width: 1920px) {
-  #welcome-header {
-    left: 37vw;
-  }
-}
-
 @media only screen and (max-width: 1375px) {
   #initiator {
     width: 65vw;

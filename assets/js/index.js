@@ -15,9 +15,9 @@ var key = initKey();
 //         var name = data[i][3] + " " + data[i][2];
 //         var className = data[i][10];
 //
-//         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
-//         firebase.database().ref("Students").push(id + ";" + name);
-//         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/VCBZK/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
+//         //firebase.database().ref("Students").push(id + ";" + name);
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/NSOSC/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
 //         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
 //       }
 // 	  }
@@ -183,7 +183,8 @@ function submitExamCode() {
     }
 
     else if(data.split(";")[0] == code) {
-      document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[1];
+      console.log(data.split(";")[3]);
+      document.getElementById('exam-info').innerHTML = data.split(";")[2] + " | " + data.split(";")[1];
       document.getElementById('id-input').style.display = 'initial';
 
       localStorage.setItem('ExamCode', code);

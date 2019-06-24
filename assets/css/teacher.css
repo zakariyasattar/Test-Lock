@@ -126,7 +126,7 @@
   }
 
   tr:hover {
-    background: white;
+    background: #eeee;
   }
 
   #topPage {
@@ -202,6 +202,7 @@
     text-align: center;
     width: 50%;
     font-size: 30px;
+    display: inline;
   }
 
   #nameOfExam:focus {
@@ -231,10 +232,6 @@
     text-align: center;
     font-size: 15px;
     padding: 5px;
-  }
-
-  #type-of-exam {
-    color: black;
   }
 
   #maxScore {

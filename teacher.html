@@ -4,16 +4,16 @@
   <head>
     <!-- NFOGIX -->
     <script type="text/javascript">
-      var _paq = window._paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//nfogix.com/";
-        _paq.push(['setTrackerUrl', u+'api/track']);
-        _paq.push(['setSiteId', 'ba809182-d46d-4be2-8eaa-9d9fec7707d1']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'js/nfogix.min.js'; s.parentNode.insertBefore(g,s);
-      })();
+      // var _paq = window._paq || [];
+      // _paq.push(['trackPageView']);
+      // _paq.push(['enableLinkTracking']);
+      // (function() {
+      //   var u="//nfogix.com/";
+      //   _paq.push(['setTrackerUrl', u+'api/track']);
+      //   _paq.push(['setSiteId', 'ba809182-d46d-4be2-8eaa-9d9fec7707d1']);
+      //   var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      //   g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'js/nfogix.min.js'; s.parentNode.insertBefore(g,s);
+      // })();
     </script>
 
     <!-- Misc -->
@@ -97,7 +97,7 @@
             &nbsp
 
             <a style="display: none" id="cached-code" class="btn btn-primary btn-lg" href="#" role="button">
-              <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
+              <i style="padding-right: 2px" class="glyphicon glyphicon-edit"></i>
               <span id="cached-exam-code"></span>
             </a>
           </div>
@@ -132,6 +132,11 @@
           <div id="overall-data">
           </div>
         </div>
+
+        <button style="margin-left: 30px" type="button" class="btn btn-success">
+          <i style="padding-right: 2px" class="glyphicon glyphicon-edit"></i>
+          Edit This Exam
+        </button>
 
         <div id="sort-menu" style="display: none" class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id="sort-trigger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -179,23 +184,8 @@
         <div id="init-setup">
           <div style="float: right;">Date Of Exam: <input type="date" id="date" name="trip-start"></div>
 
+          <a style="margin-left: 35px; color: red;" href="#" onclick="deleteExam()">Delete This Exam</a>
           <p style="margin-left: 35px;">Your Exam Code Is: <span id="exam-code"></span></p>
-
-          <div id="type-of-exam">
-            <select onchange="examTypeReactor(this.value)" id="question-type">
-              <option value="single">Single</option>
-              <option value="partner">Partner</option>
-              <option value="group">Group</option>
-            </select>
-
-              <div style="display: none" id="partner-chooser">
-                <center><input type="checkbox" value="randomize"> Randomize</center>
-              </div>
-
-              <div style="display: none" id="group-chooser">
-                <h1>He;p</h1>
-              </div>
-          </div>
 
           <br/>
           <center><input type="text" id="nameOfExam" placeholder="Exam Title">
@@ -210,7 +200,7 @@
         <div id="exam"></div>
 
         <br/><br/>
-          <center><p><a id="create-question-button" class="btn btn-primary btn-lg" href="javascript:void(0)" role="button" onclick="createQuestion();">
+          <center><p><a id="create-question-button" class="btn btn-primary btn-lg" href="javascript:void(0)" role="button" onclick="createQuestion(false);">
             <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
             Create Question
           </a></p></center>
@@ -220,7 +210,7 @@
     </div>
 
     <div id="feedback" style="display: none">
-      <embed id="feedback-form" src="https://forms.id/f/zakariyasattar.id.blockstack/56856430b7"></embed>
+      <!-- <embed id="feedback-form" src="https://forms.id/f/zakariyasattar.id.blockstack/56856430b7"></embed> -->
     </div>
 
     <div style="display: none; background: purple;" id="pong">
