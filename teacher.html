@@ -15,7 +15,7 @@
         g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'js/nfogix.min.js'; s.parentNode.insertBefore(g,s);
       })();
     </script>
-    
+
     <!-- Misc -->
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,6 +47,7 @@
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" class="active" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Leaderboard</a></li>
+            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Feedback</a></li>
 
             <!-- DropDown incase screen size goes below 450px -->
             <li id="dropdown" class="dropdown">
@@ -55,6 +56,7 @@
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Dashboard</a></li>
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Leaderboard</a></li>
+                <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Feedback</a></li>
               </ul>
             </li>
             <img class="hoverable" id="profile"></img>
@@ -66,7 +68,6 @@
           </ul>
         </div>
     </nav>
-
     <div id="main">
       <div id="welcome-div">
         <h1 id="welcome-text"></h1>
@@ -174,7 +175,7 @@
 
     <!-- CREATE EXAM -->
 
-    <div id="create-exam" style="display:none" >
+    <div id="create-exam" style="display:none">
         <div id="init-setup">
           <div style="float: right;">Date Of Exam: <input type="date" id="date" name="trip-start"></div>
 
@@ -214,8 +215,12 @@
             Create Question
           </a></p></center>
 
-          <div id="save-div">  <button id="save-button" onclick="saveExam();"> <span class="glyphicon glyphicon-upload"></span> Save</button>  <span id="last-saved">Last Saved: Not Saved</span></div>
+          <div id="save-div">  <button id="save-button" onclick="saveExam();"> <span id="save-icon" class="glyphicon glyphicon-floppy-disk"></span>&nbspSave</button>  <span id="last-saved">Last Saved: Not Saved</span></div>
 
+    </div>
+
+    <div id="feedback" style="display: none">
+      <embed id="feedback-form" src="https://forms.id/f/zakariyasattar.id.blockstack/56856430b7"></embed>
     </div>
 
     <div style="display: none; background: purple;" id="pong">

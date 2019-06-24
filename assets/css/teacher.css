@@ -354,14 +354,32 @@
 
   #save-button {
     border: none;
+    border: 1px solid white;
     border-radius: 5px;
     background: #7582d8;
     color: white;
     padding: 5px 10px 5px 10px;
+    font-size: 18px;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
+  #save-button:hover {
+    background: darkgray;
+    color: black;
+    border: 1px solid white;
+  }
+
+  #save-icon {
+    position: relative;
+    top: 4px;
   }
 
   #last-saved {
-    padding-left: 20px;
+    padding-left: 10px;
   }
 
   #description {
@@ -375,7 +393,6 @@
     display: inline;
     margin-top: 35px;
   }
-
 
   #create-exam-dashboard {
     background: white;
@@ -496,7 +513,6 @@
     top: 5px;
   }
 
-
   #lowKey {
     font-size: 20px;
     margin-bottom: 40px;
@@ -519,6 +535,12 @@
     color: dodgerblue;
   }
 
+  #feedback-form {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    bottom: 20px;
+  }
 
   #hrInBetween {
     transform: rotate(90deg);

@@ -125,6 +125,7 @@ function saveExam() {
     var jsonArg1 = new Object();
     jsonArg1.title = children[2].value;
     jsonArg1.type = children[3].value;
+    console.log(children);
     jsonArg1.points = children[4].childNodes[1].value
     jsonArg1.choices = [];
 
@@ -154,7 +155,6 @@ function populateExam(code, ref) {
       var val = childSnapshot.val();
       if(val.examCode != undefined){
         var counter = 0;
-        var localQuestions = document.getElementsByClassName('question');
 
         document.getElementById('last-saved').innerHTML = "Last Saved: " + val.lastSaved;
         document.getElementById('exam-code').innerHTML = val.examCode;
@@ -165,18 +165,19 @@ function populateExam(code, ref) {
         document.getElementsByClassName('time')[0].value = val.examTotalMins;
         document.getElementById('type-of-exam').value = val.examType;
 
-        for(var questions in childSnapshot.val().questions) {
-          counter++;
-
+        for(var i = 0; i < Object.keys(childSnapshot.val().questions).length; i++) {
+          var localQuestions = document.getElementsByClassName('question');
+          var question = childSnapshot.val().questions[i];
           createQuestion();
-          var question = childSnapshot.val().questions[questions];
 
-          localQuestions[counter].value = question.title;
-          localQuestions[counter].value = question.points;
-          localQuestions[counter].value = question.type;
+          console.log(localQuestions[i]);
 
-          for(var i = 0; i < Object.keys(question.choices).length; i++){
-            document.getElementsByClassName('option')[i].value = (question.choices[i]);
+          localQuestions[i].childNodes[2].value = question.title;
+          localQuestions[i].childNodes[4].childNodes[1].value = question.points;
+          localQuestions[i].childNodes[3].value = question.type;
+
+          for(var j = 0; j < Object.keys(question.choices).length; j++){
+            localQuestions[i].childNodes[5].childNodes[j].childNodes[1].value = (question.choices[j]);
           }
         }
       }
@@ -192,8 +193,6 @@ function loadClass(name) {
   var classCounter = 0;
   var counter = -1
 
-  //firebase.database().ref("Teachers/Zakariya Sattar/Classes/Algebra/Exams/mid-term").push("zaksat1:92")
-  document.body.style.background = "#eeeeee";
   document.getElementById('welcome-div').style.display = "none";
   document.getElementById('wrapper').style.display = "none";
   document.getElementById('classSpecific').style.display = "initial";
@@ -214,9 +213,8 @@ function loadClass(name) {
       });
 
       for(var key in childSnapshot.val()) {
-        createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1));
+        createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.val()[key].examCode, childSnapshot.val()[key].examCode);
 
-        if(localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
           var val = childSnapshot.val()[key].examTitle;
 
           var button = document.getElementById('cached-code');
@@ -234,11 +232,10 @@ function loadClass(name) {
           }
 
           if(childSnapshot.val()[key].examTitle == ""){
-            val = "Unnamed";
+            val = childSnapshot.val()[key].examCode;
           }
 
           document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
-        }
 
         break;
       }
@@ -298,129 +295,129 @@ x.addListener(removeDropDown) // Attach listener function on state changes
 
 // function to display all data in the table by className
 function displayExamData(name) {
-    var cumAvg = 0;
-    var classLength = 0;
-    var highest = "a:-1000";
-    var lowest = "a:1000";
-    var quickest = "a:1000";
-    var slowest = "a:-1000";
+  var cumAvg = 0;
+  var classLength = 0;
+  var highest = "a:-1000";
+  var lowest = "a:1000";
+  var quickest = "a:1000";
+  var slowest = "a:-1000";
 
-    document.getElementById('welcome-div').style.display = "none";
-    document.getElementById('wrapper').style.display = "none";
-    document.getElementById('classSpecific').style.display = "none";
-    document.getElementById('exam-wrapper').style.display = "none";
-    document.getElementById('examSpecific').style.display = "initial";
-    document.getElementById('sort-menu').style.display = "initial";
-    document.getElementById('exam-name').innerHTML = name;
+  document.getElementById('welcome-div').style.display = "none";
+  document.getElementById('wrapper').style.display = "none";
+  document.getElementById('classSpecific').style.display = "none";
+  document.getElementById('exam-wrapper').style.display = "none";
+  document.getElementById('examSpecific').style.display = "initial";
+  document.getElementById('sort-menu').style.display = "initial";
+  document.getElementById('exam-name').innerHTML = name;
 
-    var i = document.createElement('i');
-    i.className = "glyphicon glyphicon-circle-arrow-up";
-    i.id = "topPage";
+  var i = document.createElement('i');
+  i.className = "glyphicon glyphicon-circle-arrow-up";
+  i.id = "topPage";
 
-    i.onclick = function() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    };
+  i.onclick = function() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  };
 
-    document.getElementById('main').appendChild(document.createElement('br'));
-    document.getElementById('main').appendChild(i);
+  document.getElementById('main').appendChild(document.createElement('br'));
+  document.getElementById('main').appendChild(i);
 
 
-    for (var key in exams) {
-      // skip loop if the property is from prototype
-      if (!arr.hasOwnProperty(key)) continue;
-      var obj = exams[key];
-      for (var prop in obj) {
-        for(var initData in obj[prop]){
-          if(obj[prop][initData].examCode != undefined) {
-            // skip loop if the property is from prototype
-            if(!obj.hasOwnProperty(prop)) continue;
+  for (var key in exams) {
+    // skip loop if the property is from prototype
+    if (!arr.hasOwnProperty(key)) continue;
+    var obj = exams[key];
+    for (var prop in obj) {
+      for(var initData in obj[prop]){
+        if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length == 2) {
+          // skip loop if the property is from prototype
+          if(!obj.hasOwnProperty(prop)) continue;
 
-            if(obj[prop][initData].examTitle == name) {
-              var random = document.createElement('div');
+          if(obj[prop][initData].examTitle == name) {
+            var random = document.createElement('div');
 
-              var table = document.createElement('table');
-              table.id = "random";
-              table.className = "table table-striped";
-              table.style.width = "100vw";
+            var table = document.createElement('table');
+            table.id = "random";
+            table.className = "table table-striped";
+            table.style.width = "100vw";
 
-              var init = document.createElement('tr');
-              init.style.color = "darkgray";
+            var init = document.createElement('tr');
+            init.style.color = "darkgray";
 
-              var initName = document.createElement('td');
-              initName.innerHTML = "Name";
-              initName.style.paddingLeft = "66px";
-              initName.id = "name";
+            var initName = document.createElement('td');
+            initName.innerHTML = "Name";
+            initName.style.paddingLeft = "66px";
+            initName.id = "name";
 
-              var initScore = document.createElement('td');
-              initScore.innerHTML = "Score (%)"
-              initScore.id = "score";
+            var initScore = document.createElement('td');
+            initScore.innerHTML = "Score (%)"
+            initScore.id = "score";
 
-              var initPercentile = document.createElement('td');
-              initPercentile.innerHTML = "Percentile";
-              initPercentile.id = "percentile";
+            var initPercentile = document.createElement('td');
+            initPercentile.innerHTML = "Percentile";
+            initPercentile.id = "percentile";
 
-              var initTime = document.createElement('td');
-              initTime.innerHTML = "Time";
-              initTime.id = "time";
+            var initTime = document.createElement('td');
+            initTime.innerHTML = "Time";
+            initTime.id = "time";
 
-              init.appendChild(initName);
-              init.appendChild(initScore);
-              init.appendChild(initPercentile);
-              init.appendChild(initTime);
+            init.appendChild(initName);
+            init.appendChild(initScore);
+            init.appendChild(initPercentile);
+            init.appendChild(initTime);
 
-              table.appendChild(init);
-            }
+            table.appendChild(init);
           }
-          else{
-            for(var response in obj[prop].responses){
-              examData.push(obj[prop].responses[response]);
-              cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
-              classLength = Object.keys(obj[prop].responses).length;
+        }
+        else if(Object.keys(obj[prop]).length == 2){
+          for(var response in obj[prop].responses){
+            examData.push(obj[prop].responses[response]);
+            cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
+            classLength = Object.keys(obj[prop].responses).length;
 
-              if(parseInt(obj[prop].responses[response].split(":")[1]) > parseInt(highest.split(":")[1])) {
-                highest = obj[prop].responses[response];
-              }
-
-              if(parseInt(obj[prop].responses[response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
-                lowest = obj[prop].responses[response];
-              }
-
-              var tr = document.createElement('tr');
-              table.appendChild(document.createElement('br'));
-
-        			var name = document.createElement('td');
-              name.style.paddingLeft = "66px";
-              name.id = "name";
-        			var score = document.createElement('td');
-        			var percentile = document.createElement('td');
-              var time = document.createElement('td');
-
-        			name.innerHTML = obj[prop].responses[response].split(":")[0];
-              name.id = "name";
-
-        			score.innerHTML = obj[prop].responses[response].split(":")[1] + "%";
-              score.id = "score";
-
-              time.innerHTML = obj[prop].responses[response].split(":")[2] + " Mins";
-              time.id = "time";
-
-        			percentile.innerHTML = getPercentile(obj[prop].responses[response], obj[prop].responses) + "th";
-              percentile.id = "percentile";
-
-        			tr.appendChild(name);
-        			tr.appendChild(score);
-        			tr.appendChild(percentile);
-              tr.appendChild(time);
-        			table.appendChild(tr);
-
-              random.appendChild(table);
-              document.getElementById('main').appendChild(random);
+            if(parseInt(obj[prop].responses[response].split(":")[1]) > parseInt(highest.split(":")[1])) {
+              highest = obj[prop].responses[response];
             }
+
+            if(parseInt(obj[prop].responses[response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
+              lowest = obj[prop].responses[response];
+            }
+
+            var tr = document.createElement('tr');
+            table.appendChild(document.createElement('br'));
+
+      			var name = document.createElement('td');
+            name.style.paddingLeft = "66px";
+            name.id = "name";
+      			var score = document.createElement('td');
+      			var percentile = document.createElement('td');
+            var time = document.createElement('td');
+
+      			name.innerHTML = obj[prop].responses[response].split(":")[0];
+            name.id = "name";
+
+      			score.innerHTML = obj[prop].responses[response].split(":")[1] + "%";
+            score.id = "score";
+
+            time.innerHTML = obj[prop].responses[response].split(":")[2] + " Mins";
+            time.id = "time";
+
+      			percentile.innerHTML = getPercentile(obj[prop].responses[response], obj[prop].responses) + "th";
+            percentile.id = "percentile";
+
+      			tr.appendChild(name);
+      			tr.appendChild(score);
+      			tr.appendChild(percentile);
+            tr.appendChild(time);
+      			table.appendChild(tr);
+
+            random.appendChild(table);
+            document.getElementById('main').appendChild(random);
           }
         }
       }
     }
+  }
 
     var overallData = document.getElementById('overall-data');
     var ul = document.createElement('ul');
@@ -449,9 +446,11 @@ function displayExamData(name) {
 
 //function to remove all class='active'
 function removeAllActive() {
-  document.getElementsByTagName("LI")[0].className = "";
-  document.getElementsByTagName("LI")[1].className = "";
-  document.getElementsByTagName("LI")[2].className = "";
+  var navBars = document.getElementsByTagName("LI");
+
+  for(var i = 0; i < navBars.length; i++) {
+    navBars[i].className = "";
+  }
 }
 
 //function to switch displays based on what user clicks
@@ -460,14 +459,23 @@ function display(title) {
     document.getElementById('main').style.display = "none";
     document.getElementById('pong').style.display = "initial";
     document.getElementById('leaderboard').style.display = "none";
+    document.getElementById('feedback').style.display = "none";
   }
   else if(title == '<a href="#">Dashboard</a>') {
     document.getElementById('main').style.display = "initial";
     document.getElementById('pong').style.display = "none";
     document.getElementById('leaderboard').style.display = "none";
+    document.getElementById('feedback').style.display = "none";
   }
   else if(title == '<a href="#">Leaderboard</a>') {
     populateLeaderboard();
+    document.getElementById('feedback').style.display = "none";
+  }
+  else if(title == '<a href="#">Feedback</a>') {
+    document.getElementById('main').style.display = "none";
+    document.getElementById('pong').style.display = "none";
+    document.getElementById('leaderboard').style.display = "none";
+    document.getElementById('feedback').style.display = "initial";
   }
 }
 
@@ -1041,24 +1049,46 @@ function searchExams() {
 }
 
 // create div based on name and avg
-function createExamBox(name, classAvg) {
+function createExamBox(name, classAvg, ref, code) {
+  var gradients = [
+    "linear-gradient( 135deg, #FEB692 10%, #EA5455 100%)",
+    "linear-gradient( 135deg, #72EDF2 10%, #5151E5 100%)",
+    "linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%)"
+  ];
+
   var wrapper = document.getElementById('exam-wrapper');
-  wrapper.onclick = function() {
-    displayExamData(name);
-  };
 
   var classBox = document.createElement('div');
   classBox.className = "examBox";
   classBox.style.background = "white";
 
+  classBox.onclick = function() {
+    displayExamData(name);
+  };
+
+  firebase.database().ref(ref).on('value', function(snapshot) {
+    for(var obj in snapshot.val()) {
+      if(snapshot.val()[obj].examCode == code) {
+        classBox.onclick = function() {
+          document.getElementById('create-exam').style.display = "initial";
+          document.getElementById('main').style.display = "none";
+          document.body.style.background = "white";
+
+          populateExam(code, ref);
+        };
+      }
+    }
+  });
+
+
   var difBackground = document.createElement('div')
-  difBackground.style.background = "cornflowerblue";
+  difBackground.style.background = gradients[Math.floor(Math.random()*(3) + 0)];
   difBackground.style.borderRadius= "10px 10px 0 0";
   difBackground.className = 'wave';
 
   var span = document.createElement('span');
   if(name == "") {
-    name = "Unnamed";
+    name = code;
   }
 
   span.innerHTML = name;
@@ -1162,9 +1192,9 @@ function createQuestion() {
 
   var question_type = document.createElement('select');
     var mc = document.createElement('option'); mc.value = "mc"; mc.innerHTML = "Multiple Choice";
-    var fr = document.createElement('option'); fr.value = "mc"; fr.innerHTML = "Free Response";
-    var tf = document.createElement('option'); tf.value = "mc"; tf.innerHTML = "True | False";
-    var matching = document.createElement('option'); matching.value = "mc"; matching.innerHTML = "Matching"
+    var fr = document.createElement('option'); fr.value = "fr"; fr.innerHTML = "Free Response";
+    var tf = document.createElement('option'); tf.value = "tf"; tf.innerHTML = "True | False";
+    var matching = document.createElement('option'); matching.value = "matching"; matching.innerHTML = "Matching"
 
   question_type.appendChild(mc); question_type.appendChild(fr); question_type.appendChild(tf); question_type.appendChild(matching);
   question_type.id = "question-type";
