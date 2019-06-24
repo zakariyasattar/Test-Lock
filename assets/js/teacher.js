@@ -9,6 +9,7 @@ var examCodesTeachers = [];
 var arr = [];
 var exams = [];
 var examData = [];
+var autoSaveCounter = 0;
 
 //when page loads, populateDashboard()
 window.onload = function() {
@@ -113,10 +114,12 @@ function successfulSave() {
   setTimeout(function(){ document.getElementsByClassName('alert')[0].remove() }, 3000);
 }
 
-function saveExam() {
-  successfulSave();
+function saveExam(alert) {
+  if(alert) {
+    successfulSave();
+  }
   var newSave = new Date().toLocaleString().replace(",", " @");
-  document.getElementById('last-saved').innerHTML = "Last Saved: " + newSave;
+  document.getElementById('last-saved').innerHTML = "Last Sync: " + newSave;
 
   var examInit = {
     examCode: document.getElementById('exam-code').innerHTML,
@@ -160,16 +163,20 @@ function saveExam() {
   });
 
 }
-
 //populate exam for autosave
 function populateExam(code, ref) {
+
+  $("#create-exam").on('blur', ":input" ,function() {
+    saveExam(false);
+  });
+
   firebase.database().ref(ref).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       var val = childSnapshot.val();
       if(val.examCode != undefined){
         var counter = 0;
 
-        document.getElementById('last-saved').innerHTML = "Last Saved: " + val.lastSaved;
+        document.getElementById('last-saved').innerHTML = "Last Sync: " + val.lastSaved;
         document.getElementById('exam-code').innerHTML = val.examCode;
         document.getElementById('date').value = val.examDate;
         document.getElementById('description').value = val.examDescription;

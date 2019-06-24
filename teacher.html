@@ -180,7 +180,7 @@
 
     <!-- CREATE EXAM -->
 
-    <div id="create-exam" style="display:none">
+    <div id="create-exam" style="display:none" onblur="saveExam(); alert('fell')">
         <div id="init-setup">
           <div style="float: right;">Date Of Exam: <input type="date" id="date" name="trip-start"></div>
 
@@ -205,7 +205,7 @@
             Create Question
           </a></p></center>
 
-          <div id="save-div">  <button id="save-button" onclick="saveExam();"> <span id="save-icon" class="glyphicon glyphicon-floppy-disk"></span>&nbspSave</button>  <span id="last-saved">Last Saved: Not Saved</span></div>
+          <div id="save-div">  <button id="save-button" onclick="saveExam(true);"> <span id="save-icon" class="glyphicon glyphicon-floppy-disk"></span>&nbspSave</button>  <span id="last-saved">Last Sync: Not Saved</span></div>
 
     </div>
 
