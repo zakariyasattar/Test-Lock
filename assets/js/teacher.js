@@ -177,8 +177,6 @@ function populateExam(code, ref) {
         document.getElementsByClassName('points')[0].value = val.examTotalPoints;
         document.getElementsByClassName('time')[0].value = val.examTotalMins;
 
-        console.log(val.questions);
-
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
@@ -339,7 +337,6 @@ function displayExamData(name) {
   document.getElementById('main').appendChild(document.createElement('br'));
   document.getElementById('main').appendChild(i);
 
-
   for (var key in exams) {
     // skip loop if the property is from prototype
     if (!arr.hasOwnProperty(key)) continue;
@@ -347,6 +344,18 @@ function displayExamData(name) {
     for (var prop in obj) {
       for(var initData in obj[prop]){
         if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length == 2) {
+          var code = obj[prop][initData].examCode;
+
+          document.getElementById('edit-exam').innerHTML = name;
+          document.getElementById('edit-current-exam').style.display = "initial";
+
+          document.getElementById('edit-current-exam').onclick = function() {
+            document.getElementById('create-exam').style.display = "initial";
+            document.getElementById('main').style.display = "none";
+            document.body.style.background = "white";
+            populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + code)
+          };
+
           // skip loop if the property is from prototype
           if(!obj.hasOwnProperty(prop)) continue;
 
