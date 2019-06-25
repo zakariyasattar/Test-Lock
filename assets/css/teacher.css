@@ -443,6 +443,11 @@
     z-index: 1000;
   }
 
+  #right-hr {
+    float: right;
+    width: 70vw;
+  }
+
   #label:hover {
     cursor: pointer;
     -webkit-transform: translateX(10px);
@@ -586,9 +591,49 @@
     #wrapper{
       grid-template-columns: repeat(2, 1fr);
     }
+    #right-hr {
+      width: 68vw
+    }
   }
 
-  @media only screen and (max-width: 815px) {
+  @media only screen and (max-width: 1250px) {
+
+    #right-hr {
+      width: 65vw
+    }
+  }
+
+  @media only screen and (max-width: 1150px) {
+    #exam-wrapper {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .examBox {
+      width: 30vw;
+    }
+    #right-hr {
+      width: 62vw
+    }
+  }
+
+  @media only screen and (max-width: 1030px) {
+    #exam-wrapper {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .examBox {
+      width: 40vw;
+    }
+    #right-hr {
+      width: 58vw
+    }
+  }
+
+  @media only screen and (max-width: 930px) {
+    #right-hr {
+      width: 55vw
+    }
+  }
+
+  @media only screen and (max-width: 855px) {
     #wrapper{
       grid-template-columns: repeat(1, 1fr);
     }
@@ -596,9 +641,52 @@
       font-size: 15px;
       padding-top: 20px;
     }
+    #right-hr {
+      width: 52vw
+    }
   }
 
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 795px) {
+    #right-hr {
+      width: 40vw
+    }
+  }
+
+  @media only screen and (max-width: 610px) {
+    #exam-wrapper {
+      grid-template-columns: repeat(1, 1fr);
+    }
+    #right-hr {
+      width: 4vw
+    }
+    .examBox {
+      width: 80vw;
+      margin-left: 10vw;
+    }
+    #cached-exam-button {
+      width: 48%;
+    }
+    .btn {
+      width: 48%;
+    }
+    #main-header {
+      text-align: center;
+    }
+    #class-specific-data span{
+      float: none;
+      font-size: 75px;
+      border-top: 1px solid gray;
+      position: relative;
+      top: 10px;
+    }
+    #class-specific-data{
+      margin: 0;
+      float: none;
+      border: none;
+    }
+    #jumbotron {
+      padding: 5px;
+    }
     #numExams {
       font-size: 50px;
     }

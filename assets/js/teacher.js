@@ -238,7 +238,7 @@ function loadClass(name) {
           var button = document.getElementById('cached-code');
           if(button != null) {
             button.id = "cached-exam-button";
-            button.style.display = "inline";
+            button.style.display = "inline-block";
 
             button.onclick = function() {
               document.getElementById('create-exam').style.display = "initial";
