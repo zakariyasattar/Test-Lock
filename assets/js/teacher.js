@@ -214,6 +214,7 @@ function loadClass(name) {
   document.getElementById('wrapper').style.display = "none";
   document.getElementById('classSpecific').style.display = "initial";
   document.getElementById('main-header').innerHTML = "Welcome to " + name;
+  document.body.style.backgroundImage = "linear-gradient(to top, #dfe9f3 0%, white 100%)";
 
   localStorage.setItem('createQuizClass', name);
 
@@ -331,6 +332,7 @@ function displayExamData(name) {
   document.getElementById('examSpecific').style.display = "initial";
   document.getElementById('sort-menu').style.display = "initial";
   document.getElementById('exam-name').innerHTML = name;
+  document.body.style.backgroundImage = "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)";
 
   var i = document.createElement('i');
   i.className = "glyphicon glyphicon-circle-arrow-up";
@@ -1149,10 +1151,16 @@ function createExamBox(name, classAvg, ref, code) {
     button.style.border = "none";
     button.style.borderRadius = "5px";
     button.style.padding = "10px";
-    button.innerHTML = "Administer Test";
+    button.style.marginTop = "10px";
+    button.innerHTML = "Display Test Info";
 
     button.onclick = function() {
-      alert("x");
+      classBox.onclick = function() {};
+      document.getElementById('main').style.display = "none";
+      document.getElementById('create-exam').style.display = "none";
+      document.getElementById('display').style.display = "block";
+      document.getElementById('display-code').innerHTML = code;
+      document.body.style.backgroundImage = "none";
     }
 
     classBox.appendChild(descriptor);

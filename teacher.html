@@ -180,7 +180,7 @@
 
     <!-- CREATE EXAM -->
 
-    <div id="create-exam" style="display:none" onblur="saveExam(); alert('fell')">
+    <div id="create-exam" style="display:none">
         <div id="init-setup">
           <div style="float: right;">Date Of Exam: <input type="date" id="date" name="trip-start"></div>
 
@@ -197,7 +197,13 @@
         </div>
         <hr/>
 
-        <div id="exam"></div>
+        <div id="exam">
+          <div id="question-manager">
+            <div id="line">
+              <span style="padding-left: 5px; float: right; font-size: 20px; color: dodgerblue;" class="glyphicon glyphicon-unchecked"></span>
+            </div>
+          </div>
+        </div>
 
         <br/><br/>
           <center><p><a id="create-question-button" class="btn btn-primary btn-lg" href="javascript:void(0)" role="button" onclick="createQuestion(false);">
@@ -206,7 +212,14 @@
           </a></p></center>
 
           <div id="save-div">  <button id="save-button" onclick="saveExam(true);"> <span id="save-icon" class="glyphicon glyphicon-floppy-disk"></span>&nbspSave</button>  <span id="last-saved">Last Sync: Not Saved</span></div>
+    </div>
 
+    <div id="display" style="display: none">
+      <center><h1 style="font-size: 10vw;"><span id="display-code"></span></h1></center>
+      <hr/>
+
+      <div id="joined-students">
+      </div>
     </div>
 
     <div id="feedback" style="display: none">
