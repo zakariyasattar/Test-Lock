@@ -37,7 +37,13 @@ window.onload = function() {
       var isInView = ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 
       if (isInView){
-       //.style.fontSize = "100px"
+        document.getElementById('question-manager').scrollTop = document.getElementById('question-tracker').clientHeight * (i - 1);
+        document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CF;"
+        document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "white";
+      }
+      else {
+        document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CC;"
+        document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "black";
       }
     }
   })
@@ -183,6 +189,7 @@ function createQuestionTracker(i) {
   var manager = document.getElementById('question-manager');
   var tracker = document.createElement('div');
   tracker.id = "question-tracker";
+  tracker.className = i;
 
   $(tracker).hover(function(){
     this.style.cursor = "pointer";
