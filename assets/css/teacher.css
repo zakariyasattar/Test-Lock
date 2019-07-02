@@ -414,13 +414,29 @@
 
     background: #eeee;
     border-radius: 5px;
+    overflow: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  #line {
-    height: 270px;
-    border-left: 1px solid;
-    margin-top: 15px;
-    margin-left: 25px;
+  #question-manager::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  #circle {
+    font-size: 60px;
+    color: #58f;
+    position: relative;
+    bottom: 20px;
+    height: 20px;
+  }
+
+  #text {
+    z-index: 1;
+    position: relative;
+    bottom: 5px;
+    color: black;
   }
 
   @keyframes click-wave {

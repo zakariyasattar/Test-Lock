@@ -25,9 +25,25 @@ window.onload = function() {
     $("#description").css("border", "1px solid lightgray");
   });
 
+  $(window).scroll(function(){
+    for(var i = 1; i < document.getElementsByClassName('question').length + 1; i++) {
+      var elem = document.getElementById(i);
+      var docViewTop = $(window).scrollTop();
+      var docViewBottom = docViewTop + $(window).height();
+
+      var elemTop = $(elem).offset().top;
+      var elemBottom = elemTop + $(elem).height();
+
+      var isInView = ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+
+      if (isInView){
+       //.style.fontSize = "100px"
+      }
+    }
+  })
 };
 
-// retrieve userName, img from localStorage
+// retrieve userName, img from LocalStorage
 var userName = (JSON.parse(localStorage.getItem("userInfo"))[1]);
 var profileImg = (JSON.parse(localStorage.getItem("userInfo"))[2]);
 
@@ -40,7 +56,7 @@ $('#profile').click(function(){
     title: "Sign Out",
     text: "Are You Sure You Want To Sign Out?",
     icon: "warning",
-     buttons: ["Cancel", "Sign Me Out!"],
+    buttons: ["Cancel", "Sign Me Out!"],
   })
   .then((value) => {
     if(value) {
@@ -110,7 +126,6 @@ function successfulSave() {
 
   document.getElementById('create-exam').appendChild(document.createElement('center').appendChild(alert));
 
-
   setTimeout(function(){ document.getElementsByClassName('alert')[0].remove() }, 3000);
 }
 
@@ -118,6 +133,7 @@ function saveExam(alert) {
   if(alert) {
     successfulSave();
   }
+
   var newSave = new Date().toLocaleString().replace(",", " @");
   document.getElementById('last-saved').innerHTML = "Last Sync: " + newSave;
 
@@ -161,11 +177,46 @@ function saveExam(alert) {
       }
     });
   });
-
 }
+
+function createQuestionTracker(i) {
+  var manager = document.getElementById('question-manager');
+  var tracker = document.createElement('div');
+  tracker.id = "question-tracker";
+
+  $(tracker).hover(function(){
+    this.style.cursor = "pointer";
+    $(this).children()[0].innerHTML = "&#x25CF;";
+    this.childNodes[1].childNodes[0].style.color = "white";
+  }, function(){
+    this.childNodes[1].childNodes[0].style.color = "black";
+    $(this).children()[0].innerHTML = "&#x25CC;";
+  });
+
+  tracker.onclick = function() {
+    document.getElementById(i).scrollIntoView({block: "center"});
+  }
+
+  var circle = document.createElement('div');
+  circle.id = "circle";
+  circle.innerHTML = "&#x25CC;"
+
+  var center = document.createElement('center');
+  var text = document.createElement('div');
+  text.id = "text";
+  text.innerHTML = i;
+
+  center.appendChild(text);
+
+  tracker.appendChild(circle);
+  tracker.appendChild(center);
+
+  manager.appendChild(tracker);
+  manager.scrollTop = (manager.clientHeight + manager.clientHeight);
+}
+
 //populate exam for autosave
 function populateExam(code, ref) {
-
   $("#create-exam").on('blur', ":input" ,function() {
     saveExam(false);
   });
@@ -187,14 +238,18 @@ function populateExam(code, ref) {
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
+
           createQuestion(true);
+          createQuestionTracker(i + 1);
 
           localQuestions[i].childNodes[2].value = question.title;
           localQuestions[i].childNodes[4].childNodes[1].value = question.points;
           localQuestions[i].childNodes[3].value = question.type;
 
           for(var j = 0; j < Object.keys(question.choices).length; j++){
-            localQuestions[i].childNodes[5].childNodes[j].childNodes[1].value = (question.choices[j]);
+            if(question.choices[j] != ""){
+              localQuestions[i].childNodes[5].childNodes[j].childNodes[1].value = (question.choices[j].value);
+            }
           }
         }
       }
@@ -255,7 +310,7 @@ function loadClass(name) {
           val = childSnapshot.val()[key].examCode;
         }
 
-        if(localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
+        if(localStorage.getItem("CreatedExamCode") != null && localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
           document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
         }
 
@@ -1353,48 +1408,12 @@ function createQuestion(loading) {
   exam.appendChild(document.createElement('br'));
   exam.appendChild(hr);
 
-  //   <div id="exam">
-  //     <div id="question">
-  //        <span style="color: #97a5aa;">1.</span> &nbsp <input type="text" id="question-title" placeholder="Ex: What's Your Name?">
-  //
-  //       <select id="question-type">
-  //         <option value="mc">Multiple Choice</option>
-  //         <option value="fr">Free Response</option>
-  //         <option value="tf">True | False</option>
-  //         <option value="matching">Matching</option>
-  //       </select>
-  //
-  //        (&nbsp <input id="numPoints" type="text" placeholder="Ex: 4"></input> points)
-  //
-  //       <div id="answer-choices">
-  //         <label id="label">
-  //           <input style="outline: none" type="radio" class="option-input radio" name="example" checked />
-  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-  //         </label>
-  //         <br/>
-  //         <label id="label">
-  //           <input style="outline: none" type="radio" class="option-input radio" name="example" />
-  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-  //         </label>
-  //         <br/>
-  //         <label id="label">
-  //           <input style="outline: none" type="radio" class="option-input radio" name="example" />
-  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-  //         </label>
-  //         <br/>
-  //         <label id="label">
-  //           <input style="outline: none" type="radio" class="option-input radio" name="example" />
-  //           <input class="option" id="question-choice" type="text" placeholder="Answer Choice"></input>
-  //         </label>
-  //
-  //         <!-- <a href="#" onclick="createNewOptionChoice(this.parentElement.parentElement)">New Answer Choice</a> -->
-  //       </div>
-  //     </div>
-  //     <hr/>
-  //   </div>
 
   if(!loading) {
     setTimeout(function(){ question.scrollIntoView({behavior: "smooth"}); }, 30);
+
+    saveExam(false);
+    createQuestionTracker(document.getElementsByClassName('question').length )
   }
 }
 
