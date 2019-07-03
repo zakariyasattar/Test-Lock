@@ -183,8 +183,7 @@ function submitExamCode() {
     }
 
     else if(data.split(";")[0] == code) {
-      console.log(data.split(";")[3]);
-      document.getElementById('exam-info').innerHTML = data.split(";")[2] + " | " + data.split(";")[1];
+      document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[2];
       document.getElementById('id-input').style.display = 'initial';
 
       localStorage.setItem('ExamCode', code);

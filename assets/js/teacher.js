@@ -25,6 +25,11 @@ window.onload = function() {
     $("#description").css("border", "1px solid lightgray");
   });
 
+  $("#create-exam").on('blur', ":input" ,function() {
+    saveExam(false);
+  });
+
+  // for create-exam
   $(window).scroll(function(){
     for(var i = 1; i < document.getElementsByClassName('question').length + 1; i++) {
       var elem = document.getElementById(i);
@@ -111,7 +116,7 @@ function createQuiz() {
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
 
-  createQuestion(true);
+  createQuestion(true, 4);
 
   document.getElementById('create-exam').style.display = "initial";
   document.getElementById('main').style.display = "none";
@@ -143,6 +148,16 @@ function saveExam(alert) {
   var newSave = new Date().toLocaleString().replace(",", " @");
   document.getElementById('last-saved').innerHTML = "Last Sync: " + newSave;
 
+  if(document.getElementById('nameOfExam').value != "") {
+    firebase.database().ref("exam-codes").once('value').then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        if(childSnapshot.val().split(";")[0] == document.getElementById('exam-code').innerHTML) {
+          firebase.database().ref("exam-codes").child(childSnapshot.key).set(childSnapshot.val().split(";")[0] + ";" + childSnapshot.val().split(";")[1] + ";" + childSnapshot.val().split(";")[2] + ";" + document.getElementById('nameOfExam').value);
+        }
+      });
+    });
+  }
+
   var examInit = {
     examCode: document.getElementById('exam-code').innerHTML,
     examTitle: document.getElementById('nameOfExam').value,
@@ -168,7 +183,7 @@ function saveExam(alert) {
     jsonArg1.choices = [];
 
     for(var j = 0; j < children[5].childNodes.length - 1; j++){
-      jsonArg1.choices.push(children[5].childNodes[j].childNodes[1].value);
+      jsonArg1.choices.push(children[5].childNodes[j].childNodes[2].value);
     }
 
     pluginArrayArg.push(jsonArg1);
@@ -224,10 +239,6 @@ function createQuestionTracker(i) {
 
 //populate exam for autosave
 function populateExam(code, ref) {
-  $("#create-exam").on('blur', ":input" ,function() {
-    saveExam(false);
-  });
-
   firebase.database().ref(ref).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       var val = childSnapshot.val();
@@ -246,7 +257,7 @@ function populateExam(code, ref) {
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
-          createQuestion(true);
+          createQuestion(true, Object.keys(question.choices).length);
           createQuestionTracker(i + 1);
 
           localQuestions[i].childNodes[2].value = question.title;
@@ -255,7 +266,7 @@ function populateExam(code, ref) {
 
           for(var j = 0; j < Object.keys(question.choices).length; j++){
             if(question.choices[j] != ""){
-              localQuestions[i].childNodes[5].childNodes[j].childNodes[1].value = (question.choices[j].value);
+              localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j]);
             }
           }
         }
@@ -356,7 +367,7 @@ function generateCode() {
   }
 
   if(examCodes.indexOf(code) == -1){
-    firebase.database().ref("exam-codes").push(code.toUpperCase() + ";" + userName + ";" + className);
+    firebase.database().ref("exam-codes").push(code.toUpperCase() + ";" + userName + ";" + className + ";" + code.toUpperCase());
     localStorage.setItem("CreatedExamCode", code);
     return code;
   }
@@ -1254,6 +1265,14 @@ function deleteExam() {
     localStorage.setItem("CreatedExamCode", "");
   }
 
+  firebase.database().ref("exam-codes").once('value').then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      if(childSnapshot.val().split(";")[0] == code) {
+        firebase.database().ref("exam-codes").child(childSnapshot.key).remove();
+      }
+    });
+  });
+
   swal({
     title: "Are you sure?",
     text: "Once deleted, you will not be able to recover this exam!",
@@ -1279,7 +1298,7 @@ function deleteExam() {
 
       $("#exam-wrapper").empty();
       loadClass(localStorage.getItem("className"));
-
+      $( "#exam" ).empty();
       swal("Poof! Your exam has been deleted!", {
         icon: "success",
       });
@@ -1288,7 +1307,7 @@ function deleteExam() {
 }
 
 // function to create HTML question
-function createQuestion(loading) {
+function createQuestion(loading, numAnswerChoices) {
   var exam = document.getElementById('exam');
 
   var question = document.createElement('div');
@@ -1366,7 +1385,7 @@ function createQuestion(loading) {
 
   var answer_choices = document.createElement('div');
 
-  for(var i = 0; i < 4; i++) {
+  for(var i = 0; i < numAnswerChoices; i++) {
     var label = document.createElement('label');
     label.id = "label";
 
@@ -1392,10 +1411,34 @@ function createQuestion(loading) {
     answer_choice.type="text";
     answer_choice.placeholder = " Answer Choice...";
 
+    var labelTrash = document.createElement('span');
+    labelTrash.className = "glyphicon glyphicon-minus";
+    labelTrash.style.display = "none";
+    labelTrash.style.marginRight = "5px";
+    labelTrash.style.color = "#f25555";
+
+    $(labelTrash).click(function(){
+        this.parentNode.remove();
+        saveExam();
+    });
+
+    $(label).hover(function(){
+      this.childNodes[0].style.display = "initial";
+    }, function(){
+      this.childNodes[0].style.display = "none";
+    });
+
+    $(labelTrash).hover(function(){
+      this.style.cursor="pointer";
+      this.style.color = "#f25555";
+    }, function(){
+
+    });
+
+    label.appendChild(labelTrash)
     label.appendChild(input);
     label.appendChild(answer_choice);
     answer_choices.appendChild(label);
-
   }
 
   var plus = document.createElement('span');
@@ -1424,8 +1467,11 @@ function createQuestion(loading) {
   }
 }
 
+
+// append new answer choice to question based on num
 function createNewOptionChoice(num) {
-  var val = document.getElementById(num);
+  var val = document.getElementById(num).childNodes[5];
+  val.childNodes[val.childNodes.length - 1].remove();
 
   var label = document.createElement('label');
   label.id = "label";
@@ -1442,6 +1488,46 @@ function createNewOptionChoice(num) {
   answer_choice.type="text";
   answer_choice.placeholder = " Answer Choice...";
 
+  // if(val.childNodes.length % 4 == 0) {
+  //   for(var l in val.childNodes) {
+  //     if(val.childNodes[l].childNodes != undefined) {
+  //       console.log(val.childNodes[l].style.width = "25%";
+  //     }
+  //   }
+  // }
+
+
+  var answer_choice = document.createElement('input');
+  answer_choice.className = "option";
+  answer_choice.id = "question-choice";
+  answer_choice.type="text";
+  answer_choice.placeholder = " Answer Choice...";
+
+  var labelTrash = document.createElement('span');
+  labelTrash.className = "glyphicon glyphicon-minus";
+  labelTrash.style.display = "none";
+  labelTrash.style.marginRight = "5px";
+  labelTrash.style.color = "#f25555";
+
+  $(labelTrash).click(function(){
+      this.parentNode.remove();
+      saveExam();
+  });
+
+  $(label).hover(function(){
+    this.childNodes[0].style.display = "initial";
+  }, function(){
+    this.childNodes[0].style.display = "none";
+  });
+
+  $(labelTrash).hover(function(){
+    this.style.cursor="pointer";
+    this.style.color = "#f25555";
+  }, function(){
+
+  });
+
+  label.appendChild(labelTrash);
   label.appendChild(input);
   label.appendChild(answer_choice);
   val.appendChild(label);
@@ -1453,7 +1539,7 @@ function createNewOptionChoice(num) {
   createNewAnswerChoice.id = "createNewAnswerChoice";
   createNewAnswerChoice.href = "javascript:createNewOptionChoice(" +  num + ")";
   createNewAnswerChoice.appendChild(plus);
-  createNewAnswerChoice.innerHTML += ' New Answer Choice'
+  createNewAnswerChoice.innerHTML += ' New Answer Choice';
 
   val.appendChild(createNewAnswerChoice);
 }
