@@ -15,9 +15,9 @@ var key = initKey();
 //         var name = data[i][3] + " " + data[i][2];
 //         var className = data[i][10];
 //
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
+//         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
 //         //firebase.database().ref("Students").push(id + ";" + name);
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/NSOSC/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/NJFIJ/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
 //         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
 //       }
 // 	  }
