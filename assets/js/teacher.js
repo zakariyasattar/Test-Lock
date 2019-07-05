@@ -149,7 +149,7 @@ function successfulSave() {
 
   document.getElementById('create-exam').appendChild(document.createElement('center').appendChild(alert));
 
-  setTimeout(function(){ document.getElementsByClassName('alert')[0].remove() }, 3000);
+  setTimeout(function(){ document.getElementsByClassName('alert')[0].remove(); }, 2500);
 }
 
 function saveExam(alert) {
@@ -203,16 +203,19 @@ function saveExam(alert) {
     $.extend(examInit, { questions });
   }
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).once('value').then(function(snapshot) {
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.key != "responses") {
-        firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).child(childSnapshot.key).set(examInit);
+        firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).child(childSnapshot.key).set(examInit);
       }
     });
   });
 }
 
-function createQuestionTracker(i) {
+function createQuestionTracker(i, populating) {
+  if(i == 2 && !populating) {
+    createQuestionTracker(1, false);
+  }
   var manager = document.getElementById('question-manager');
   var tracker = document.createElement('div');
   tracker.id = "question-tracker";
@@ -270,7 +273,7 @@ function populateExam(code, ref) {
           var question = childSnapshot.val().questions[i];
 
           createQuestion(true, Object.keys(question.choices).length);
-          createQuestionTracker(i + 1);
+          createQuestionTracker(i + 1, true);
 
           localQuestions[i].childNodes[2].value = question.title;
           localQuestions[i].childNodes[4].childNodes[1].value = question.points;
@@ -304,7 +307,7 @@ function loadClass(name) {
   document.getElementById('main-header').innerHTML = "Welcome to " + name;
   document.body.style.backgroundImage = "linear-gradient(to top, #dfe9f3 0%, white 100%)";
 
-  localStorage.setItem('createQuizClass', name);
+  localStorage.setItem('createExamClass', name);
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
     exams.push(snapshot.val());
@@ -336,7 +339,7 @@ function loadClass(name) {
                 document.getElementById('main').style.display = "none";
                 document.body.style.background = "white";
 
-                populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
+                populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
               }
             }
           }
@@ -345,7 +348,7 @@ function loadClass(name) {
             val = childSnapshot.val()[key].examCode;
           }
 
-          if(localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
+          if(localStorage.getItem("CreatedExamCode") != null && localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
             setTimeout(function(){
               document.getElementById('cached-exam-button').style.display = "initial";
               document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
@@ -363,8 +366,9 @@ function loadClass(name) {
       classAvg = 0;
       classCounter = 0;
     });
+
     collectiveAvg = collectiveAvg / examCounter;
-    collectiveAvg = (collectiveAvg).toFixed(1)
+    collectiveAvg = (collectiveAvg).toFixed(1);
 
     if(collectiveAvg == "NaN"){
       document.getElementById('avg-grade-number').innerHTML = "No Data";
@@ -385,7 +389,7 @@ function generateCode() {
 
   for(var i = 0; i < string.length; i++) {
     if(i != string.length - 1) {
-      className += string[i] + " "
+      className += string[i] + " ";
     }
     else{
       className += string[i];
@@ -398,20 +402,20 @@ function generateCode() {
     return code;
   }
   else {
-    generateCode();
+    generateCode(); // Rerun Code if code exists already
   }
 }
 
 // remove dropdown if screen size can handle navbar
 function removeDropDown(x) {
  if (x.matches) { // If media query matches
-   document.getElementById('dropdown').style.display = "none";
+   document.getElementById('dropdown').style.display = "none"; // Remove DropDown
  } else {
-   document.getElementById('dropdown').style.display = "initial";
+   document.getElementById('dropdown').style.display = "initial"; //Bring DropDown back
  }
 }
 
-var x = window.matchMedia("(min-width: 601px)")
+var x = window.matchMedia("(min-width: 601px)") // Specify what to set media-queries at
 removeDropDown(x) // Call listener function at run time
 x.addListener(removeDropDown) // Attach listener function on state changes
 
@@ -463,7 +467,7 @@ function displayExamData(name) {
             document.getElementById('create-exam').style.display = "initial";
             document.getElementById('main').style.display = "none";
             document.body.style.background = "white";
-            populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createQuizClass') + "/Exams/" + code)
+            populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code)
           };
 
           // skip loop if the property is from prototype
@@ -1420,7 +1424,6 @@ function createQuestion(loading, numAnswerChoices) {
   question.appendChild(question_type);
 
   var points = document.createElement('div');
-
   var span = document.createElement('span');
   span.innerHTML = "( ";
 
@@ -1504,9 +1507,8 @@ function createQuestion(loading, numAnswerChoices) {
 
   if(!loading) {
     window.scroll({ top: question.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
-
+    createQuestionTracker(document.getElementsByClassName('question').length, false);
     saveExam(false);
-    createQuestionTracker(document.getElementsByClassName('question').length);
   }
 }
 
