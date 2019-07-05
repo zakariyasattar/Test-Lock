@@ -31,7 +31,7 @@ window.onload = function() {
 
   // for create-exam
   $(window).scroll(function(){
-    for(var i = 1; i < document.getElementsByClassName('question').length; i++) {
+    for(var i = 1; i < document.getElementsByClassName('question').length + 1; i++) {
       var elem = document.getElementById(i);
       var docViewTop = $(window).scrollTop();
       var docViewBottom = docViewTop + $(window).height();
@@ -1296,10 +1296,9 @@ function deleteExam() {
   })
   .then((willDelete) => {
     if (willDelete) {
+      console.log(localStorage.getItem("CreatedExamCode"), code)
       var data = false;
-      if(localStorage.getItem("CreatedExamCode") == code) {
-        localStorage.setItem("CreatedExamCode", "");
-      }
+
       firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + code).remove();
 
       var ref = (firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/"));
@@ -1312,7 +1311,6 @@ function deleteExam() {
       if(!data) {
         ref.push("no_exams");
       }
-
 
       firebase.database().ref('exam-codes').on('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
@@ -1330,11 +1328,27 @@ function deleteExam() {
       $( "#exam" ).empty();
       loadClass(localStorage.getItem("className"));
 
+      if(localStorage.getItem("CreatedExamCode").toUpperCase() == code) {
+        localStorage.setItem("CreatedExamCode", "");
+        document.getElementById('cached-exam-button').remove();
+      }
+
       swal("Poof! Your exam has been deleted!", {
         icon: "success",
       });
     }
   });
+}
+
+//function to restructure if question is deleted in the middle
+function restructureQuestions() {
+  var questions = document.getElementsByClassName('question');
+
+  for(var i = 0; i < questions.length; i++) {
+    var question = questions[i];
+
+    question.childNodes[0].innerHTML = i + 1 + ". "
+  }
 }
 
 // function to create HTML question
@@ -1359,13 +1373,13 @@ function createQuestion(loading, numAnswerChoices) {
 
   $(trash).click(function(){
       question.remove(); hr.remove();
+      restructureQuestions(); saveExam();
   });
 
   $(question).hover(function(){
     num.style.display = "none";
     trash.style.display = "initial";
     num.style.cursor = "pointer";
-
   }, function(){
     num.style.display = "initial";
     trash.style.display = "none";
@@ -1481,8 +1495,7 @@ function createQuestion(loading, numAnswerChoices) {
 
 
   if(!loading) {
-    console.log(question)
-    setTimeout(function(){ question.scrollIntoView({behavior: "smooth"}); }, 30);
+    window.scroll({ top: question.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
 
     saveExam(false);
     createQuestionTracker(document.getElementsByClassName('question').length);
