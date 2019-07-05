@@ -116,6 +116,9 @@ function createQuiz() {
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
 
+
+  //////////// FIX ALPHABETIC SORTING
+
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/").once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.val() == "no_exams") {
@@ -320,9 +323,9 @@ function loadClass(name) {
 
         if(childSnapshot.val() != "no_exams") {
           createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.val()[key].examCode, childSnapshot.val()[key].examCode);
-          var val = childSnapshot.val()[key].examTitle
-          if(localStorage.getItem("CreatedExamCode") != "") {
+          var val = childSnapshot.val()[key].examTitle;
 
+          if(localStorage.getItem("CreatedExamCode") != "") {
             var button = document.getElementById('cached-code');
             if(button != null) {
               button.id = "cached-exam-button";
@@ -342,10 +345,15 @@ function loadClass(name) {
             val = childSnapshot.val()[key].examCode;
           }
 
-          if(localStorage.getItem("CreatedExamCode") != null && localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
-            document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
+          if(localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
+            setTimeout(function(){
+              document.getElementById('cached-exam-button').style.display = "initial";
+              document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
+            }, 2);
           }
-
+          else {
+            document.getElementById('cached-exam-button').style.display = "none";
+          }
           break;
         }
         else {
