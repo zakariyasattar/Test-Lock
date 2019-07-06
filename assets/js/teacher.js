@@ -1363,6 +1363,73 @@ function restructureQuestions() {
   }
 }
 
+// True | False
+function createTrueFalse() {
+  var label = document.createElement('label');
+  label.id = "label";
+
+  var true_input = document.createElement('input');
+  true_input.style.outline = "none";
+  true_input.type = "radio";
+  true_input.className = "option-input radio";
+  true_input.name = "example";
+
+  var false_input = document.createElement('input');
+  false_input.style.outline = "none";
+  false_input.type = "radio";
+  false_input.className = "option-input radio";
+  false_input.name = "example";
+  false_input.style.marginLeft = "10%";
+
+  var true_span = document.createElement('span');
+  true_span.innerHTML = " True";
+  true_span.style.marginLeft = "10px";
+  true_span.style.color = "gray"
+  true_span.style.fontWeight = 'normal';
+
+  var false_span = document.createElement('span');
+  false_span.innerHTML = " False";
+  false_span.style.marginLeft = "10px";
+  false_span.style.color = "gray"
+  false_span.style.fontWeight = 'normal';
+
+  label.appendChild(true_input);
+  label.appendChild(true_span)
+
+  label.appendChild(false_input);
+  label.appendChild(false_span)
+
+  return label;
+}
+
+//function to dynamically change type of question
+function changeQuestionType(val, i) {
+  if(val == "mc") {
+    document.getElementsByClassName("mc")[i].style.display = "initial";
+    //document.getElementsByClassName("fr")[i].style.display = "none";
+    //document.getElementsByClassName("tf")[i].style.display = "none";
+  //  document.getElementsByClassName("matching")[i].style.display = "none";
+  }
+  else if(val == "fr") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+    document.getElementsByClassName("tf")[i].style.display = "none";
+    //document.getElementsByClassName("matching")[i].style.display = "none";
+  }
+  else if(val == "tf") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+    //document.getElementsByClassName("fr")[i].style.display = "none";
+    //d//ocument.getElementsByClassName("matching")[i].style.display = "none";
+
+    console.log(createTrueFalse());
+    document.getElementById(i + 1).appendChild(createTrueFalse());
+  }
+  else if(val == "matching") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+    document.getElementsByClassName("fr")[i].style.display = "none";
+    document.getElementsByClassName("tf")[i].style.display = "none";
+  }
+}
+
 // function to create HTML question
 function createQuestion(loading, numAnswerChoices) {
   var exam = document.getElementById('exam');
@@ -1418,6 +1485,10 @@ function createQuestion(loading, numAnswerChoices) {
   question_type.appendChild(mc); question_type.appendChild(fr); question_type.appendChild(tf); question_type.appendChild(matching);
   question_type.id = "question-type";
 
+  question_type.onchange = function() {
+    changeQuestionType(this.children[this.selectedIndex].value, question.id - 1);
+  }
+
   question.appendChild(num);
   question.appendChild(trash);
   question.appendChild(question_title);
@@ -1440,6 +1511,7 @@ function createQuestion(loading, numAnswerChoices) {
   question.appendChild(points);
 
   var answer_choices = document.createElement('div');
+  answer_choices.className = "mc";
 
   for(var i = 0; i < numAnswerChoices; i++) {
     var label = document.createElement('label');
