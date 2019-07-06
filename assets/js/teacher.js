@@ -212,7 +212,7 @@ function saveExam(alert) {
     }
 
     else if(jsonArg1.type == 'fr') {
-      jsonArg1.choices.push(children[6].value);
+      jsonArg1.choices.push(children[7].value);
     }
 
     else if(jsonArg1.type == 'tf') {
@@ -1545,10 +1545,29 @@ function createMatching(){
     }
   }
 
+  var newBox = document.createElement('button');
+  newBox.style.paddingLeft = "20px";
+  newBox.style.paddingRight = "20px";
+  newBox.style.borderRadius = "5px";
+  newBox.style.border = "1px solid cornflowerblue";
+  newBox.style.background = "#eee";
+  newBox.style.boxShadow = "4px";
+  newBox.style.width = "46.5vw";
+  newBox.style.marginLeft = "20px";
+  newBox.innerHTML = "New Element!";
+
+  newBox.onclick = function() {
+    createMatchingElement(matchingWrapper, document.getElementsByClassName('matchingbox').length + 1);
+    saveExam(false);
+  }
+
   matching.appendChild(numElements);
   matching.appendChild(hr);
   matching.appendChild(questions); matching.appendChild(results);
   matching.appendChild(matchingWrapper);
+
+  matching.appendChild(document.createElement('br'));
+  matching.appendChild(newBox);
 
   return matching;
 }
@@ -1621,27 +1640,57 @@ function createMatchingElement(div, i) {
 function changeQuestionType(val, i) {
   if(val == "mc") {
     document.getElementsByClassName("mc")[i].style.display = "initial";
-    //document.getElementsByClassName("fr")[i].style.display = "none";
-    //document.getElementsByClassName("tf")[i].style.display = "none";
-  //  document.getElementsByClassName("matching")[i].style.display = "none";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
   }
   else if(val == "fr") {
     document.getElementsByClassName("mc")[i].style.display = "none";
-    document.getElementsByClassName("tf")[i].style.display = "none";
-    //document.getElementsByClassName("matching")[i].style.display = "none";
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createFreeResponse());
   }
   else if(val == "tf") {
     document.getElementsByClassName("mc")[i].style.display = "none";
-    //document.getElementsByClassName("fr")[i].style.display = "none";
-    //d//ocument.getElementsByClassName("matching")[i].style.display = "none";
 
-    console.log(createTrueFalse());
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+
     document.getElementById(i + 1).appendChild(createTrueFalse());
   }
   else if(val == "matching") {
     document.getElementsByClassName("mc")[i].style.display = "none";
-    document.getElementsByClassName("fr")[i].style.display = "none";
-    document.getElementsByClassName("tf")[i].style.display = "none";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createMatching());
   }
 }
 
