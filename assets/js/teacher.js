@@ -1445,7 +1445,6 @@ function restructureBoxes() {
 // True | False
 function createTrueFalse() {
   var label = document.createElement('label');
-  label.className = "tf";
   label.id = "label";
 
   var true_input = document.createElement('input');
@@ -1622,57 +1621,27 @@ function createMatchingElement(div, i) {
 function changeQuestionType(val, i) {
   if(val == "mc") {
     document.getElementsByClassName("mc")[i].style.display = "initial";
-
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
+    //document.getElementsByClassName("fr")[i].style.display = "none";
+    //document.getElementsByClassName("tf")[i].style.display = "none";
+  //  document.getElementsByClassName("matching")[i].style.display = "none";
   }
   else if(val == "fr") {
     document.getElementsByClassName("mc")[i].style.display = "none";
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
-
-    document.getElementById(i + 1).appendChild(createFreeResponse());
+    document.getElementsByClassName("tf")[i].style.display = "none";
+    //document.getElementsByClassName("matching")[i].style.display = "none";
   }
   else if(val == "tf") {
     document.getElementsByClassName("mc")[i].style.display = "none";
+    //document.getElementsByClassName("fr")[i].style.display = "none";
+    //d//ocument.getElementsByClassName("matching")[i].style.display = "none";
 
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
-
+    console.log(createTrueFalse());
     document.getElementById(i + 1).appendChild(createTrueFalse());
   }
   else if(val == "matching") {
     document.getElementsByClassName("mc")[i].style.display = "none";
-
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    document.getElementById(i + 1).appendChild(createMatching());
+    document.getElementsByClassName("fr")[i].style.display = "none";
+    document.getElementsByClassName("tf")[i].style.display = "none";
   }
 }
 
@@ -1698,7 +1667,7 @@ function createQuestion(loading, numAnswerChoices) {
 
   $(trash).click(function(){
       question.remove(); hr.remove();
-      restructureQuestions(); saveExam(true);
+      restructureQuestions(); saveExam();
   });
 
   $(question).hover(function(){
@@ -1733,7 +1702,6 @@ function createQuestion(loading, numAnswerChoices) {
 
   question_type.onchange = function() {
     changeQuestionType(this.children[this.selectedIndex].value, question.id - 1);
-    saveExam(false);
   }
 
   question.appendChild(num);
@@ -1784,7 +1752,7 @@ function createQuestion(loading, numAnswerChoices) {
 
     $(labelTrash).click(function(){
         this.parentNode.remove();
-        saveExam(false);
+        saveExam();
     });
 
     $(label).hover(function(){
@@ -1875,7 +1843,7 @@ function createNewOptionChoice(num) {
 
   $(labelTrash).click(function(){
       this.parentNode.remove();
-      saveExam(false);
+      saveExam();
   });
 
   $(label).hover(function(){
