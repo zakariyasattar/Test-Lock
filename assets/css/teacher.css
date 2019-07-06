@@ -66,9 +66,7 @@
      color: #a5af95;
      opacity:  1;
   }
-  :-ms-input-placeholder { /* Internet Explorer 10-11 */
-     color: #a5af95;
-  }
+
   ::-ms-input-placeholder { /* Microsoft Edge */
      color: #a5af95;
   }
@@ -313,7 +311,7 @@
   }
 
   #result::-webkit-input-placeholder { text-align: left; padding-left: 10px;}
-  #result::-moz-placeholder { text-align: left; padding-left: 10px;}
+  #result::-moz-placeholder { text-align: left; margin-left: 20px;}
 
   #answer-choices {
     margin: 33px;

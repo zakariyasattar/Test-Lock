@@ -25,7 +25,11 @@ window.onload = function() {
     $("#description").css("border", "1px solid lightgray");
   });
 
-  $("#create-exam").on('blur', ":input" ,function() {
+  $("#create-exam").on('blur', ":input", function() {
+    saveExam(false);
+  });
+
+  $("#create-exam").on('change', "input:radio", function() {
     saveExam(false);
   });
 
@@ -136,6 +140,8 @@ function createQuiz() {
   document.getElementById('exam-code').innerHTML = randomCode.toUpperCase();
 }
 
+
+// Alert After Save
 function successfulSave() {
   var alert = document.createElement('div');
   alert.innerHTML = "Successfully Saved Exam!"
@@ -152,12 +158,17 @@ function successfulSave() {
   setTimeout(function(){ document.getElementsByClassName('alert')[0].remove(); }, 2500);
 }
 
+// Save Exam
 function saveExam(alert) {
   if(alert) {
     successfulSave();
   }
 
   var newSave = new Date().toLocaleString().replace(",", " @");
+  if(newSave == "") {
+    newSave = " Not Saved!";
+  }
+
   document.getElementById('last-saved').innerHTML = "Last Sync: " + newSave;
 
   if(document.getElementById('nameOfExam').value != "") {
@@ -194,8 +205,35 @@ function saveExam(alert) {
     jsonArg1.points = children[4].childNodes[1].value
     jsonArg1.choices = [];
 
-    for(var j = 0; j < children[5].childNodes.length - 1; j++){
-      jsonArg1.choices.push(children[5].childNodes[j].childNodes[2].value);
+    if(jsonArg1.type == 'mc') {
+      for(var j = 0; j < children[5].childNodes.length - 1; j++){
+        jsonArg1.choices.push(children[5].childNodes[j].childNodes[2].value);
+      }
+    }
+
+    else if(jsonArg1.type == 'fr') {
+      jsonArg1.choices.push(children[6].value);
+    }
+
+    else if(jsonArg1.type == 'tf') {
+      if(children[6].childNodes[0].checked) {
+        jsonArg1.choices.push("true");
+      }
+      else {
+        jsonArg1.choices.push("false");
+      }
+    }
+
+    else {
+      var boxes = document.getElementsByClassName('matchingbox');
+      jsonArg1.numBoxes = boxes.length;
+
+      for(var i = 0; i < boxes.length; i++) {
+        var question = boxes[i].childNodes[2].value;
+        var result = boxes[i].childNodes[4].value;
+
+        jsonArg1.choices.push(question + ";" + result);
+      }
     }
 
     pluginArrayArg.push(jsonArg1);
@@ -281,14 +319,43 @@ function populateExam(code, ref) {
 
           changeQuestionType(question.type, i);
 
-          for(var j = 0; j < Object.keys(question.choices).length; j++){
-            if(question.choices[j].value != undefined){
-              localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j].value);
-            }
-            else {
-              localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j]);
+          if(question.type == "mc") {
+            for(var j = 0; j < Object.keys(question.choices).length; j++){
+              if(question.choices[j].value != undefined){
+                localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j].value);
+              }
+              else {
+                localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j]);
+              }
             }
           }
+
+          else if(question.type == "fr"){
+            localQuestions[i].childNodes[6].value = (question.choices[0]);
+          }
+
+          else if(question.type == "tf") {
+            if(question.choices[0] == 'true') {
+              localQuestions[i].childNodes[6].childNodes[0].checked = true;
+            }
+            else {
+              localQuestions[i].childNodes[6].childNodes[2].checked = true;
+            }
+          }
+
+          else {
+            document.getElementsByClassName('matching')[i].childNodes[0].value = question.numBoxes;
+            for(var j = 0; j < question.numBoxes; j++) {
+              createMatchingElement(document.getElementsByClassName('matching-wrapper')[i], j + 1);
+            }
+
+            var localBoxes = document.getElementsByClassName('matchingbox');
+            for(var k = 0; k < localBoxes.length; k++) {
+              localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
+              localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
+            }
+          }
+
         }
       }
     });
@@ -356,7 +423,7 @@ function loadClass(name) {
               document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
             }, 2);
           }
-          else {
+          else if(document.getElementById('cached-exam-button') != null){
             document.getElementById('cached-exam-button').style.display = "none";
           }
           break;
@@ -1365,6 +1432,16 @@ function restructureQuestions() {
   }
 }
 
+function restructureBoxes() {
+  var boxes = document.getElementsByClassName('matchingbox');
+
+  for(var i = 0; i < boxes.length; i++) {
+    var box = questions[i];
+
+    box.childNodes[1].innerHTML = i + 1 + ". "
+  }
+}
+
 // True | False
 function createTrueFalse() {
   var label = document.createElement('label');
@@ -1375,13 +1452,13 @@ function createTrueFalse() {
   true_input.style.outline = "none";
   true_input.type = "radio";
   true_input.className = "option-input radio";
-  true_input.name = "example";
+  true_input.name = "radio";
 
   var false_input = document.createElement('input');
   false_input.style.outline = "none";
   false_input.type = "radio";
   false_input.className = "option-input radio";
-  false_input.name = "example";
+  false_input.name = "radio";
   false_input.style.marginLeft = "10%";
 
   var true_span = document.createElement('span');
@@ -1418,7 +1495,7 @@ function createFreeResponse() {
 // function to create matching boxes
 function createMatching(){
   var matchingWrapper = document.createElement('div');
-  matchingWrapper.id = "matching-wrapper";
+  matchingWrapper.className = "matching-wrapper";
 
   var matching = document.createElement('div');
   matching.className = 'matching';
@@ -1431,7 +1508,7 @@ function createMatching(){
   questions.style.marginLeft = "1.5vw";
 
   var results = document.createElement('span');
-  results.innerHTML = 'Results'
+  results.innerHTML = 'Results (Will Be Randomized)'
   results.style.marginLeft = "22.5vw";
 
   var numElements = document.createElement('input');
@@ -1443,7 +1520,7 @@ function createMatching(){
   numElements.style.fontSize = "15px";
 
   numElements.onkeyup = function() {
-    $("#matching-wrapper").empty();
+    $(matchingWrapper).empty();
 
     if(this.value <= 20) {
       for(var i = 0; i < this.value; i++) {
@@ -1480,6 +1557,34 @@ function createMatching(){
 // function to create matching Elements
 function createMatchingElement(div, i) {
   var box = document.createElement('div');
+  box.className = 'matchingbox';
+
+  var labelTrash = document.createElement('span');
+  labelTrash.className = "glyphicon glyphicon-minus";
+  labelTrash.style.display = "none";
+  labelTrash.style.marginRight = "5px";
+  labelTrash.style.color = "#f25555";
+
+  $(labelTrash).click(function(){
+    this.parentNode.remove();
+    saveExam(false);
+    restructureBoxes();
+  });
+
+  $(box).hover(function(){
+    this.childNodes[0].style.display = "initial";
+  }, function(){
+    this.childNodes[0].style.display = "none";
+  });
+
+  $(labelTrash).hover(function(){
+    this.style.cursor="pointer";
+    this.style.color = "#f25555";
+  }, function(){
+
+  });
+
+  box.appendChild(labelTrash)
 
   var num = document.createElement('span');
   num.innerHTML = i + ".";
@@ -1663,7 +1768,7 @@ function createQuestion(loading, numAnswerChoices) {
     input.style.outline = "none";
     input.type = "radio";
     input.className = "option-input radio";
-    input.name = "example";
+    input.name = "radio";
 
     var answer_choice = document.createElement('input');
     answer_choice.className = "option";
@@ -1739,7 +1844,7 @@ function createNewOptionChoice(num) {
   input.style.outline = "none";
   input.type = "radio";
   input.className = "option-input radio";
-  input.name = "example";
+  input.name = "radio";
 
   var answer_choice = document.createElement('input');
   answer_choice.className = "option";
