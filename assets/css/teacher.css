@@ -302,19 +302,6 @@
     margin-right: 33px;
   }
 
-  .fr {
-    width: 65vw;
-    height: 150px;
-    resize: none;
-    border-radius: 5px;
-    font-size: 15px;
-    border: 1px solid gray;
-    padding: 15px;
-  }
-
-  #result::-webkit-input-placeholder { text-align: left; padding-left: 10px;}
-  #result::-moz-placeholder { text-align: left; padding-left: 10px;}
-
   #answer-choices {
     margin: 33px;
     padding-top: 5px;

@@ -279,8 +279,6 @@ function populateExam(code, ref) {
           localQuestions[i].childNodes[4].childNodes[1].value = question.points;
           localQuestions[i].childNodes[3].value = question.type;
 
-          changeQuestionType(question.type, i);
-
           for(var j = 0; j < Object.keys(question.choices).length; j++){
             if(question.choices[j].value != undefined){
               localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j].value);
@@ -1368,7 +1366,6 @@ function restructureQuestions() {
 // True | False
 function createTrueFalse() {
   var label = document.createElement('label');
-  label.className = "tf";
   label.id = "label";
 
   var true_input = document.createElement('input');
@@ -1405,169 +1402,31 @@ function createTrueFalse() {
   return label;
 }
 
-// function for Free-Response
-function createFreeResponse() {
-  var ta = document.createElement('textarea');
-  ta.className = "fr";
-  ta.placeholder = "NOTE: This question type requires manual grading";
-
-  return ta;
-}
-
-
-// function to create matching boxes
-function createMatching(){
-  var matchingWrapper = document.createElement('div');
-  matchingWrapper.id = "matching-wrapper";
-
-  var matching = document.createElement('div');
-  matching.className = 'matching';
-
-  var hr = document.createElement('hr');
-  hr.style.width = '67%';
-
-  var questions = document.createElement('span');
-  questions.innerHTML = 'Questions';
-  questions.style.marginLeft = "1.5vw";
-
-  var results = document.createElement('span');
-  results.innerHTML = 'Results'
-  results.style.marginLeft = "22.5vw";
-
-  var numElements = document.createElement('input');
-  numElements.type = 'textbox';
-  numElements.placeholder = '# Of Elements...';
-  numElements.style.borderRadius = "5px";
-  numElements.style.padding = "5px";
-  numElements.style.border= "1px solid black";
-  numElements.style.fontSize = "15px";
-
-  numElements.onkeyup = function() {
-    $("#matching-wrapper").empty();
-
-    if(this.value <= 20) {
-      for(var i = 0; i < this.value; i++) {
-        createMatchingElement(matchingWrapper, i + 1);
-      }
-    }
-    else {
-      this.value = "";
-
-      var alert = document.createElement('div');
-      alert.innerHTML = "20 Elements Max!"
-      alert.style.textAlign = "center";
-      alert.style.width = "100%";
-      alert.style.position = "fixed";
-      alert.style.zIndex = "100000";
-      alert.style.top = "0";
-      alert.className = "alert alert-danger";
-      alert.role = "alert";
-
-      document.getElementById('create-exam').appendChild(document.createElement('center').appendChild(alert));
-
-      setTimeout(function(){ document.getElementsByClassName('alert')[0].remove(); }, 2500);
-    }
-  }
-
-  matching.appendChild(numElements);
-  matching.appendChild(hr);
-  matching.appendChild(questions); matching.appendChild(results);
-  matching.appendChild(matchingWrapper);
-
-  return matching;
-}
-
-// function to create matching Elements
-function createMatchingElement(div, i) {
-  var box = document.createElement('div');
-
-  var num = document.createElement('span');
-  num.innerHTML = i + ".";
-  num.style.marginRight = "10px";
-  num.style.fontSize = "15px";
-
-  box.appendChild(num);
-
-  var input = document.createElement('input');
-  input.type = 'textbox';
-  input.style.marginTop = "20px";
-  input.style.textAlign = "center";
-  input.placeholder = "1 + 1";
-  input.id = 'result';
-
-  var arrow = document.createElement('span');
-  arrow.className = 'glyphicon glyphicon-arrow-right';
-  arrow.style.paddingLeft = '5vw';
-
-  var result_input = document.createElement('input');
-  result_input.type = 'textbox';
-  result_input.style.marginLeft = "5vw";
-  result_input.style.textAlign = "center";
-  result_input.placeholder = "2";
-  result_input.id = 'result';
-
-  box.appendChild(input);
-  box.appendChild(arrow);
-  box.appendChild(result_input);
-  div.appendChild(box);
-}
-
-
 //function to dynamically change type of question
 function changeQuestionType(val, i) {
   if(val == "mc") {
     document.getElementsByClassName("mc")[i].style.display = "initial";
-
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
+    //document.getElementsByClassName("fr")[i].style.display = "none";
+    //document.getElementsByClassName("tf")[i].style.display = "none";
+  //  document.getElementsByClassName("matching")[i].style.display = "none";
   }
   else if(val == "fr") {
     document.getElementsByClassName("mc")[i].style.display = "none";
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
-
-    document.getElementById(i + 1).appendChild(createFreeResponse());
+    document.getElementsByClassName("tf")[i].style.display = "none";
+    //document.getElementsByClassName("matching")[i].style.display = "none";
   }
   else if(val == "tf") {
     document.getElementsByClassName("mc")[i].style.display = "none";
+    //document.getElementsByClassName("fr")[i].style.display = "none";
+    //d//ocument.getElementsByClassName("matching")[i].style.display = "none";
 
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
-
+    console.log(createTrueFalse());
     document.getElementById(i + 1).appendChild(createTrueFalse());
   }
   else if(val == "matching") {
     document.getElementsByClassName("mc")[i].style.display = "none";
-
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    document.getElementById(i + 1).appendChild(createMatching());
+    document.getElementsByClassName("fr")[i].style.display = "none";
+    document.getElementsByClassName("tf")[i].style.display = "none";
   }
 }
 
@@ -1593,7 +1452,7 @@ function createQuestion(loading, numAnswerChoices) {
 
   $(trash).click(function(){
       question.remove(); hr.remove();
-      restructureQuestions(); saveExam(true);
+      restructureQuestions(); saveExam();
   });
 
   $(question).hover(function(){
@@ -1628,7 +1487,6 @@ function createQuestion(loading, numAnswerChoices) {
 
   question_type.onchange = function() {
     changeQuestionType(this.children[this.selectedIndex].value, question.id - 1);
-    saveExam(false);
   }
 
   question.appendChild(num);
@@ -1679,7 +1537,7 @@ function createQuestion(loading, numAnswerChoices) {
 
     $(labelTrash).click(function(){
         this.parentNode.remove();
-        saveExam(false);
+        saveExam();
     });
 
     $(label).hover(function(){
@@ -1770,7 +1628,7 @@ function createNewOptionChoice(num) {
 
   $(labelTrash).click(function(){
       this.parentNode.remove();
-      saveExam(false);
+      saveExam();
   });
 
   $(label).hover(function(){
