@@ -209,7 +209,6 @@
   }
 
   #nameOfExam:hover {
-    text-align: left;
     border-bottom: 1px solid black;
   }
 
@@ -310,12 +309,51 @@
     padding: 15px;
   }
 
+  #newBox {
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 5px;
+    border: 1px solid cornflowerblue;
+    color: cornflowerblue;
+    background: white;
+    width: 46.5vw;
+    margin-left: 20px;
+    box-shadow: 1px 1px;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
+  #newBox:hover {
+    background: cornflowerblue;
+    color: white;
+    border: 1px solid black;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
   #result::-webkit-input-placeholder { text-align: left; padding-left: 10px;}
   #result::-moz-placeholder { text-align: left; margin-left: 20px;}
 
   #answer-choices {
     margin: 33px;
     padding-top: 5px;
+  }
+
+  #moveDiv {
+    color: lightgray;
+    transform: translate(90deg);
+  }
+
+  #moveDiv:hover {
+    cursor: pointer;
+    color: black;
+    /* .grabbing {cursor: -webkit-grabbing; cursor: grabbing;} */
   }
 
   #createNewAnswerChoice {

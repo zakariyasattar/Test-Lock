@@ -206,8 +206,8 @@ function saveExam(alert) {
     jsonArg1.choices = [];
 
     if(jsonArg1.type == 'mc') {
-      for(var j = 0; j < children[5].childNodes.length - 1; j++){
-        jsonArg1.choices.push(children[5].childNodes[j].childNodes[2].value);
+      for(var j = 0; j < children[6].childNodes.length - 1; j++){
+        jsonArg1.choices.push(children[6].childNodes[j].childNodes[2].value);
       }
     }
 
@@ -322,10 +322,10 @@ function populateExam(code, ref) {
           if(question.type == "mc") {
             for(var j = 0; j < Object.keys(question.choices).length; j++){
               if(question.choices[j].value != undefined){
-                localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j].value);
+                localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
               }
               else {
-                localQuestions[i].childNodes[5].childNodes[j].childNodes[2].value = (question.choices[j]);
+                localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
               }
             }
           }
@@ -1442,6 +1442,65 @@ function restructureBoxes() {
   }
 }
 
+//function to dynamically change type of question
+function changeQuestionType(val, i) {
+  if(val == "mc") {
+    document.getElementsByClassName("mc")[i].style.display = "initial";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+  }
+  else if(val == "fr") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createFreeResponse());
+  }
+  else if(val == "tf") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createTrueFalse());
+  }
+  else if(val == "matching") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createMatching());
+  }
+}
+
+
 // True | False
 function createTrueFalse() {
   var label = document.createElement('label');
@@ -1546,14 +1605,7 @@ function createMatching(){
   }
 
   var newBox = document.createElement('button');
-  newBox.style.paddingLeft = "20px";
-  newBox.style.paddingRight = "20px";
-  newBox.style.borderRadius = "5px";
-  newBox.style.border = "1px solid cornflowerblue";
-  newBox.style.background = "#eee";
-  newBox.style.boxShadow = "4px";
-  newBox.style.width = "46.5vw";
-  newBox.style.marginLeft = "20px";
+  newBox.id = "newBox";
   newBox.innerHTML = "New Element!";
 
   newBox.onclick = function() {
@@ -1636,64 +1688,6 @@ function createMatchingElement(div, i) {
 }
 
 
-//function to dynamically change type of question
-function changeQuestionType(val, i) {
-  if(val == "mc") {
-    document.getElementsByClassName("mc")[i].style.display = "initial";
-
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
-  }
-  else if(val == "fr") {
-    document.getElementsByClassName("mc")[i].style.display = "none";
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
-
-    document.getElementById(i + 1).appendChild(createFreeResponse());
-  }
-  else if(val == "tf") {
-    document.getElementsByClassName("mc")[i].style.display = "none";
-
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("matching")[i] != undefined) {
-      document.getElementsByClassName("matching")[i].style.display = "none";
-    }
-
-    document.getElementById(i + 1).appendChild(createTrueFalse());
-  }
-  else if(val == "matching") {
-    document.getElementsByClassName("mc")[i].style.display = "none";
-
-    if(document.getElementsByClassName("fr")[i] != undefined) {
-      document.getElementsByClassName("fr")[i].style.display = "none";
-    }
-
-    if(document.getElementsByClassName("tf")[i] != undefined) {
-      document.getElementsByClassName("tf")[i].style.display = "none";
-    }
-
-    document.getElementById(i + 1).appendChild(createMatching());
-  }
-}
-
 // function to create HTML question
 function createQuestion(loading, numAnswerChoices) {
   var exam = document.getElementById('exam');
@@ -1714,18 +1708,35 @@ function createQuestion(loading, numAnswerChoices) {
   trash.style.marginRight = "5px";
   trash.style.color = "lightgray";
 
+  var moveDiv = document.createElement('span');
+  moveDiv.id = "moveDiv"
+  moveDiv.className = "glyphicon glyphicon-refresh";
+  moveDiv.style.display = "none";
+  moveDiv.style.marginRight = "5px";
+
+  $(moveDiv).click(function(){
+    if(!swapDiv(this.parentNode, prompt("Which Question (#) Would You Like To Swap With?"))){
+      swal("Failed!", "The Number You Provided Does Not Exist", "error");
+    }
+    else {
+      console.log("swapped");
+    }
+  });
+
   $(trash).click(function(){
-      question.remove(); hr.remove();
-      restructureQuestions(); saveExam();
+    question.remove(); hr.remove();
+    restructureQuestions(); saveExam();
   });
 
   $(question).hover(function(){
     num.style.display = "none";
     trash.style.display = "initial";
+    moveDiv.style.display = "initial";
     num.style.cursor = "pointer";
   }, function(){
     num.style.display = "initial";
     trash.style.display = "none";
+    moveDiv.style.display = "none";
   });
 
   $(trash).hover(function(){
@@ -1754,6 +1765,7 @@ function createQuestion(loading, numAnswerChoices) {
   }
 
   question.appendChild(num);
+  question.appendChild(moveDiv);
   question.appendChild(trash);
   question.appendChild(question_title);
   question.appendChild(question_type);
@@ -1803,7 +1815,6 @@ function createQuestion(loading, numAnswerChoices) {
         this.parentNode.remove();
         saveExam();
     });
-
     $(label).hover(function(){
       this.childNodes[0].style.display = "initial";
     }, function(){
@@ -1813,9 +1824,8 @@ function createQuestion(loading, numAnswerChoices) {
     $(labelTrash).hover(function(){
       this.style.cursor="pointer";
       this.style.color = "#f25555";
-    }, function(){
+    }, function(){});
 
-    });
 
     label.appendChild(labelTrash)
     label.appendChild(input);
@@ -1845,6 +1855,21 @@ function createQuestion(loading, numAnswerChoices) {
     window.scroll({ top: question.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
     createQuestionTracker(document.getElementsByClassName('question').length, false);
     saveExam(false);
+  }
+}
+
+//function to swap divs
+function swapDiv(elem, numToSwap){
+  if(document.getElementById(numToSwap) == undefined) {
+    return false;
+  }
+  else {
+    var q = document.getElementById(numToSwap);
+    elem.parentNode.insertBefore(elem, elem.parentNode.q);
+    elem.parentNode.childNodes[4].remove();
+    elem.parentNode.appendChild(document.createElement('hr'));
+    restructureQuestions(); saveExam();
+    return true;
   }
 }
 
