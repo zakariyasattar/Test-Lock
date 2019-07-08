@@ -1,6 +1,6 @@
 // check if user is signed in
 if(localStorage.getItem('userInfo') == null) {
-  document.getElementById('body').style.display = "none";
+  document.body.style.display = "none";
   alert("NOT AUTHORIZED");
 }
 
@@ -195,14 +195,16 @@ function saveExam(alert) {
   var localQuestions = document.getElementsByClassName('question');
   var pluginArrayArg = new Array();
 
+  console.log(localQuestions.length);
+
   for(var i = 0; i < localQuestions.length; i++) {
     var question = localQuestions[i];
     var children = question.childNodes;
 
     var jsonArg1 = new Object();
-    jsonArg1.title = children[2].value;
-    jsonArg1.type = children[3].value;
-    jsonArg1.points = children[4].childNodes[1].value
+    jsonArg1.title = children[3].value;
+    jsonArg1.type = children[4].value;
+    jsonArg1.points = children[5].childNodes[1].value
     jsonArg1.choices = [];
 
     if(jsonArg1.type == 'mc') {
@@ -314,8 +316,8 @@ function populateExam(code, ref) {
           createQuestionTracker(i + 1, true);
 
           localQuestions[i].childNodes[2].value = question.title;
-          localQuestions[i].childNodes[4].childNodes[1].value = question.points;
-          localQuestions[i].childNodes[3].value = question.type;
+          localQuestions[i].childNodes[3].childNodes[1].value = question.points;
+          localQuestions[i].childNodes[4].value = question.type;
 
           changeQuestionType(question.type, i);
 
@@ -336,10 +338,10 @@ function populateExam(code, ref) {
 
           else if(question.type == "tf") {
             if(question.choices[0] == 'true') {
-              localQuestions[i].childNodes[6].childNodes[0].checked = true;
+              localQuestions[i].childNodes[7].childNodes[0].checked = true;
             }
             else {
-              localQuestions[i].childNodes[6].childNodes[2].checked = true;
+              localQuestions[i].childNodes[7].childNodes[2].checked = true;
             }
           }
 

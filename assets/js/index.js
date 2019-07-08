@@ -246,7 +246,8 @@ function findCode(code) {
 }
 
 // function to display quiz to student
-function displayQuiz(code) {
+function displayQuiz() {
+  var code = localStorage.getItem("ExamCode");
   var i = 0;
 
   for(var x = 0; x < examCodes.length; x++){
@@ -261,10 +262,450 @@ function displayQuiz(code) {
 
   var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
   var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+  console.log(plaintext)
 
   document.getElementById('main').style.display = "none";
   document.getElementById('navigation').style.display = "none";
-  toggleFullScreen();
+  document.getElementById('display-exam').style.display = "initial";
+
+  document.body.style.background = "white";
+  document.body.style.overflow = "scroll";
+  populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
+  //toggleFullScreen();
+}
+
+//pull and populate exam
+function populateExam(code, ref) {
+  firebase.database().ref(ref).once('value').then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      var val = childSnapshot.val();
+      console.log(val);
+      if(val.examCode != undefined){
+        var counter = 0;
+
+        console.log(val);
+
+        document.getElementById('exam-code').innerHTML = val.examCode;
+        document.getElementById('date').innerHTML = val.examDate;
+        document.getElementById('description').value = val.examDescription;
+        document.getElementById('nameOfExam').innerHTML = val.examTitle;
+        document.getElementsByClassName('points')[0].innerHTML = val.examTotalPoints;
+        document.getElementsByClassName('time')[0].innerHTML = val.examTotalMins;
+
+        for(var i = 0; i < Object.keys(val.questions).length; i++) {
+          var localQuestions = document.getElementsByClassName('question');
+          var question = childSnapshot.val().questions[i];
+
+          createQuestion(true, Object.keys(question.choices).length);
+          createQuestionTracker(i + 1, true);
+
+          localQuestions[i].childNodes[1].value = question.title;
+          localQuestions[i].childNodes[2].childNodes[1].innerHTML = question.points;
+
+          changeQuestionType(question.type, i);
+
+          if(question.type == "mc") {
+            for(var j = 0; j < Object.keys(question.choices).length; j++){
+              console.log(localQuestions[i].childNodes);
+              if(question.choices[j].value != undefined){
+                localQuestions[i].childNodes[3].childNodes[j].childNodes[1].innerHTML = (question.choices[j].value);
+              }
+              else {
+                localQuestions[i].childNodes[3].childNodes[j].childNodes[1].innerHTML = (question.choices[j]);
+              }
+            }
+          }
+
+          else if(question.type == "fr"){
+            console.log(localQuestions[i].childNodes);
+            localQuestions[i].childNodes[4].value = (question.choices[0]);
+          }
+
+          else if(question.type == "tf") {
+            console.log(localQuestions[i].childNodes);
+            if(question.choices[0] == 'true') {
+              localQuestions[i].childNodes[4].childNodes[0].checked = true;
+            }
+            else {
+              localQuestions[i].childNodes[4].childNodes[2].checked = true;
+            }
+          }
+
+          else {
+            document.getElementsByClassName('matching')[i].childNodes[0].value = question.numBoxes;
+            for(var j = 0; j < question.numBoxes; j++) {
+              createMatchingElement(document.getElementsByClassName('matching-wrapper')[i], j + 1);
+            }
+
+            var localBoxes = document.getElementsByClassName('matchingbox');
+            for(var k = 0; k < localBoxes.length; k++) {
+              localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
+              localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
+            }
+          }
+
+        }
+      }
+    });
+  });
+}
+
+//function to dynamically change type of question
+function changeQuestionType(val, i) {
+  if(val == "mc") {
+    document.getElementsByClassName("mc")[i].style.display = "initial";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+  }
+  else if(val == "fr") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createFreeResponse());
+  }
+  else if(val == "tf") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("matching")[i] != undefined) {
+      document.getElementsByClassName("matching")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createTrueFalse());
+  }
+  else if(val == "matching") {
+    document.getElementsByClassName("mc")[i].style.display = "none";
+
+    if(document.getElementsByClassName("fr")[i] != undefined) {
+      document.getElementsByClassName("fr")[i].style.display = "none";
+    }
+
+    if(document.getElementsByClassName("tf")[i] != undefined) {
+      document.getElementsByClassName("tf")[i].style.display = "none";
+    }
+
+    document.getElementById(i + 1).appendChild(createMatching());
+  }
+}
+
+
+// True | False
+function createTrueFalse() {
+  var label = document.createElement('label');
+  label.id = "label";
+
+  var true_input = document.createElement('input');
+  true_input.style.outline = "none";
+  true_input.type = "radio";
+  true_input.className = "option-input radio";
+  true_input.name = "radio";
+
+  var false_input = document.createElement('input');
+  false_input.style.outline = "none";
+  false_input.type = "radio";
+  false_input.className = "option-input radio";
+  false_input.name = "radio";
+  false_input.style.marginLeft = "10%";
+
+  var true_span = document.createElement('span');
+  true_span.innerHTML = " True";
+  true_span.style.marginLeft = "10px";
+  true_span.style.color = "gray"
+  true_span.style.fontWeight = 'normal';
+
+  var false_span = document.createElement('span');
+  false_span.innerHTML = " False";
+  false_span.style.marginLeft = "10px";
+  false_span.style.color = "gray"
+  false_span.style.fontWeight = 'normal';
+
+  label.appendChild(true_input);
+  label.appendChild(true_span)
+
+  label.appendChild(false_input);
+  label.appendChild(false_span)
+
+  return label;
+}
+
+// function for Free-Response
+function createFreeResponse() {
+  var ta = document.createElement('textarea');
+  ta.className = "fr";
+  ta.placeholder = "NOTE: This question type requires manual grading";
+
+  return ta;
+}
+
+
+// function to create matching boxes
+function createMatching(){
+  var matchingWrapper = document.createElement('div');
+  matchingWrapper.className = "matching-wrapper";
+
+  var matching = document.createElement('div');
+  matching.className = 'matching';
+
+  var hr = document.createElement('hr');
+  hr.style.width = '67%';
+
+  var questions = document.createElement('span');
+  questions.innerHTML = 'Questions';
+  questions.style.marginLeft = "1.5vw";
+
+  var results = document.createElement('span');
+  results.innerHTML = 'Results (Will Be Randomized)'
+  results.style.marginLeft = "22.5vw";
+
+  var numElements = document.createElement('input');
+  numElements.type = 'textbox';
+  numElements.placeholder = '# Of Elements...';
+  numElements.style.borderRadius = "5px";
+  numElements.style.padding = "5px";
+  numElements.style.border= "1px solid black";
+  numElements.style.fontSize = "15px";
+
+  numElements.onkeyup = function() {
+    $(matchingWrapper).empty();
+
+    if(this.value <= 20) {
+      for(var i = 0; i < this.value; i++) {
+        createMatchingElement(matchingWrapper, i + 1);
+      }
+    }
+    else {
+      this.value = "";
+
+      var alert = document.createElement('div');
+      alert.innerHTML = "20 Elements Max!"
+      alert.style.textAlign = "center";
+      alert.style.width = "100%";
+      alert.style.position = "fixed";
+      alert.style.zIndex = "100000";
+      alert.style.top = "0";
+      alert.className = "alert alert-danger";
+      alert.role = "alert";
+
+      document.getElementById('create-exam').appendChild(document.createElement('center').appendChild(alert));
+
+      setTimeout(function(){ document.getElementsByClassName('alert')[0].remove(); }, 2500);
+    }
+  }
+
+  var newBox = document.createElement('button');
+  newBox.id = "newBox";
+  newBox.innerHTML = "New Element!";
+
+  newBox.onclick = function() {
+    createMatchingElement(matchingWrapper, document.getElementsByClassName('matchingbox').length + 1);
+    saveExam(false);
+  }
+
+  matching.appendChild(numElements);
+  matching.appendChild(hr);
+  matching.appendChild(questions); matching.appendChild(results);
+  matching.appendChild(matchingWrapper);
+
+  matching.appendChild(document.createElement('br'));
+  matching.appendChild(newBox);
+
+  return matching;
+}
+
+// function to create matching Elements
+function createMatchingElement(div, i) {
+  var box = document.createElement('div');
+  box.className = 'matchingbox';
+
+  var labelTrash = document.createElement('span');
+  labelTrash.className = "glyphicon glyphicon-minus";
+  labelTrash.style.display = "none";
+  labelTrash.style.marginRight = "5px";
+  labelTrash.style.color = "#f25555";
+
+  $(labelTrash).click(function(){
+    this.parentNode.remove();
+    saveExam(false);
+    restructureBoxes();
+  });
+
+  $(box).hover(function(){
+    this.childNodes[0].style.display = "initial";
+  }, function(){
+    this.childNodes[0].style.display = "none";
+  });
+
+  $(labelTrash).hover(function(){
+    this.style.cursor="pointer";
+    this.style.color = "#f25555";
+  }, function(){
+
+  });
+
+  box.appendChild(labelTrash)
+
+  var num = document.createElement('span');
+  num.innerHTML = i + ".";
+  num.style.marginRight = "10px";
+  num.style.fontSize = "15px";
+
+  box.appendChild(num);
+
+  var input = document.createElement('input');
+  input.type = 'textbox';
+  input.style.marginTop = "20px";
+  input.style.textAlign = "center";
+  input.placeholder = "1 + 1";
+  input.id = 'result';
+
+  var arrow = document.createElement('span');
+  arrow.className = 'glyphicon glyphicon-arrow-right';
+  arrow.style.paddingLeft = '5vw';
+
+  var result_input = document.createElement('input');
+  result_input.type = 'textbox';
+  result_input.style.marginLeft = "5vw";
+  result_input.style.textAlign = "center";
+  result_input.placeholder = "2";
+  result_input.id = 'result';
+
+  box.appendChild(input);
+  box.appendChild(arrow);
+  box.appendChild(result_input);
+  div.appendChild(box);
+}
+
+// function to create HTML question
+function createQuestion(loading, numAnswerChoices) {
+  var exam = document.getElementById('exam');
+
+  var question = document.createElement('div');
+  question.className = "question";
+  question.id = document.getElementsByClassName('question').length + 1;
+
+  var num = document.createElement('span');
+  num.innerHTML = document.getElementsByClassName('question').length + 1 + ". ";
+  num.style.color = "#97a5aa";
+
+  var hr = document.createElement('hr');
+
+  var question_title = document.createElement('input');
+  question_title.type = "text";
+  question_title.placeholder = "Ex: What's Your Name?";
+  question_title.id = "question-title";
+
+  question.appendChild(num);
+  question.appendChild(question_title);
+
+  var points = document.createElement('div');
+  points.id = "points";
+  var span = document.createElement('span');
+  span.innerHTML = "( ";
+
+  var numPoints = document.createElement('span');
+  numPoints.type = "text";
+  numPoints.id = "numPoints";
+  numPoints.placeholder = "Ex: 4";
+
+  var finishingSpan =  document.createElement('span');
+  finishingSpan.innerHTML = " points)";
+
+  points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
+
+  question.appendChild(points);
+
+  var answer_choices = document.createElement('div');
+  answer_choices.className = "mc";
+
+  for(var i = 0; i < numAnswerChoices; i++) {
+    var label = document.createElement('label');
+    label.id = "label";
+
+    var input = document.createElement('input');
+    input.style.outline = "none";
+    input.type = "radio";
+    input.className = "option-input radio";
+    input.name = "radio";
+
+    var answer_choice = document.createElement('span');
+    answer_choice.className = "option";
+    answer_choice.id = "question-choice";
+
+    label.appendChild(input);
+    label.appendChild(answer_choice);
+    answer_choices.appendChild(label);
+  }
+  question.appendChild(answer_choices);
+
+  exam.appendChild(question);
+  exam.appendChild(document.createElement('br'));
+  exam.appendChild(hr);
+
+
+  if(!loading) {
+    window.scroll({ top: question.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
+    createQuestionTracker(document.getElementsByClassName('question').length, false);
+  }
+}
+
+function createQuestionTracker(i, populating) {
+  if(i == 2 && !populating) {
+    createQuestionTracker(1, false);
+  }
+  var manager = document.getElementById('question-manager');
+  var tracker = document.createElement('div');
+  tracker.id = "question-tracker";
+  tracker.className = i;
+
+  $(tracker).hover(function(){
+    this.style.cursor = "pointer";
+    $(this).children()[0].innerHTML = "&#x25CF;";
+    this.childNodes[1].childNodes[0].style.color = "white";
+  }, function(){
+    this.childNodes[1].childNodes[0].style.color = "black";
+    $(this).children()[0].innerHTML = "&#x25CC;";
+  });
+
+  tracker.onclick = function() {
+    document.getElementById(i).scrollIntoView({block: "center"});
+  }
+
+  var circle = document.createElement('div');
+  circle.id = "circle";
+  circle.innerHTML = "&#x25CC;"
+
+  var center = document.createElement('center');
+  var text = document.createElement('div');
+  text.id = "text";
+  text.innerHTML = i;
+
+  center.appendChild(text);
+
+  tracker.appendChild(circle);
+  tracker.appendChild(center);
+
+  manager.appendChild(tracker);
+  manager.scrollTop = (manager.clientHeight + manager.clientHeight);
 }
 
 //toggleFullScreen

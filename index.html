@@ -124,6 +124,30 @@
       <script src="assets/js/index.js"></script>
     </div>
 
+    <div id="display-exam" style="display: none;">
+      <div id="create-exam">
+          <div id="init-setup" style="padding-top: 20px">
+            <div style="float: right;"><span id="date"></span></div>
+
+            <p style="margin-left: 35px;">Exam Code: <span id="exam-code"></span></p>
+
+            <br/>
+            <center>
+              <h1 id="nameOfExam"></h1>
+              <br/><br/>
+              (<span class="points" id="maxScore"> </span> Points, <span class="time" id="maxScore"></span> Minutes)
+              <br/>
+              <textarea readonly id="description" placeholder="Optional Description..."></textarea>
+            </center>
+          </div>
+          <hr/>
+
+          <div id="exam">
+            <div id="question-manager"></div>
+          </div>
+      </div>
+    </div>
+
     <div style="display: none; background: purple;" id="pong">
       <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
       <script src="assets/js/pong.js"></script>
