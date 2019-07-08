@@ -182,6 +182,7 @@ function saveExam(alert) {
   }
 
   var examInit = {
+    examTeacher: userName,
     examCode: document.getElementById('exam-code').innerHTML,
     examTitle: document.getElementById('nameOfExam').value,
     lastSaved: newSave,
@@ -1545,6 +1546,7 @@ function createTrueFalse() {
 // function for Free-Response
 function createFreeResponse() {
   var ta = document.createElement('textarea');
+  ta.readOnly = true;
   ta.className = "fr";
   ta.placeholder = "NOTE: This question type requires manual grading";
 

@@ -248,6 +248,7 @@ function findCode(code) {
 // function to display quiz to student
 function displayQuiz() {
   var code = localStorage.getItem("ExamCode");
+  localStorage.setItem("StudentName", document.getElementById('userName').innerHTML);
   var i = 0;
 
   for(var x = 0; x < examCodes.length; x++){
@@ -279,14 +280,11 @@ function populateExam(code, ref) {
   firebase.database().ref(ref).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       var val = childSnapshot.val();
-      console.log(val);
       if(val.examCode != undefined){
         var counter = 0;
 
-        console.log(val);
-
-        document.getElementById('exam-code').innerHTML = val.examCode;
-        document.getElementById('date').innerHTML = val.examDate;
+        document.getElementById('exam-code').innerHTML = val.examCode + " | " + localStorage.getItem("StudentName");
+        document.getElementById('date').innerHTML = val.examTeacher + " | " + val.examDate;
         document.getElementById('description').value = val.examDescription;
         document.getElementById('nameOfExam').innerHTML = val.examTitle;
         document.getElementsByClassName('points')[0].innerHTML = val.examTotalPoints;
@@ -314,11 +312,6 @@ function populateExam(code, ref) {
                 localQuestions[i].childNodes[3].childNodes[j].childNodes[1].innerHTML = (question.choices[j]);
               }
             }
-          }
-
-          else if(question.type == "fr"){
-            console.log(localQuestions[i].childNodes);
-            localQuestions[i].childNodes[4].value = (question.choices[0]);
           }
 
           else if(question.type == "tf") {
@@ -610,6 +603,7 @@ function createQuestion(loading, numAnswerChoices) {
   var hr = document.createElement('hr');
 
   var question_title = document.createElement('input');
+  question_title.readOnly = true;
   question_title.type = "text";
   question_title.placeholder = "Ex: What's Your Name?";
   question_title.id = "question-title";
