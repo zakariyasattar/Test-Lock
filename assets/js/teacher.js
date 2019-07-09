@@ -196,8 +196,6 @@ function saveExam(alert) {
   var localQuestions = document.getElementsByClassName('question');
   var pluginArrayArg = new Array();
 
-  console.log(localQuestions.length);
-
   for(var i = 0; i < localQuestions.length; i++) {
     var question = localQuestions[i];
     var children = question.childNodes;
@@ -313,52 +311,55 @@ function populateExam(code, ref) {
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
-          createQuestion(true, Object.keys(question.choices).length);
-          createQuestionTracker(i + 1, true);
+          if(question.choices != undefined) {
+            createQuestion(true, Object.keys(question.choices).length);
+            createQuestionTracker(i + 1, true);
+            console.log(localQuestions[i].childNodes);
 
-          localQuestions[i].childNodes[2].value = question.title;
-          localQuestions[i].childNodes[3].childNodes[1].value = question.points;
-          localQuestions[i].childNodes[4].value = question.type;
+            localQuestions[i].childNodes[3].value = question.title;
+            localQuestions[i].childNodes[5].childNodes[1].value = question.points;
+            localQuestions[i].childNodes[4].value = question.type;
 
-          changeQuestionType(question.type, i);
+            changeQuestionType(question.type, i);
 
-          if(question.type == "mc") {
-            for(var j = 0; j < Object.keys(question.choices).length; j++){
-              if(question.choices[j].value != undefined){
-                localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
+            if(question.type == "mc") {
+              for(var j = 0; j < Object.keys(question.choices).length; j++){
+                if(question.choices[j].value != undefined){
+                  localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
+                }
+                else {
+                  localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
+                }
+              }
+            }
+
+            else if(question.type == "fr"){
+              localQuestions[i].childNodes[6].value = (question.choices[0]);
+            }
+
+            else if(question.type == "tf") {
+              if(question.choices[0] == 'true') {
+                localQuestions[i].childNodes[7].childNodes[0].checked = true;
               }
               else {
-                localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
+                localQuestions[i].childNodes[7].childNodes[2].checked = true;
               }
             }
-          }
 
-          else if(question.type == "fr"){
-            localQuestions[i].childNodes[6].value = (question.choices[0]);
-          }
-
-          else if(question.type == "tf") {
-            if(question.choices[0] == 'true') {
-              localQuestions[i].childNodes[7].childNodes[0].checked = true;
-            }
             else {
-              localQuestions[i].childNodes[7].childNodes[2].checked = true;
+              document.getElementsByClassName('matching')[i].childNodes[0].value = question.numBoxes;
+              for(var j = 0; j < question.numBoxes; j++) {
+                createMatchingElement(document.getElementsByClassName('matching-wrapper')[i], j + 1);
+              }
+
+              var localBoxes = document.getElementsByClassName('matchingbox');
+              for(var k = 0; k < localBoxes.length; k++) {
+                localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
+                localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
+              }
             }
+
           }
-
-          else {
-            document.getElementsByClassName('matching')[i].childNodes[0].value = question.numBoxes;
-            for(var j = 0; j < question.numBoxes; j++) {
-              createMatchingElement(document.getElementsByClassName('matching-wrapper')[i], j + 1);
-            }
-
-            var localBoxes = document.getElementsByClassName('matchingbox');
-            for(var k = 0; k < localBoxes.length; k++) {
-              localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
-              localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
-            }
-          }
-
         }
       }
     });
