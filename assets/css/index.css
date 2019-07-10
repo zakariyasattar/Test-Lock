@@ -297,6 +297,35 @@ body {
    display: inline;
  }
 
+ #submit-exam {
+   float: right;
+   margin: 10px;
+   margin-right: 40px;
+   font-size: 18px;
+
+   width: 250px;
+   height: 30px;
+
+   color: #2e2f7d;
+   background: white;
+   border: 1px solid #2e2f7d;
+
+   border-radius: 5px;
+
+   box-shadow: 5px 5px lightgray;
+
+   transition: all .5s;
+
+   /* 89dd7c */
+ }
+
+ #submit-exam:hover {
+   height: 35px;
+   margin: 8px;
+
+   transition: all .5s;
+ }
+
  @keyframes click-wave {
    0% {
      height: 40px;

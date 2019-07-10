@@ -66,6 +66,7 @@ function signOut() {
 window.onload = function() {
   $(window).scroll(function(){
     for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
+      var waitTime = 3000;
       var elem = document.getElementById(i);
       var docViewTop = $(window).scrollTop();
       var docViewBottom = docViewTop + $(window).height();
@@ -83,6 +84,12 @@ window.onload = function() {
         document.getElementsByClassName(i)[0].innerHTML = "&#x25CF;"
         document.getElementsByClassName(i)[0].appendChild(text);
         document.getElementsByClassName(i)[0].childNodes[1].style.color = "white";
+        document.getElementsByClassName(i)[0].childNodes[1].style.right = "22.5px";
+
+        setTimeout(function(){
+          document.getElementsByClassName(i)[0].style.bottom = '20px';
+          document.getElementsByClassName(i)[0].style.transition = 'all .5s';
+        }, waitTime);
 
         break;
       }
@@ -94,6 +101,7 @@ window.onload = function() {
         document.getElementsByClassName(i)[0].innerHTML = "&#x25CC;"
         document.getElementsByClassName(i)[0].appendChild(text);
         document.getElementsByClassName(i)[0].childNodes[1].style.color = "black";
+        document.getElementsByClassName(i)[0].childNodes[1].style.right = "22px";
       }
     }
   });
@@ -482,7 +490,7 @@ function createTrueFalse() {
 function createFreeResponse() {
   var ta = document.createElement('textarea');
   ta.className = "fr";
-  ta.placeholder = "NOTE: This question type requires manual grading";
+  ta.placeholder = "NOTE: This question requires manual grading";
 
   return ta;
 }
@@ -711,6 +719,7 @@ function createQuestionTracker(i, populating) {
   tracker.style.position = "relative";
   tracker.style.bottom = "20px";
   tracker.style.color = "#58f";
+  tracker.style.left = "125px"
 
   tracker.id = "question-tracker";
   tracker.className = i;
