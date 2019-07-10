@@ -278,27 +278,21 @@ body {
  #question-manager {
    position: fixed;
    bottom: 0;
-   width: 100%;
+   width: 100vw;
+   height: 50px;
+   margin-left: -20px;
 
    background: #eeee;
- }
-
- #circle {
-   font-size: 60px;
-   color: #58f;
-   position: relative;
-   bottom: 20px;
-   height: 20px;
  }
 
  #text {
    z-index: 1;
    position: relative;
    color: black;
-   bottom: 15px;
-   right: 24px;
+   bottom: 12px;
+   right: 22px;
 
-   font-size: 15px;
+   font-size: 14px;
    width: 10px;
    display: inline;
  }

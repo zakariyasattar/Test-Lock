@@ -62,6 +62,43 @@ function signOut() {
   });
 }
 
+// for displayQuiz()
+window.onload = function() {
+  $(window).scroll(function(){
+    for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
+      var elem = document.getElementById(i);
+      var docViewTop = $(window).scrollTop();
+      var docViewBottom = docViewTop + $(window).height();
+
+      var elemTop = $(elem).offset().top;
+      var elemBottom = elemTop + $(elem).height();
+
+      var isInView = ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+
+      if (isInView){
+        document.getElementsByClassName(i)[0].style.bottom = '25px';
+        document.getElementsByClassName(i)[0].style.transition = 'all .5s';
+
+        var text = document.getElementsByClassName(i)[0].childNodes[1];
+        document.getElementsByClassName(i)[0].innerHTML = "&#x25CF;"
+        document.getElementsByClassName(i)[0].appendChild(text);
+        document.getElementsByClassName(i)[0].childNodes[1].style.color = "white";
+
+        break;
+      }
+      else {
+        document.getElementsByClassName(i)[0].style.bottom = '20px';
+        document.getElementsByClassName(i)[0].style.transition = 'all .5s';
+
+        var text = document.getElementsByClassName(i)[0].childNodes[1];
+        document.getElementsByClassName(i)[0].innerHTML = "&#x25CC;"
+        document.getElementsByClassName(i)[0].appendChild(text);
+        document.getElementsByClassName(i)[0].childNodes[1].style.color = "black";
+      }
+    }
+  });
+};
+
 //initialize key with random val
 function initKey() {
   var finalString;
@@ -669,22 +706,36 @@ function createQuestionTracker(i, populating) {
   var manager = document.getElementById('questionNums');
 
   var tracker = document.createElement('span');
-  tracker.id = "circle";
   tracker.innerHTML = "&#x25CC;"
-  tracker.style.fontSize = "65px"
+  tracker.style.fontSize = "60px";
+  tracker.style.position = "relative";
+  tracker.style.bottom = "20px";
+  tracker.style.color = "#58f";
 
   tracker.id = "question-tracker";
   tracker.className = i;
+  console.log(tracker, manager.childNodes[0]);
 
   $(tracker).hover(function(){
+    var text = tracker.childNodes[1];
+
     this.style.cursor = "pointer";
-    $(this).children()[0] = "hello;";
-    console.log(this.childNodes[0])
-    this.childNodes[1].style.color = "white";
+    this.innerHTML = "&#x25CF;";
+    this.appendChild(text);
+
+    this.style.bottom = '25px';
+    this.style.transition = 'all .5s';
+
+    tracker.childNodes[1].style.color = "white";
   }, function(){
-    this.childNodes[1].style.color = "black";
-    this.childNodes[0] = "&#x25CC;";
-    console.log(this.childNodes[0])
+    var text = tracker.childNodes[1];
+    this.innerHTML = "&#x25CC;";
+
+    this.style.bottom = '20px';
+    this.style.transition = 'all .5s';
+
+    this.appendChild(text);
+    tracker.childNodes[1].style.color = "black";
   });
 
   tracker.onclick = function() {
