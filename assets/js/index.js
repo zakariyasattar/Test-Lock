@@ -64,6 +64,10 @@ function signOut() {
 
 // for displayQuiz()
 window.onload = function() {
+  $("#create-exam").on('change', "input:radio", function() {
+    saveExam(false);
+  });
+
   $(window).scroll(function(){
     for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
       var waitTime = 3000;
