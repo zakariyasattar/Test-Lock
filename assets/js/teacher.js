@@ -203,12 +203,19 @@ function saveExam(alert) {
     var jsonArg1 = new Object();
     jsonArg1.title = children[3].value;
     jsonArg1.type = children[4].value;
-    jsonArg1.points = children[5].childNodes[1].value
+    jsonArg1.points = children[5].childNodes[1].value;
+    jsonArg1.checked = -1;
     jsonArg1.choices = [];
 
     if(jsonArg1.type == 'mc') {
+
       for(var j = 0; j < children[6].childNodes.length - 1; j++){
+        console.log(j, children[6].childNodes)
         jsonArg1.choices.push(children[6].childNodes[j].childNodes[2].value);
+
+        if(children[6].childNodes[j].childNodes[1].checked == true) {
+          jsonArg1.checked = j;
+        }
       }
     }
 
@@ -310,11 +317,12 @@ function populateExam(code, ref) {
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
+          console.log(i)
 
-          if(question.choices != undefined) {
+          if(question.choices != undefined && question.type != "matching") {
             createQuestion(true, Object.keys(question.choices).length);
             createQuestionTracker(i + 1, true);
-            console.log(localQuestions[i].childNodes);
+            console.log(localQuestions, i - 1)
 
             localQuestions[i].childNodes[3].value = question.title;
             localQuestions[i].childNodes[5].childNodes[1].value = question.points;
@@ -326,9 +334,15 @@ function populateExam(code, ref) {
               for(var j = 0; j < Object.keys(question.choices).length; j++){
                 if(question.choices[j].value != undefined){
                   localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
+                  if(j == question.checked) {
+                    localQuestions[i].childNodes[6].childNodes[j].childNodes[1].checked = true;
+                  }
                 }
                 else {
                   localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
+                  if(j == question.checked) {
+                    localQuestions[i].childNodes[6].childNodes[j].childNodes[1].checked = true;
+                  }
                 }
               }
             }
@@ -345,20 +359,22 @@ function populateExam(code, ref) {
                 localQuestions[i].childNodes[7].childNodes[2].checked = true;
               }
             }
+          }
+          else if(question.type == "matching") {
+            createQuestion(true, question.numBoxes);
+            createQuestionTracker(i + 1, true);
+            changeQuestionType(question.type, i);
 
-            else {
-              document.getElementsByClassName('matching')[i].childNodes[0].value = question.numBoxes;
-              for(var j = 0; j < question.numBoxes; j++) {
-                createMatchingElement(document.getElementsByClassName('matching-wrapper')[i], j + 1);
-              }
-
-              var localBoxes = document.getElementsByClassName('matchingbox');
-              for(var k = 0; k < localBoxes.length; k++) {
-                localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
-                localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
-              }
+            localQuestions[i].childNodes[0].value = question.numBoxes;
+            for(var j = 0; j < question.numBoxes; j++) {
+              createMatchingElement(localQuestions[i].childNodes[7], j + 1);
             }
 
+            var localBoxes = document.getElementsByClassName('matchingbox');
+            for(var k = 0; k < localBoxes.length; k++) {
+              localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
+              localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
+            }
           }
         }
       }
@@ -1228,23 +1244,6 @@ function mergeTime(left, right) {
   return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
 }
 
-// decide what to display based on selected value
-function examTypeReactor(value) {
-  switch(value) {
-    case 'partner':
-      document.getElementById('partner-chooser').style.display = "inline";
-      document.getElementById('group-chooser').style.display = "none";
-      break;
-    case 'group':
-      document.getElementById('group-chooser').style.display = "inline";
-      document.getElementById('partner-chooser').style.display = "none";
-      break;
-    default:
-      document.getElementById('partner-chooser').style.display = "none";
-      document.getElementById('group-chooser').style.display = "none";
-  }
-}
-
 // search and parse through exams based on value
 function searchExams() {
   var input, filter, ul, li, a, i, txtValue;
@@ -1448,6 +1447,7 @@ function restructureBoxes() {
 
 //function to dynamically change type of question
 function changeQuestionType(val, i) {
+  var plus = i + 1;
   if(val == "mc") {
     document.getElementsByClassName("mc")[i].style.display = "initial";
 
@@ -1474,7 +1474,7 @@ function changeQuestionType(val, i) {
       document.getElementsByClassName("matching")[i].style.display = "none";
     }
 
-    document.getElementById(i + 1).appendChild(createFreeResponse());
+    document.getElementById(plus).appendChild(createFreeResponse());
   }
   else if(val == "tf") {
     document.getElementsByClassName("mc")[i].style.display = "none";
@@ -1487,7 +1487,7 @@ function changeQuestionType(val, i) {
       document.getElementsByClassName("matching")[i].style.display = "none";
     }
 
-    document.getElementById(i + 1).appendChild(createTrueFalse());
+    document.getElementById(plus).appendChild(createTrueFalse());
   }
   else if(val == "matching") {
     document.getElementsByClassName("mc")[i].style.display = "none";
@@ -1499,8 +1499,7 @@ function changeQuestionType(val, i) {
     if(document.getElementsByClassName("tf")[i] != undefined) {
       document.getElementsByClassName("tf")[i].style.display = "none";
     }
-
-    document.getElementById(i + 1).appendChild(createMatching());
+    document.getElementById(plus).appendChild(createMatching());
   }
 }
 
@@ -1724,7 +1723,7 @@ function createQuestion(loading, numAnswerChoices) {
       swal("Failed!", "The Number You Provided Does Not Exist", "error");
     }
     else {
-      console.log("swapped");
+      saveExam(false);
     }
   });
 
@@ -1873,7 +1872,7 @@ function swapDiv(elem, numToSwap){
     elem.parentNode.insertBefore(elem, elem.parentNode.q);
     elem.parentNode.childNodes[4].remove();
     elem.parentNode.appendChild(document.createElement('hr'));
-    restructureQuestions(); saveExam();
+    restructureQuestions();
     return true;
   }
 }
@@ -1881,7 +1880,7 @@ function swapDiv(elem, numToSwap){
 
 // append new answer choice to question based on num
 function createNewOptionChoice(num) {
-  var val = document.getElementById(num).childNodes[5];
+  var val = document.getElementById(num).childNodes[6];
   val.childNodes[val.childNodes.length - 1].remove();
 
   var label = document.createElement('label');
@@ -1898,15 +1897,6 @@ function createNewOptionChoice(num) {
   answer_choice.id = "question-choice";
   answer_choice.type="text";
   answer_choice.placeholder = " Answer Choice...";
-
-  // if(val.childNodes.length % 4 == 0) {
-  //   for(var l in val.childNodes) {
-  //     if(val.childNodes[l].childNodes != undefined) {
-  //       console.log(val.childNodes[l].style.width = "25%";
-  //     }
-  //   }
-  // }
-
 
   var answer_choice = document.createElement('input');
   answer_choice.className = "option";
