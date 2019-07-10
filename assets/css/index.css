@@ -276,27 +276,12 @@ body {
  }
 
  #question-manager {
-   float: right;
-   border-left: 1px solid white;
    position: fixed;
-
-   right: 45px;
-   top: 35vh;
-   padding-left: 10px;
-   padding-right: 10px;
-   height: 300px;
+   bottom: 0;
+   width: 100%;
 
    background: #eeee;
-   border-radius: 5px;
-   overflow: scroll;
-   -ms-overflow-style: none;
-   scrollbar-width: none;
  }
-
- #question-manager::-webkit-scrollbar {
-   display: none;
- }
-
 
  #circle {
    font-size: 60px;
@@ -309,8 +294,13 @@ body {
  #text {
    z-index: 1;
    position: relative;
-   bottom: 5px;
    color: black;
+   bottom: 15px;
+   right: 24px;
+
+   font-size: 15px;
+   width: 10px;
+   display: inline;
  }
 
  @keyframes click-wave {

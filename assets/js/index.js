@@ -324,7 +324,7 @@ function populateExam(code, ref) {
             }
           }
 
-          else {
+          else if(question.type == "matching"){
             document.getElementsByClassName('matching')[i].childNodes[0].value = question.numBoxes;
             for(var j = 0; j < question.numBoxes; j++) {
               createMatchingElement(document.getElementsByClassName('matching-wrapper')[i], j + 1);
@@ -666,37 +666,37 @@ function createQuestionTracker(i, populating) {
   if(i == 2 && !populating) {
     createQuestionTracker(1, false);
   }
-  var manager = document.getElementById('question-manager');
-  var tracker = document.createElement('div');
+  var manager = document.getElementById('questionNums');
+
+  var tracker = document.createElement('span');
+  tracker.id = "circle";
+  tracker.innerHTML = "&#x25CC;"
+  tracker.style.fontSize = "65px"
+
   tracker.id = "question-tracker";
   tracker.className = i;
 
   $(tracker).hover(function(){
     this.style.cursor = "pointer";
-    $(this).children()[0].innerHTML = "&#x25CF;";
-    this.childNodes[1].childNodes[0].style.color = "white";
+    $(this).children()[0] = "hello;";
+    console.log(this.childNodes[0])
+    this.childNodes[1].style.color = "white";
   }, function(){
-    this.childNodes[1].childNodes[0].style.color = "black";
-    $(this).children()[0].innerHTML = "&#x25CC;";
+    this.childNodes[1].style.color = "black";
+    this.childNodes[0] = "&#x25CC;";
+    console.log(this.childNodes[0])
   });
 
   tracker.onclick = function() {
     document.getElementById(i).scrollIntoView({block: "center"});
   }
 
-  var circle = document.createElement('div');
-  circle.id = "circle";
-  circle.innerHTML = "&#x25CC;"
-
   var center = document.createElement('center');
   var text = document.createElement('div');
   text.id = "text";
   text.innerHTML = i;
 
-  center.appendChild(text);
-
-  tracker.appendChild(circle);
-  tracker.appendChild(center);
+  tracker.appendChild(text);
 
   manager.appendChild(tracker);
   manager.scrollTop = (manager.clientHeight + manager.clientHeight);
