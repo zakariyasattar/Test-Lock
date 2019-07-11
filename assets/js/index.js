@@ -1,4 +1,4 @@
-var examCodes = [], students = [];
+var examCodes = [], students = [], done = [];
 var stopEnter = false;
 var key = initKey();
 
@@ -65,7 +65,13 @@ function signOut() {
 // for displayQuiz()
 window.onload = function() {
   $("#create-exam").on('change', "input:radio", function() {
-    saveExam(false);
+    done[(this.parentNode.parentNode.parentNode.id - 1)] = 1;
+    // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
+    //
+
+    if(done.indexOf(0) == -1) {
+      document.getElementById('submit-exam').disabled = false;
+    }
   });
 
   $(window).scroll(function(){
@@ -95,7 +101,6 @@ window.onload = function() {
           document.getElementsByClassName(i)[0].style.transition = 'all .5s';
         }, waitTime);
 
-        break;
       }
       else {
         document.getElementsByClassName(i)[0].style.bottom = '20px';
@@ -340,6 +345,7 @@ function populateExam(code, ref) {
         document.getElementsByClassName('time')[0].innerHTML = val.examTotalMins;
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
+          done.push(0);
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
@@ -782,6 +788,11 @@ function toggleFullScreen() {
 //function to end test
 function endTest() {
   window.location.href = window.location.href;
+}
+
+// submit code - reroute!
+function submitExam() {
+  console.log('submitted');
 }
 
 //code to call when document leaves full screen
