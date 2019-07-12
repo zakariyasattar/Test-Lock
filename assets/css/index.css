@@ -297,6 +297,23 @@ body {
    display: inline;
  }
 
+ #submit-exam-disabled {
+   float: right;
+   margin: 10px;
+   margin-right: 40px;
+   font-size: 18px;
+
+   width: 250px;
+   height: 30px;
+
+   border-radius: 5px;
+   border: 1px solid black;
+ }
+
+ #submit-exam-disabled:hover {
+   cursor: not-allowed;
+ }
+
  #submit-exam {
    float: right;
    margin: 10px;

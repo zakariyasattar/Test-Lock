@@ -67,16 +67,15 @@ window.onload = function() {
   $("#create-exam").on('change', "input:radio", function() {
     done[(this.parentNode.parentNode.parentNode.id - 1)] = 1;
     // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
-    //
 
-    if(done.indexOf(0) == -1) {
-      document.getElementById('submit-exam').disabled = false;
+    if(done.indexOf('0') == -1) {
+      document.getElementById('submit-exam').style.display = 'initial';
+      document.getElementById('submit-exam-disabled').style.display = "none";
     }
   });
 
   $(window).scroll(function(){
     for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
-      var waitTime = 3000;
       var elem = document.getElementById(i);
       var docViewTop = $(window).scrollTop();
       var docViewBottom = docViewTop + $(window).height();
@@ -99,7 +98,7 @@ window.onload = function() {
         setTimeout(function(){
           document.getElementsByClassName(i)[0].style.bottom = '20px';
           document.getElementsByClassName(i)[0].style.transition = 'all .5s';
-        }, waitTime);
+        }, 3000);
 
       }
       else {
@@ -317,7 +316,6 @@ function displayQuiz() {
 
   var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
   var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-  console.log(plaintext)
 
   document.getElementById('main').style.display = "none";
   document.getElementById('navigation').style.display = "none";
@@ -345,7 +343,7 @@ function populateExam(code, ref) {
         document.getElementsByClassName('time')[0].innerHTML = val.examTotalMins;
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
-          done.push(0);
+          done.push(1);
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
@@ -359,7 +357,6 @@ function populateExam(code, ref) {
 
           if(question.type == "mc") {
             for(var j = 0; j < Object.keys(question.choices).length; j++){
-              console.log(localQuestions[i].childNodes);
               if(question.choices[j].value != undefined){
                 localQuestions[i].childNodes[3].childNodes[j].childNodes[1].innerHTML = (question.choices[j].value);
               }
@@ -370,7 +367,6 @@ function populateExam(code, ref) {
           }
 
           else if(question.type == "tf") {
-            console.log(localQuestions[i].childNodes);
             if(question.choices[0] == 'true') {
               localQuestions[i].childNodes[4].childNodes[0].checked = true;
             }
@@ -733,7 +729,6 @@ function createQuestionTracker(i, populating) {
 
   tracker.id = "question-tracker";
   tracker.className = i;
-  console.log(tracker, manager.childNodes[0]);
 
   $(tracker).hover(function(){
     var text = tracker.childNodes[1];

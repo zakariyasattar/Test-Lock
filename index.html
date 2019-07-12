@@ -146,10 +146,12 @@
             <div id="question-manager">
               <center>
                 <div id="questionNums">
-                  <button disabled id="submit-exam" onclick="submitExam()">
+                  <button style="display: none" id="submit-exam" onclick="submitExam()">
                     Submit Exam
                     <span style="position: relative; left: 20px; top: 2px;" class="glyphicon glyphicon-hand-right"></span>
-                  </button>   
+                  </button>
+
+                  <button id="submit-exam-disabled" disabled>Submit Exam <span style="position: relative; left: 20px; top: 2px;" class="glyphicon glyphicon-hand-right"></span></button>
                 </div>
               </center>
 
