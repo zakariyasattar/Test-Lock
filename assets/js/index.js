@@ -1,6 +1,7 @@
 var examCodes = [], students = [], done = [];
 var stopEnter = false;
 var key = initKey();
+var timer = 0;
 
 // var data;
 // 	$.ajax({
@@ -58,7 +59,7 @@ function onSignIn(googleUser) {
 function signOut() {
   var auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
-    localStorage.removeItem('userInfo')
+    localStorage.removeItem('userInfo');
   });
 }
 
@@ -67,16 +68,15 @@ window.onload = function() {
   $("#create-exam").on('change', "input:radio", function() {
     done[(this.parentNode.parentNode.parentNode.id - 1)] = 1;
     // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
-    //
 
-    if(done.indexOf(0) == -1) {
-      document.getElementById('submit-exam').disabled = false;
+    if(done.indexOf('0') == -1) {
+      document.getElementById('submit-exam').style.display = 'initial';
+      document.getElementById('submit-exam-disabled').style.display = "none";
     }
   });
 
   $(window).scroll(function(){
     for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
-      var waitTime = 3000;
       var elem = document.getElementById(i);
       var docViewTop = $(window).scrollTop();
       var docViewBottom = docViewTop + $(window).height();
@@ -99,7 +99,7 @@ window.onload = function() {
         setTimeout(function(){
           document.getElementsByClassName(i)[0].style.bottom = '20px';
           document.getElementsByClassName(i)[0].style.transition = 'all .5s';
-        }, waitTime);
+        }, 3000);
 
       }
       else {
@@ -317,7 +317,6 @@ function displayQuiz() {
 
   var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
   var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-  console.log(plaintext)
 
   document.getElementById('main').style.display = "none";
   document.getElementById('navigation').style.display = "none";
@@ -326,7 +325,8 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  setInterval(function(){ timer++; }, 60000);
+  // toggleFullScreen();
 }
 
 //pull and populate exam
@@ -345,7 +345,7 @@ function populateExam(code, ref) {
         document.getElementsByClassName('time')[0].innerHTML = val.examTotalMins;
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
-          done.push(0);
+          done.push(1);
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
@@ -359,7 +359,6 @@ function populateExam(code, ref) {
 
           if(question.type == "mc") {
             for(var j = 0; j < Object.keys(question.choices).length; j++){
-              console.log(localQuestions[i].childNodes);
               if(question.choices[j].value != undefined){
                 localQuestions[i].childNodes[3].childNodes[j].childNodes[1].innerHTML = (question.choices[j].value);
               }
@@ -370,7 +369,6 @@ function populateExam(code, ref) {
           }
 
           else if(question.type == "tf") {
-            console.log(localQuestions[i].childNodes);
             if(question.choices[0] == 'true') {
               localQuestions[i].childNodes[4].childNodes[0].checked = true;
             }
@@ -461,6 +459,7 @@ function changeQuestionType(val, i) {
 function createTrueFalse() {
   var label = document.createElement('label');
   label.id = "label";
+  label.className = "tf";
 
   var true_input = document.createElement('input');
   true_input.style.outline = "none";
@@ -733,7 +732,6 @@ function createQuestionTracker(i, populating) {
 
   tracker.id = "question-tracker";
   tracker.className = i;
-  console.log(tracker, manager.childNodes[0]);
 
   $(tracker).hover(function(){
     var text = tracker.childNodes[1];
@@ -790,9 +788,276 @@ function endTest() {
   window.location.href = window.location.href;
 }
 
+function getChecked(question) {
+  console.log(question)
+  var type = question.childNodes[Object.keys(question.childNodes)[question.childNodes.length - 1]];
+
+  if(type.className == "mc") {
+    for(var i = 0; i < type.childNodes.length; i++) {
+      if(type.childNodes[i].childNodes[0].checked) {
+        return i;
+      }
+    }
+  }
+  else if(type.className == "tf") {
+    if(type.childNodes[0].checked) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+  else if(type.className == "matching"){
+    type = "matching";
+    return 15;
+  }
+  else {
+    return "fr";
+  }
+}
+
 // submit code - reroute!
 function submitExam() {
-  console.log('submitted');
+  var student_answers = [];
+
+  for(var i = 0; i < document.getElementsByClassName('question').length; i++) {
+    var question = document.getElementsByClassName('question')[i];
+    var checked = getChecked(question);
+
+    student_answers.push(checked);
+  }
+
+  localStorage.setItem("student_answers", JSON.stringify(student_answers));
+
+
+  document.getElementById('display-exam').style.display = "none";
+  document.getElementById('result').style.display = "initial";
+}
+
+displayResults();
+
+// function to display Results
+function displayResults() {
+  var answers = JSON.parse(localStorage.getItem('student_answers'));
+  var dbAnswers;
+
+  firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/YQIMW").once('value').then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      dbAnswers = childSnapshot.toJSON();
+    });
+    var total = 0;
+    console.log(answers)
+
+    for(var i = 0; i < answers.length; i++) {
+      if(dbAnswers.questions[i].type != "tf") {
+        if(answers[i].split(";")[1] == dbAnswers.questions[i].checked) {
+          total += parseInt(dbAnswers.questions[i].points);
+          createCorrectBox(dbAnswers.questions[i].choices[answers[i].split(";")[1]], dbAnswers.questions[i].choices[dbAnswers.questions[i].checked], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        }
+        else {
+          createIncorrectBox(dbAnswers.questions[i].choices[answers[i].split(";")[1]], dbAnswers.questions[i].choices[dbAnswers.questions[i].checked], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        }
+      }
+      else {
+        if(answers[i].split(";")[1] == dbAnswers.questions[i].choices[0]) {
+          total += parseInt(dbAnswers.questions[i].points);
+          createCorrectTfBox(answers[i].split(";")[1], dbAnswers.questions[i].choices[0], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        }
+        else {
+          createIncorrectTfBox(answers[i].split(";")[1], dbAnswers.questions[i].choices[0], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        }
+      }
+    }
+
+    firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/YQIMW/responses").push(localStorage.getItem('StudentName') + ";" + (total / dbAnswers.examTotalPoints) * 100 + ";" + timer);
+
+    document.getElementById('score').innerHTML = (total / dbAnswers.examTotalPoints) * 100 + "%";
+    document.getElementById('score-num').innerHTML = (total + " / " + dbAnswers.examTotalPoints);
+
+  });
+
+
+   var result = document.getElementById('result');
+}
+
+function createCorrectBox(studentAnswer, correctAnswer, title, num, points) {
+  var dataDiv = document.getElementById('question-data');
+
+  var box = document.createElement('div');
+  box.style.width = "90vw";
+  box.style.marginTop = "10px";
+  box.style.border = "1px solid black";
+  box.style.padding = "15px";
+  box.style.height = "50px";
+  box.style.background = "#84f277";
+  box.style.borderRadius = "6px";
+  box.className = "questionBox";
+
+  var name = document.createElement('span');
+  name.innerHTML = parseInt(num) + 1 + " | " + title;
+  name.style.float = "left";
+  name.style.paddingLeft = "10px";
+
+  var sAnswer = document.createElement('span');
+  sAnswer.innerHTML = "You Answered: " + studentAnswer;
+  sAnswer.style.float = "right";
+  sAnswer.style.paddingRight = "20px";
+
+  var cAnswer = document.createElement('span');
+  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
+  cAnswer.style.float = "right";
+  cAnswer.style.paddingRight = "20px";
+
+  var pointsAwarded = document.createElement('span');
+  pointsAwarded.innerHTML = "You Received " + points + " / " + points + " Points For This Question!"
+  pointsAwarded.style.float = "right";
+  pointsAwarded.style.paddingRight = "20px";
+
+  box.appendChild(name);
+  box.appendChild(pointsAwarded);
+  box.appendChild(cAnswer);
+  box.appendChild(sAnswer);
+
+  dataDiv.appendChild(box);
+}
+
+function createIncorrectBox(studentAnswer, correctAnswer, title, num, points) {
+  var dataDiv = document.getElementById('question-data');
+
+  var box = document.createElement('div');
+  box.style.width = "90vw";
+  box.style.marginTop = "10px";
+  box.style.border = "1px solid black";
+  box.style.padding = "15px";
+  box.style.height = "50px";
+  box.style.background = "#cc2d2d";
+  box.style.color = "white";
+  box.style.borderRadius = "6px";
+  box.className = "questionBox";
+
+  var name = document.createElement('span');
+  name.innerHTML = parseInt(num) + 1 + " | " + title;
+  name.style.float = "left";
+  name.style.paddingLeft = "10px";
+
+  var sAnswer = document.createElement('span');
+  sAnswer.innerHTML = "You Answered: " + studentAnswer;
+  sAnswer.style.float = "right";
+  sAnswer.style.paddingRight = "20px";
+
+  var cAnswer = document.createElement('span');
+  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
+  cAnswer.style.float = "right";
+  cAnswer.style.paddingRight = "20px";
+
+  var pointsAwarded = document.createElement('span');
+  pointsAwarded.innerHTML = "You Received " + 0 + " / " + points + " Points For This Question"
+  pointsAwarded.style.float = "right";
+  pointsAwarded.style.paddingRight = "20px";
+
+  box.appendChild(name);
+  box.appendChild(pointsAwarded);
+  box.appendChild(cAnswer);
+  box.appendChild(sAnswer);
+
+  dataDiv.appendChild(box);
+}
+
+function createCorrectTfBox(studentAnswer, correctAnswer, title, num, points) {
+  var dataDiv = document.getElementById('question-data');
+
+  var box = document.createElement('div');
+  box.style.width = "90vw";
+  box.style.marginTop = "10px";
+  box.style.border = "1px solid black";
+  box.style.padding = "15px";
+  box.style.height = "50px";
+  box.style.background = "#84f277";
+  box.style.borderRadius = "6px";
+  box.className = "questionBox";
+
+  var name = document.createElement('span');
+  name.innerHTML = parseInt(num) + 1 + " | " + title;
+  name.style.float = "left";
+  name.style.paddingLeft = "10px";
+
+  var sAnswer = document.createElement('span');
+  if(studentAnswer == 1) {
+    studentAnswer = "true";
+  }
+  else {
+    studentAnswer = "false";
+  }
+
+  sAnswer.innerHTML = "You Answered: " + studentAnswer;
+  sAnswer.style.float = "right";
+  sAnswer.style.paddingRight = "20px";
+
+  var cAnswer = document.createElement('span');
+  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
+  cAnswer.style.float = "right";
+  cAnswer.style.paddingRight = "20px";
+
+  var pointsAwarded = document.createElement('span');
+  pointsAwarded.innerHTML = "You Received " + points + " / " + points + " Points For This Question!"
+  pointsAwarded.style.float = "right";
+  pointsAwarded.style.paddingRight = "20px";
+
+  box.appendChild(name);
+  box.appendChild(pointsAwarded);
+  box.appendChild(cAnswer);
+  box.appendChild(sAnswer);
+
+  dataDiv.appendChild(box);
+}
+
+function createIncorrectTfBox(studentAnswer, correctAnswer, title, num, points) {
+  var dataDiv = document.getElementById('question-data');
+
+  var box = document.createElement('div');
+  box.style.width = "90vw";
+  box.style.marginTop = "10px";
+  box.style.border = "1px solid black";
+  box.style.padding = "15px";
+  box.style.height = "50px";
+  box.style.background = "#cc2d2d";
+  box.style.color = "white";
+  box.style.borderRadius = "6px";
+  box.className = "questionBox";
+
+  var name = document.createElement('span');
+  name.innerHTML = parseInt(num) + 1 + " | " + title;
+  name.style.float = "left";
+  name.style.paddingLeft = "10px";
+
+  var sAnswer = document.createElement('span');
+  if(studentAnswer == 1) {
+    studentAnswer = "true";
+  }
+  else {
+    studentAnswer = "false";
+  }
+
+  sAnswer.innerHTML = "You Answered: " + studentAnswer;
+  sAnswer.style.float = "right";
+  sAnswer.style.paddingRight = "20px";
+
+  var cAnswer = document.createElement('span');
+  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
+  cAnswer.style.float = "right";
+  cAnswer.style.paddingRight = "20px";
+
+  var pointsAwarded = document.createElement('span');
+  pointsAwarded.innerHTML = "You Received " + 0 + " / " + points + " Points For This Question"
+  pointsAwarded.style.float = "right";
+  pointsAwarded.style.paddingRight = "20px";
+
+  box.appendChild(name);
+  box.appendChild(pointsAwarded);
+  box.appendChild(cAnswer);
+  box.appendChild(sAnswer);
+
+  dataDiv.appendChild(box);
 }
 
 //code to call when document leaves full screen

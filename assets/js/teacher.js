@@ -9,6 +9,7 @@ var examCodesTeachers = [];
 var arr = [];
 var exams = [];
 var examData = [];
+var totalPoints = 0;
 var autoSaveCounter = 0;
 
 //when page loads, populateDashboard()
@@ -186,7 +187,7 @@ function saveExam(alert) {
     examCode: document.getElementById('exam-code').innerHTML,
     examTitle: document.getElementById('nameOfExam').value,
     lastSaved: newSave,
-    examTotalPoints: document.getElementsByClassName('points')[0].value,
+    examTotalPoints: totalPoints,
     examTotalMins: document.getElementsByClassName('time')[0].value,
     examDate: document.getElementById('date').value,
     examDescription: document.getElementById('description').value,
@@ -211,6 +212,7 @@ function saveExam(alert) {
 
       for(var j = 0; j < children[6].childNodes.length - 1; j++){
         jsonArg1.choices.push(children[6].childNodes[j].childNodes[2].value);
+        console.log(children[6].childNodes[j].childNodes[1]);
 
         if(children[6].childNodes[j].childNodes[1].checked == true) {
           jsonArg1.checked = j;
@@ -1774,6 +1776,10 @@ function createQuestion(loading, numAnswerChoices) {
   numPoints.type = "text";
   numPoints.id = "numPoints";
   numPoints.placeholder = "Ex: 4";
+
+  numPoints.onblur = function() {
+    totalPoints += parseInt(this.value);
+  }
 
   var finishingSpan =  document.createElement('span');
   finishingSpan.innerHTML = " points)";

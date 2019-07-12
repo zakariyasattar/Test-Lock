@@ -70,7 +70,7 @@
         </div>
     </nav>
 
-    <div id="main">
+    <div id="main" style="display: none">
       <!-- Welcome Header Text -->
       <h1 id="welcome-header">Welcome to Drip!</h1>
 
@@ -148,16 +148,28 @@
             <div id="question-manager">
               <center>
                 <div id="questionNums">
-                  <button disabled id="submit-exam" onclick="submitExam()">
+                  <button style="display: none" id="submit-exam" onclick="submitExam()">
                     Submit Exam
                     <span style="position: relative; left: 20px; top: 2px;" class="glyphicon glyphicon-hand-right"></span>
                   </button>
+
+                  <button id="submit-exam-disabled" disabled>Submit Exam <span style="position: relative; left: 20px; top: 2px;" class="glyphicon glyphicon-hand-right"></span></button>
                 </div>
               </center>
 
             </div>
           </div>
       </div>
+    </div>
+
+    <div id="result">
+      <center>
+        <h1 id="score"></h1>
+        <span style="font-size: 20px;" id="score-num"></span>
+        <hr></hr>
+
+        <div id="question-data"></div>
+      </center>
     </div>
 
     <div style="display: none; background: purple;" id="pong">
