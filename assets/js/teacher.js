@@ -258,9 +258,6 @@ function saveExam(alert) {
 }
 
 function createQuestionTracker(i, populating) {
-  if(i == 2 && !populating) {
-    createQuestionTracker(1, false);
-  }
   var manager = document.getElementById('question-manager');
   var tracker = document.createElement('div');
   tracker.id = "question-tracker";
@@ -323,7 +320,6 @@ function populateExam(code, ref) {
 
             localQuestions[i].childNodes[3].value = question.title;
             localQuestions[i].childNodes[5].childNodes[1].value = question.points;
-            console.log(localQuestions[i].childNodes);
             localQuestions[i].childNodes[4].value = question.type;
 
             changeQuestionType(question.type, i, 'mc');
@@ -363,6 +359,10 @@ function populateExam(code, ref) {
             createQuestion(true, question.numBoxes);
             createQuestionTracker(i + 1, true);
             changeQuestionType(question.type, i, "mc");
+
+            localQuestions[i].childNodes[3].value = question.title;
+            localQuestions[i].childNodes[5].childNodes[1].value = question.points;
+            localQuestions[i].childNodes[4].value = question.type;
 
             localQuestions[i].childNodes[0].value = question.numBoxes;
             for(var j = 0; j < question.numBoxes; j++) {
@@ -1431,6 +1431,7 @@ function restructureQuestions() {
     var question = questions[i];
 
     question.childNodes[0].innerHTML = i + 1 + ". "
+    question.id = i + 1;
   }
 }
 
@@ -1531,141 +1532,148 @@ function createFreeResponse() {
 
 // function to create matching boxes
 function createMatching(){
-  // var matchingWrapper = document.createElement('div');
-  // matchingWrapper.className = "matching-wrapper";
+  var matchingWrapper = document.createElement('div');
+  matchingWrapper.className = "matching-wrapper";
 
   var matching = document.createElement('div');
   matching.className = 'matching';
 
-  // var hr = document.createElement('hr');
-  // hr.style.width = '67%';
-  //
-  // var questions = document.createElement('span');
-  // questions.innerHTML = 'Questions';
-  // questions.style.marginLeft = "1.5vw";
-  //
-  // var results = document.createElement('span');
-  // results.innerHTML = 'Results (Will Be Randomized)'
-  // results.style.marginLeft = "22.5vw";
+  var hr = document.createElement('hr');
+  hr.style.width = '67%';
 
-  // var numElements = document.createElement('input');
-  // numElements.type = 'textbox';
-  // numElements.placeholder = '# Of Elements...';
-  // numElements.style.borderRadius = "5px";
-  // numElements.style.padding = "5px";
-  // numElements.style.border= "1px solid black";
-  // numElements.style.fontSize = "15px";
-  //
-  // numElements.onkeyup = function() {
-  //   $(matchingWrapper).empty();
-  //
-  //   if(this.value <= 20) {
-  //     for(var i = 0; i < this.value; i++) {
-  //       createMatchingElement(matchingWrapper, i + 1);
-  //     }
-  //   }
-  //   else {
-  //     this.value = "";
-  //
-  //     var alert = document.createElement('div');
-  //     alert.innerHTML = "20 Elements Max!"
-  //     alert.style.textAlign = "center";
-  //     alert.style.width = "100%";
-  //     alert.style.position = "fixed";
-  //     alert.style.zIndex = "100000";
-  //     alert.style.top = "0";
-  //     alert.className = "alert alert-danger";
-  //     alert.role = "alert";
-  //
-  //     document.getElementById('create-exam').appendChild(document.createElement('center').appendChild(alert));
-  //
-  //     setTimeout(function(){ document.getElementsByClassName('alert')[0].remove(); }, 2500);
-  //   }
-  // }
-  //
-  // var newBox = document.createElement('button');
-  // newBox.id = "newBox";
-  // newBox.innerHTML = "New Element!";
-  //
-  // newBox.onclick = function() {
-  //   createMatchingElement(matchingWrapper, document.getElementsByClassName('matchingbox').length + 1);
-  //   saveExam(false);
-  // }
-  //
-  // matching.appendChild(numElements);
-  // matching.appendChild(hr);
-  // matching.appendChild(questions); matching.appendChild(results);
-  // matching.appendChild(matchingWrapper);
-  //
-  // matching.appendChild(document.createElement('br'));
-  // matching.appendChild(newBox);
+  var questions = document.createElement('span');
+  questions.innerHTML = 'Questions';
+  questions.style.marginLeft = "1.5vw";
+
+  var results = document.createElement('span');
+  results.innerHTML = 'Results (Will Be Randomized)'
+  results.style.marginLeft = "22.5vw";
+
+  var numElements = document.createElement('input');
+  numElements.type = 'textbox';
+  numElements.placeholder = '# Of Elements...';
+  numElements.style.borderRadius = "5px";
+  numElements.style.padding = "5px";
+  numElements.style.border= "1px solid black";
+  numElements.style.fontSize = "15px";
+
+  numElements.onkeyup = function() {
+    $(matchingWrapper).empty();
+
+    if(this.value <= 20) {
+      for(var i = 0; i < this.value; i++) {
+        createMatchingElement(matchingWrapper, i + 1);
+      }
+    }
+    else {
+      this.value = "";
+
+      var alert = document.createElement('div');
+      alert.innerHTML = "20 Elements Max!"
+      alert.style.textAlign = "center";
+      alert.style.width = "100%";
+      alert.style.position = "fixed";
+      alert.style.zIndex = "100000";
+      alert.style.top = "0";
+      alert.className = "alert alert-danger";
+      alert.role = "alert";
+
+      document.getElementById('create-exam').appendChild(document.createElement('center').appendChild(alert));
+
+      setTimeout(function(){ document.getElementsByClassName('alert')[0].remove(); }, 2500);
+    }
+  }
+
+  var newBox = document.createElement('button');
+  newBox.id = "newBox";
+  newBox.innerHTML = "New Element!";
+
+  newBox.onclick = function() {
+    createMatchingElement(matchingWrapper, document.getElementsByClassName('matchingbox').length + 1);
+    saveExam(false);
+  }
+
+  matching.appendChild(numElements);
+  matching.appendChild(hr);
+  matching.appendChild(questions); matching.appendChild(results);
+  matching.appendChild(matchingWrapper);
+
+  matching.appendChild(document.createElement('br'));
+  matching.appendChild(newBox);
 
   return matching;
 }
 
 // function to create matching Elements
-// function createMatchingElement(div, i) {
-//   var box = document.createElement('div');
-//   box.className = 'matchingbox';
-//
-//   var labelTrash = document.createElement('span');
-//   labelTrash.className = "glyphicon glyphicon-minus";
-//   labelTrash.style.display = "none";
-//   labelTrash.style.marginRight = "5px";
-//   labelTrash.style.color = "#f25555";
-//
-//   $(labelTrash).click(function(){
-//     this.parentNode.remove();
-//     saveExam(false);
-//     restructureBoxes();
-//   });
-//
-//   $(box).hover(function(){
-//     this.childNodes[0].style.display = "initial";
-//   }, function(){
-//     this.childNodes[0].style.display = "none";
-//   });
-//
-//   $(labelTrash).hover(function(){
-//     this.style.cursor="pointer";
-//     this.style.color = "#f25555";
-//   }, function(){
-//
-//   });
-//
-//   box.appendChild(labelTrash)
-//
-//   var num = document.createElement('span');
-//   num.innerHTML = i + ".";
-//   num.style.marginRight = "10px";
-//   num.style.fontSize = "15px";
-//
-//   box.appendChild(num);
-//
-//   var input = document.createElement('input');
-//   input.type = 'textbox';
-//   input.style.marginTop = "20px";
-//   input.style.textAlign = "center";
-//   input.placeholder = "1 + 1";
-//   input.id = 'result';
-//
-//   var arrow = document.createElement('span');
-//   arrow.className = 'glyphicon glyphicon-arrow-right';
-//   arrow.style.paddingLeft = '5vw';
-//
-//   var result_input = document.createElement('input');
-//   result_input.type = 'textbox';
-//   result_input.style.marginLeft = "5vw";
-//   result_input.style.textAlign = "center";
-//   result_input.placeholder = "2";
-//   result_input.id = 'result';
-//
-//   box.appendChild(input);
-//   box.appendChild(arrow);
-//   box.appendChild(result_input);
-//   div.appendChild(box);
-// }
+function createMatchingElement(div, i) {
+  var box = document.createElement('div');
+  box.className = 'matchingbox';
 
+  var labelTrash = document.createElement('span');
+  labelTrash.className = "glyphicon glyphicon-minus";
+  labelTrash.style.display = "none";
+  labelTrash.style.marginRight = "5px";
+  labelTrash.style.color = "#f25555";
+
+  $(labelTrash).click(function(){
+    this.parentNode.remove();
+    saveExam(false);
+    restructureBoxes();
+  });
+
+  $(box).hover(function(){
+    this.childNodes[0].style.display = "initial";
+  }, function(){
+    this.childNodes[0].style.display = "none";
+  });
+
+  $(labelTrash).hover(function(){
+    this.style.cursor="pointer";
+    this.style.color = "#f25555";
+  }, function(){
+
+  });
+
+  box.appendChild(labelTrash)
+
+  var num = document.createElement('span');
+  num.innerHTML = i + ".";
+  num.style.marginRight = "10px";
+  num.style.fontSize = "15px";
+
+  box.appendChild(num);
+
+  var input = document.createElement('input');
+  input.type = 'textbox';
+  input.style.marginTop = "20px";
+  input.style.textAlign = "center";
+  input.placeholder = "1 + 1";
+  input.id = 'result';
+
+  var arrow = document.createElement('span');
+  arrow.className = 'glyphicon glyphicon-arrow-right';
+  arrow.style.paddingLeft = '5vw';
+
+  var result_input = document.createElement('input');
+  result_input.type = 'textbox';
+  result_input.style.marginLeft = "5vw";
+  result_input.style.textAlign = "center";
+  result_input.placeholder = "2";
+  result_input.id = 'result';
+
+  box.appendChild(input);
+  box.appendChild(arrow);
+  box.appendChild(result_input);
+  div.appendChild(box);
+}
+
+function restructureManager() {
+  $('#question-manager').empty();
+
+  for(var i = 0; i < document.getElementsByClassName('question').length; i++) {
+    createQuestionTracker(i + 1, false);
+  }
+}
 
 // function to create HTML question
 function createQuestion(loading, numAnswerChoices) {
@@ -1680,6 +1688,7 @@ function createQuestion(loading, numAnswerChoices) {
   num.style.color = "#97a5aa";
 
   var hr = document.createElement('hr');
+  var br = document.createElement('br');
 
   var trash = document.createElement('span');
   trash.className = "glyphicon glyphicon-trash";
@@ -1703,8 +1712,8 @@ function createQuestion(loading, numAnswerChoices) {
   });
 
   $(trash).click(function(){
-    question.remove(); hr.remove();
-    restructureQuestions(); saveExam();
+    question.remove(); hr.remove(); br.remove();
+    restructureManager(); restructureQuestions(); saveExam();
   });
 
   $(question).hover(function(){
@@ -1834,7 +1843,7 @@ function createQuestion(loading, numAnswerChoices) {
   question.appendChild(answer_choices);
   exam.appendChild(question);
 
-  exam.appendChild(document.createElement('br'));
+  exam.appendChild(br);
   exam.appendChild(hr);
 
 
@@ -1855,6 +1864,7 @@ function swapDiv(elem, numToSwap){
     elem.parentNode.insertBefore(elem, elem.parentNode.q);
     console.log(elem.parentNode.childNodes);
     elem.parentNode.childNodes[4].remove();
+    console.log(elem.parentNode.childNodes);
     elem.parentNode.appendChild(document.createElement('hr'));
     restructureQuestions();
     return true;
@@ -2017,11 +2027,15 @@ function populateDashboard() {
           if (!arr.hasOwnProperty(key)) continue;
           var obj = arr[key];
           for (var prop in obj) {
+            // skip loop if the property is from prototype
+            if(!obj.hasOwnProperty(prop)) continue;
 
-              // skip loop if the property is from prototype
-              if(!obj.hasOwnProperty(prop)) continue;
-
+            if(obj[prop].Exams[Object.keys(obj[prop].Exams)[0]] == "no_exams") {
+              createClassBox(prop, Object.keys(obj[prop].Students).length, 0);
+            }
+            else {
               createClassBox(prop, Object.keys(obj[prop].Students).length, Object.keys(obj[prop].Exams).length);
+            }
           }
         }
       }
