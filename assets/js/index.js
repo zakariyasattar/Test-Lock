@@ -824,7 +824,7 @@ function submitExam() {
     var question = document.getElementsByClassName('question')[i];
     var checked = getChecked(question);
 
-    student_answers.push(checked);
+    student_answers.push(i + ";" + checked);
   }
 
   localStorage.setItem("student_answers", JSON.stringify(student_answers));
