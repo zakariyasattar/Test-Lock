@@ -9,7 +9,7 @@ var examCodesTeachers = [];
 var arr = [];
 var exams = [];
 var examData = [];
-var totalPoints = 0;
+var totalPoints;
 var autoSaveCounter = 0;
 
 //when page loads, populateDashboard()
@@ -171,6 +171,7 @@ function saveExam(alert) {
   }
 
   document.getElementById('last-saved').innerHTML = "Last Sync: " + newSave;
+  document.getElementsByClassName('points')[0].value = getAllPoints();
 
   if(document.getElementById('nameOfExam').value != "") {
     firebase.database().ref("exam-codes").once('value').then(function(snapshot) {
@@ -187,7 +188,7 @@ function saveExam(alert) {
     examCode: document.getElementById('exam-code').innerHTML,
     examTitle: document.getElementById('nameOfExam').value,
     lastSaved: newSave,
-    examTotalPoints: totalPoints,
+    examTotalPoints: getAllPoints(),
     examTotalMins: document.getElementsByClassName('time')[0].value,
     examDate: document.getElementById('date').value,
     examDescription: document.getElementById('description').value,
@@ -212,7 +213,6 @@ function saveExam(alert) {
 
       for(var j = 0; j < children[6].childNodes.length - 1; j++){
         jsonArg1.choices.push(children[6].childNodes[j].childNodes[2].value);
-        console.log(children[6].childNodes[j].childNodes[1]);
 
         if(children[6].childNodes[j].childNodes[1].checked == true) {
           jsonArg1.checked = j;
@@ -257,6 +257,19 @@ function saveExam(alert) {
       }
     });
   });
+}
+
+function getAllPoints() {
+  var pointsBoxes = document.getElementsByClassName('numPoints');
+  var points = 0;
+
+  for(var i = 0; i < pointsBoxes.length; i++) {
+    if(pointsBoxes[i].value != "") {
+      points += parseInt(pointsBoxes[i].value);
+    }
+  }
+
+  return points;
 }
 
 function createQuestionTracker(i, populating) {
@@ -309,7 +322,6 @@ function populateExam(code, ref) {
         document.getElementById('date').value = val.examDate;
         document.getElementById('description').value = val.examDescription;
         document.getElementById('nameOfExam').value = val.examTitle;
-        document.getElementsByClassName('points')[0].value = val.examTotalPoints;
         document.getElementsByClassName('time')[0].value = val.examTotalMins;
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
@@ -331,13 +343,13 @@ function populateExam(code, ref) {
                 if(question.choices[j].value != undefined){
                   localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
                   if(j == question.checked) {
-                    localQuestions[i].childNodes[6].childNodes[j].childNodes[1].checked = true;
+                    setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
                   }
                 }
                 else {
                   localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
                   if(j == question.checked) {
-                    localQuestions[i].childNodes[6].childNodes[j].childNodes[1].checked = true;
+                    setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
                   }
                 }
               }
@@ -381,6 +393,11 @@ function populateExam(code, ref) {
       }
     });
   });
+  setTimeout(function(){ document.getElementsByClassName('points')[0].value = getAllPoints(); }, 200);
+}
+
+function setChecked(div) {
+  setTimeout(function(){ div.checked = true; }, 200);
 }
 
 //load class based on name
@@ -1491,13 +1508,13 @@ function createTrueFalse() {
   true_input.style.outline = "none";
   true_input.type = "radio";
   true_input.className = "option-input radio";
-  true_input.name = "radio";
+  true_input.name = "tf";
 
   var false_input = document.createElement('input');
   false_input.style.outline = "none";
   false_input.type = "radio";
   false_input.className = "option-input radio";
-  false_input.name = "radio";
+  false_input.name = "tf";
   false_input.style.marginLeft = "10%";
 
   var true_span = document.createElement('span');
@@ -1775,11 +1792,8 @@ function createQuestion(loading, numAnswerChoices) {
   var numPoints = document.createElement('input');
   numPoints.type = "text";
   numPoints.id = "numPoints";
+  numPoints.className = "numPoints";
   numPoints.placeholder = "Ex: 4";
-
-  numPoints.onblur = function() {
-    totalPoints += parseInt(this.value);
-  }
 
   var finishingSpan =  document.createElement('span');
   finishingSpan.innerHTML = " points)";
@@ -1799,7 +1813,7 @@ function createQuestion(loading, numAnswerChoices) {
     input.style.outline = "none";
     input.type = "radio";
     input.className = "option-input radio";
-    input.name = "radio";
+    input.name = num.innerHTML;
 
     var answer_choice = document.createElement('input');
     answer_choice.className = "option";
@@ -1866,12 +1880,15 @@ function swapDiv(elem, numToSwap){
     return false;
   }
   else {
-    var q = document.getElementById(numToSwap);
-    elem.parentNode.insertBefore(elem, elem.parentNode.q);
-    console.log(elem.parentNode.childNodes);
-    elem.parentNode.childNodes[4].remove();
-    console.log(elem.parentNode.childNodes);
-    elem.parentNode.appendChild(document.createElement('hr'));
+    var div1 = jQuery(elem);
+  	var div2 = jQuery(document.getElementById(numToSwap));
+
+  	var tdiv1 = div1.clone();
+  	var tdiv2 = div2.clone();
+
+		div1.replaceWith(tdiv2);
+		div2.replaceWith(tdiv1);
+
     restructureQuestions();
     return true;
   }
@@ -1943,6 +1960,7 @@ function createNewOptionChoice(num) {
   createNewAnswerChoice.innerHTML += ' New Answer Choice';
 
   val.appendChild(createNewAnswerChoice);
+  saveExam(false);
 }
 
 // return letter grade based on avg

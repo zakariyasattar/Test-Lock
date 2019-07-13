@@ -65,15 +65,18 @@ function signOut() {
 
 // for displayQuiz()
 window.onload = function() {
-  $("#create-exam").on('change', "input:radio", function() {
-    done[(this.parentNode.parentNode.parentNode.id - 1)] = 1;
-    // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
+  // $("#create-exam").on('change', "input:radio", function() {
+  //   done[(this.parentNode.parentNode.parentNode.id - 1)] = 1;
+  //   // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
+  //
+  //   if(done.indexOf('0') == -1) {
+  //     document.getElementById('submit-exam').style.display = 'initial';
+  //     document.getElementById('submit-exam-disabled').style.display = "none";
+  //   }
+  // });
 
-    if(done.indexOf('0') == -1) {
-      document.getElementById('submit-exam').style.display = 'initial';
-      document.getElementById('submit-exam-disabled').style.display = "none";
-    }
-  });
+  document.getElementById('submit-exam').style.display = 'initial';
+  document.getElementById('submit-exam-disabled').style.display = "none";
 
   $(window).scroll(function(){
     for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
@@ -326,7 +329,7 @@ function displayQuiz() {
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
   setInterval(function(){ timer++; }, 60000);
-  // toggleFullScreen();
+  //toggleFullScreen();
 }
 
 //pull and populate exam
@@ -465,14 +468,14 @@ function createTrueFalse() {
   true_input.style.outline = "none";
   true_input.type = "radio";
   true_input.className = "option-input radio";
-  true_input.name = "radio";
+  true_input.name = "true_radio"
 
   var false_input = document.createElement('input');
   false_input.style.outline = "none";
   false_input.type = "radio";
   false_input.className = "option-input radio";
-  false_input.name = "radio";
   false_input.style.marginLeft = "10%";
+  false_input.name = "false_radio"
 
   var true_span = document.createElement('span');
   true_span.innerHTML = " True";
@@ -693,7 +696,6 @@ function createQuestion(loading, numAnswerChoices) {
     input.style.outline = "none";
     input.type = "radio";
     input.className = "option-input radio";
-    input.name = "radio";
 
     var answer_choice = document.createElement('span');
     answer_choice.className = "option";
@@ -789,16 +791,16 @@ function endTest() {
 }
 
 function getChecked(question) {
-  console.log(question)
   var type = question.childNodes[Object.keys(question.childNodes)[question.childNodes.length - 1]];
 
   if(type.className == "mc") {
     for(var i = 0; i < type.childNodes.length; i++) {
-      if(type.childNodes[i].childNodes[0].checked) {
+      if(type.childNodes[i].childNodes[0].checked == true) {
         return i;
       }
     }
   }
+
   else if(type.className == "tf") {
     if(type.childNodes[0].checked) {
       return 0;
@@ -807,11 +809,13 @@ function getChecked(question) {
       return 1;
     }
   }
+
   else if(type.className == "matching"){
     type = "matching";
     return 15;
   }
-  else {
+
+  else if(type.className == "fr"){
     return "fr";
   }
 }
@@ -825,16 +829,17 @@ function submitExam() {
     var checked = getChecked(question);
 
     student_answers.push(i + ";" + checked);
+    console.log(student_answers);
   }
+
 
   localStorage.setItem("student_answers", JSON.stringify(student_answers));
 
-
   document.getElementById('display-exam').style.display = "none";
   document.getElementById('result').style.display = "initial";
-}
 
-displayResults();
+  displayResults();
+}
 
 // function to display Results
 function displayResults() {
@@ -843,14 +848,16 @@ function displayResults() {
 
   firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/YQIMW").once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      dbAnswers = childSnapshot.toJSON();
+      if(childSnapshot.toJSON().questions != undefined) {
+        dbAnswers = childSnapshot.toJSON();
+      }
     });
+
     var total = 0;
-    console.log(answers)
 
     for(var i = 0; i < answers.length; i++) {
       if(dbAnswers.questions[i].type != "tf") {
-        if(answers[i].split(";")[1] == dbAnswers.questions[i].checked) {
+        if(parseInt(answers[i].split(";")[1]) == dbAnswers.questions[i].checked) {
           total += parseInt(dbAnswers.questions[i].points);
           createCorrectBox(dbAnswers.questions[i].choices[answers[i].split(";")[1]], dbAnswers.questions[i].choices[dbAnswers.questions[i].checked], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
@@ -871,7 +878,7 @@ function displayResults() {
 
     firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/YQIMW/responses").push(localStorage.getItem('StudentName') + ";" + (total / dbAnswers.examTotalPoints) * 100 + ";" + timer);
 
-    document.getElementById('score').innerHTML = (total / dbAnswers.examTotalPoints) * 100 + "%";
+    document.getElementById('score').innerHTML = ((total / dbAnswers.examTotalPoints) * 100).toFixed(1) + "%";
     document.getElementById('score-num').innerHTML = (total + " / " + dbAnswers.examTotalPoints);
 
   });
