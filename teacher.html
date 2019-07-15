@@ -86,7 +86,13 @@
       <div style="display: none" id="classSpecific">
         <div id="jumbotron" class="jumbotron">
           <div style="float: left">
-            <a href="javascript:location.reload(); localStorage.setItem('className', '')"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp Go Back To Classes</a>
+
+            <!-- <a href="javascript:location.reload(); localStorage.setItem('className', '')"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp Go Back To Classes</a> -->
+            <ol class="breadcrumb" style="background: white;">
+              <li><a href="javascript:goHomeFromExams();">Classes</a></li>
+              <li class="active">Exams</li>
+            </ol>
+
             <h1 id="main-header"></h1>
             <br/>
             <a class="btn btn-primary btn-lg" href="#" role="button" onclick="createQuiz();">
@@ -128,7 +134,14 @@
       <div id="examSpecific" style="display: none;">
         <div id="jumbotron" class="jumbotron">
           <div style="float: left">
-            <a href="javascript:location.reload(); "><i class="glyphicon glyphicon-arrow-left"></i> &nbsp Go Back To Classes</a>
+            <!-- <a href="javascript:location.reload(); "><i class="glyphicon glyphicon-arrow-left"></i> &nbsp Go Back To Classes</a> -->
+
+            <ol class="breadcrumb" style="background: white;">
+              <li><a href="#">Classes</a></li>
+              <li><a href="#">Exams</a></li>
+              <li class="active"><span id="this-exam"></span></li>
+            </ol>
+
             <h1 id="exam-name"></h1>
             <br/>
           </div>
@@ -222,7 +235,7 @@
     </div>
 
     <div id="feedback" style="display: none">
-      <!-- <embed id="feedback-form" src="https://forms.id/f/zakariyasattar.id.blockstack/56856430b7"></embed> -->
+      <embed id="feedback-form" src="about:blank"></embed>
     </div>
 
     <div style="display: none; background: purple;" id="pong">

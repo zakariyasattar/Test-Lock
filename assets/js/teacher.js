@@ -122,8 +122,6 @@ function createQuiz() {
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
 
 
-  //////////// FIX ALPHABETIC SORTING
-
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/").once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.val() == "no_exams") {
@@ -252,7 +250,7 @@ function saveExam(alert) {
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      if(childSnapshot.key != "responses") {
+      if(childSnapshot.key != "responses" && childSnapshot.key != "taken") {
         firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).child(childSnapshot.key).set(examInit);
       }
     });
@@ -411,6 +409,7 @@ function loadClass(name) {
   document.getElementById('welcome-div').style.display = "none";
   document.getElementById('wrapper').style.display = "none";
   document.getElementById('classSpecific').style.display = "initial";
+  document.getElementById('exam-wrapper').style.display = "grid";
   document.getElementById('main-header').innerHTML = "Welcome to " + name;
   document.body.style.backgroundImage = "linear-gradient(to top, #dfe9f3 0%, white 100%)";
 
@@ -535,6 +534,8 @@ function displayExamData(name) {
   var quickest = "a:1000";
   var slowest = "a:-1000";
   var table;
+  var populated = false;
+  var standardDeviation = [];
 
   document.getElementById('welcome-div').style.display = "none";
   document.getElementById('wrapper').style.display = "none";
@@ -561,10 +562,10 @@ function displayExamData(name) {
     // skip loop if the property is from prototype
     if (!arr.hasOwnProperty(key)) continue;
     var obj = exams[key];
+
     for (var prop in obj) {
       for(var initData in obj[prop]){
-
-        if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length == 2) {
+        if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length == 3) {
           var code = obj[prop][initData].examCode;
 
           document.getElementById('edit-exam').innerHTML = name;
@@ -621,8 +622,10 @@ function displayExamData(name) {
             table.appendChild(init);
           }
         }
-        else if(Object.keys(obj[prop]).length == 2){
+        else if(Object.keys(obj[prop]).length == 3 && !populated){
+          populated = true;
           for(var response in obj[prop].responses){
+            standardDeviation.push(parseInt(obj[prop].responses[response].split(":")[1]));
             examData.push(obj[prop].responses[response]);
             cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
             classLength = Object.keys(obj[prop].responses).length;
@@ -648,7 +651,7 @@ function displayExamData(name) {
       			name.innerHTML = obj[prop].responses[response].split(":")[0];
             name.id = "name";
 
-      			score.innerHTML = obj[prop].responses[response].split(":")[1] + "%";
+      			score.innerHTML = parseInt(obj[prop].responses[response].split(":")[1]).toFixed(1) + "%";
             score.id = "score";
 
             time.innerHTML = obj[prop].responses[response].split(":")[2] + " Mins";
@@ -688,11 +691,22 @@ function displayExamData(name) {
     lowestScorer.innerHTML = "Lowest Scorer: " + lowest.split(":")[0] + " (" + lowest.split(":")[1] + "%)";
     lowestScorer.style.fontSize = "20px";
 
+    var standardDev = document.createElement('li');
+
+    // calc SD
+    n = standardDeviation.length;
+    mean = standardDeviation.reduce((a,b) => a+b)/n;
+    sd = Math.sqrt(standardDeviation.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
+
+    standardDev.innerHTML = "Standard Deviation (σ): " + sd.toFixed(3);
+    standardDev.style.fontSize = "20px";
 
     ul.appendChild(avg);
     ul.appendChild(highestScorer);
     overallData.appendChild(document.createElement('br'));
     ul.appendChild(lowestScorer);
+    ul.appendChild(standardDev);
+
     overallData.appendChild(ul);
 }
 
@@ -728,10 +742,31 @@ function display(title) {
     document.getElementById('pong').style.display = "none";
     document.getElementById('leaderboard').style.display = "none";
     document.getElementById('feedback').style.display = "initial";
+
+    var iframe = $("#feedback-form");
+    iframe.attr("src", 'https://forms.id/f/zakariyasattar.id.blockstack/56856430b7');
   }
 }
 
-//function to calc perecntile range
+// function to display / undisplay items to simulate going home
+function goHomeFromExams() {
+  document.getElementById('classSpecific').style.display = "none";
+  document.getElementById('welcome-div').style.display = "block";
+  document.getElementById('wrapper').style.display = "grid";
+  document.getElementById('doesNotExist').style.display = "none";
+  document.getElementById('no-exams').style.display = "none";
+
+  document.getElementById('exam-wrapper').style.display = "none";
+  $(document.getElementById('exam-wrapper')).empty()
+
+  document.body.style.backgroundImage = "none"
+}
+
+function goExamsFromExam() {
+  
+}
+
+//function to calc precentile range
 function getPercentile(val, exam) {
   var numBelow = 0;
   var numEqual = 0;
@@ -1299,6 +1334,7 @@ function createExamBox(name, classAvg, ref, code) {
 
   classBox.onclick = function() {
     displayExamData(name);
+    document.getElementById("this-exam").innerHTML = name;
   };
 
   firebase.database().ref(ref).on('value', function(snapshot) {
@@ -1314,7 +1350,6 @@ function createExamBox(name, classAvg, ref, code) {
       }
     }
   });
-
 
   var difBackground = document.createElement('div')
   difBackground.style.background = gradients[Math.floor(Math.random()*(3) + 0)];
@@ -1343,7 +1378,6 @@ function createExamBox(name, classAvg, ref, code) {
   classBox.appendChild(difBackground);
 
   if(classAvg == 'NaN') {
-
     var descriptor = document.createElement('span');
     descriptor.innerHTML = "No Responses!";
 
@@ -1367,6 +1401,7 @@ function createExamBox(name, classAvg, ref, code) {
     classBox.appendChild(document.createElement('br'));
     classBox.appendChild(button);
   }
+
   else {
     var letter = document.createElement('span');
     letter.innerHTML = getLetter(classAvg);
@@ -1398,7 +1433,6 @@ function deleteExam() {
   })
   .then((willDelete) => {
     if (willDelete) {
-      console.log(localStorage.getItem("CreatedExamCode"), code)
       var data = false;
 
       firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + code).remove();
@@ -1468,12 +1502,10 @@ function restructureBoxes() {
 function changeQuestionType(val, i, prevVal) {
   var plus = i + 1;
   var plusDiv = document.getElementById(plus);
-  console.log(prevVal)
 
   if(val != prevVal) {
     for(var j = 0; j < plusDiv.childNodes.length; j++) {
       if(plusDiv.childNodes[j].className == prevVal) {
-        console.log(plusDiv.childNodes[j]);
         plusDiv.childNodes[j].style.display = "none";
       }
     }
@@ -2057,6 +2089,7 @@ function populateDashboard() {
             if(obj[prop].Exams[Object.keys(obj[prop].Exams)[0]] == "no_exams") {
               createClassBox(prop, Object.keys(obj[prop].Students).length, 0);
             }
+
             else {
               createClassBox(prop, Object.keys(obj[prop].Students).length, Object.keys(obj[prop].Exams).length);
             }

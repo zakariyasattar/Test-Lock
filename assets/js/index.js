@@ -1,5 +1,5 @@
 var examCodes = [], students = [], done = [];
-var stopEnter = false;
+var stopEnter = false, canCount = false, canChangeCircle = true;
 var key = initKey();
 var timer = 0;
 
@@ -16,10 +16,8 @@ var timer = 0;
 //         var name = data[i][3] + " " + data[i][2];
 //         var className = data[i][10];
 //
-//         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
-//         //firebase.database().ref("Students").push(id + ";" + name);
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/YQIMW/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
-//         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className).remove();
+//         firebase.database().ref("Teachers/Matthew Fahrenbacher/Classes/" + className + "/Students").push(id + ";" + name);
+//         firebase.database().ref("Teachers/Matthew Fahrenbacher/Classes/" + className + "/Exams/YQIMW/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
 //       }
 // 	  }
 // });
@@ -67,6 +65,8 @@ function signOut() {
 window.onload = function() {
   // $("#create-exam").on('change', "input:radio", function() {
   //   done[(this.parentNode.parentNode.parentNode.id - 1)] = 1;
+  //
+  //   console.log(document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].childNodes[0])
   //   // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
   //
   //   if(done.indexOf('0') == -1) {
@@ -74,6 +74,12 @@ window.onload = function() {
   //     document.getElementById('submit-exam-disabled').style.display = "none";
   //   }
   // });
+
+  setInterval(function(){
+    if(canCount) {
+      timer++;
+    }
+  }, 60000);
 
   document.getElementById('submit-exam').style.display = 'initial';
   document.getElementById('submit-exam-disabled').style.display = "none";
@@ -100,20 +106,24 @@ window.onload = function() {
         document.getElementsByClassName(i)[0].childNodes[1].style.right = "22.5px";
 
         setTimeout(function(){
-          document.getElementsByClassName(i)[0].style.bottom = '20px';
-          document.getElementsByClassName(i)[0].style.transition = 'all .5s';
+          if(document.getElementsByClassName(i)[0] != undefined) {
+            document.getElementsByClassName(i)[0].style.bottom = '20px';
+            document.getElementsByClassName(i)[0].style.transition = 'all .5s';
+          }
         }, 3000);
 
       }
       else {
-        document.getElementsByClassName(i)[0].style.bottom = '20px';
-        document.getElementsByClassName(i)[0].style.transition = 'all .5s';
+        if(canChangeCircle) {
+          document.getElementsByClassName(i)[0].style.bottom = '20px';
+          document.getElementsByClassName(i)[0].style.transition = 'all .5s';
 
-        var text = document.getElementsByClassName(i)[0].childNodes[1];
-        document.getElementsByClassName(i)[0].innerHTML = "&#x25CC;"
-        document.getElementsByClassName(i)[0].appendChild(text);
-        document.getElementsByClassName(i)[0].childNodes[1].style.color = "black";
-        document.getElementsByClassName(i)[0].childNodes[1].style.right = "22px";
+          var text = document.getElementsByClassName(i)[0].childNodes[1];
+          document.getElementsByClassName(i)[0].innerHTML = "&#x25CC;"
+          document.getElementsByClassName(i)[0].appendChild(text);
+          document.getElementsByClassName(i)[0].childNodes[1].style.color = "black";
+          document.getElementsByClassName(i)[0].childNodes[1].style.right = "22px";
+        }
       }
     }
   });
@@ -240,6 +250,7 @@ function submitExamCode() {
     }
 
     else if(data.split(";")[0] == code) {
+      localStorage.setItem("teacher", data.split(";")[1]);
       document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[2];
       document.getElementById('id-input').style.display = 'initial';
 
@@ -250,6 +261,7 @@ function submitExamCode() {
 }
 
 function retrieveName() {
+  var taken = false;
   var id = document.getElementsByClassName("ID")[0].value;
 
   if(id.length == 5){
@@ -269,19 +281,34 @@ function retrieveName() {
 
     document.getElementById('userName').innerHTML = "";
 
-    firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
+    firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").once('value', function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
-        if(childSnapshot.val().split(";")[0] == id) {
-          document.getElementById('userName').innerHTML = childSnapshot.val().split(";")[1];
-          document.getElementById('proceed').style.display = "initial";
-          document.getElementById('recognition').style.bottom = "-10px";
+        if(childSnapshot.val() == id) {
+          taken = true;
         }
       });
-    });
+      if(taken) {
+        localStorage.setItem('idNum', id);
+        firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            if(childSnapshot.val().split(";")[0] == id) {
+              document.getElementById('userName').innerHTML = childSnapshot.val().split(";")[1];
+              document.getElementById('proceed').style.display = "initial";
+              document.getElementById('recognition').style.bottom = "-10px";
+            }
+          });
+        });
 
-    if(document.getElementById('userName').innerHTML == "") {
-      document.getElementById('userName').innerHTML = "Not Found!"
-    }
+        if(document.getElementById('userName').innerHTML == "") {
+          document.getElementById('userName').innerHTML = "Not Found!"
+        }
+      }
+
+      else {
+        document.getElementById('userName').innerHTML = "You Have Taken This Exam Already!";
+        document.getElementById('userName').style.color = "red";
+      }
+    });
   }
 }
 
@@ -321,6 +348,8 @@ function displayQuiz() {
   var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
   var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
+  localStorage.setItem("className", plaintext.split(";")[2]);
+
   document.getElementById('main').style.display = "none";
   document.getElementById('navigation').style.display = "none";
   document.getElementById('display-exam').style.display = "initial";
@@ -328,8 +357,10 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  setInterval(function(){ timer++; }, 60000);
   //toggleFullScreen();
+
+  canCount = true;
+  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
 }
 
 //pull and populate exam
@@ -341,7 +372,7 @@ function populateExam(code, ref) {
         var counter = 0;
 
         document.getElementById('exam-code').innerHTML = val.examCode + " | " + localStorage.getItem("StudentName");
-        document.getElementById('date').innerHTML = val.examTeacher + " | " + val.examDate;
+        document.getElementById('date').innerHTML = val.examTeacher + " | " + val.examDate.split("-")[1] + "-" + val.examDate.split("-")[2] + "-" + val.examDate.split("-")[0];
         document.getElementById('description').value = val.examDescription;
         document.getElementById('nameOfExam').innerHTML = val.examTitle;
         document.getElementsByClassName('points')[0].innerHTML = val.examTotalPoints;
@@ -371,15 +402,6 @@ function populateExam(code, ref) {
             }
           }
 
-          else if(question.type == "tf") {
-            if(question.choices[0] == 'true') {
-              localQuestions[i].childNodes[4].childNodes[0].checked = true;
-            }
-            else {
-              localQuestions[i].childNodes[4].childNodes[2].checked = true;
-            }
-          }
-
           else if(question.type == "matching"){
             document.getElementsByClassName('matching')[i].childNodes[0].value = question.numBoxes;
             for(var j = 0; j < question.numBoxes; j++) {
@@ -392,7 +414,6 @@ function populateExam(code, ref) {
               localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
             }
           }
-
         }
       }
     });
@@ -468,14 +489,14 @@ function createTrueFalse() {
   true_input.style.outline = "none";
   true_input.type = "radio";
   true_input.className = "option-input radio";
-  true_input.name = "true_radio"
+  true_input.name = "tf_radio"
 
   var false_input = document.createElement('input');
   false_input.style.outline = "none";
   false_input.type = "radio";
   false_input.className = "option-input radio";
   false_input.style.marginLeft = "10%";
-  false_input.name = "false_radio"
+  false_input.name = "tf_radio"
 
   var true_span = document.createElement('span');
   true_span.innerHTML = " True";
@@ -696,6 +717,7 @@ function createQuestion(loading, numAnswerChoices) {
     input.style.outline = "none";
     input.type = "radio";
     input.className = "option-input radio";
+    input.name = num.innerHTML;
 
     var answer_choice = document.createElement('span');
     answer_choice.className = "option";
@@ -829,7 +851,6 @@ function submitExam() {
     var checked = getChecked(question);
 
     student_answers.push(i + ";" + checked);
-    console.log(student_answers);
   }
 
 
@@ -846,10 +867,12 @@ function displayResults() {
   var answers = JSON.parse(localStorage.getItem('student_answers'));
   var dbAnswers;
 
-  firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/YQIMW").once('value').then(function(snapshot) {
+  console.log("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode"));
+  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.toJSON().questions != undefined) {
         dbAnswers = childSnapshot.toJSON();
+        console.log(dbAnswers)
       }
     });
 
@@ -859,24 +882,32 @@ function displayResults() {
       if(dbAnswers.questions[i].type != "tf") {
         if(parseInt(answers[i].split(";")[1]) == dbAnswers.questions[i].checked) {
           total += parseInt(dbAnswers.questions[i].points);
-          createCorrectBox(dbAnswers.questions[i].choices[answers[i].split(";")[1]], dbAnswers.questions[i].choices[dbAnswers.questions[i].checked], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+          createCorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
         else {
-          createIncorrectBox(dbAnswers.questions[i].choices[answers[i].split(";")[1]], dbAnswers.questions[i].choices[dbAnswers.questions[i].checked], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+          createIncorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
       }
       else {
-        if(answers[i].split(";")[1] == dbAnswers.questions[i].choices[0]) {
-          total += parseInt(dbAnswers.questions[i].points);
-          createCorrectTfBox(answers[i].split(";")[1], dbAnswers.questions[i].choices[0], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        var answer = "";
+        if(answers[i].split(";")[1] == "1") {
+          answer = "false";
         }
         else {
-          createIncorrectTfBox(answers[i].split(";")[1], dbAnswers.questions[i].choices[0], dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+          answer = "true";
+        }
+
+        if(answer == dbAnswers.questions[i].choices[0]) {
+          total += parseInt(dbAnswers.questions[i].points);
+          createCorrectTfBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        }
+        else {
+          createIncorrectTfBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
       }
     }
 
-    firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/YQIMW/responses").push(localStorage.getItem('StudentName') + ";" + (total / dbAnswers.examTotalPoints) * 100 + ";" + timer);
+    firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses").push(localStorage.getItem('StudentName') + ":" + ((total / dbAnswers.examTotalPoints) * 100).toFixed(1) + ":" + timer);
 
     document.getElementById('score').innerHTML = ((total / dbAnswers.examTotalPoints) * 100).toFixed(1) + "%";
     document.getElementById('score-num').innerHTML = (total + " / " + dbAnswers.examTotalPoints);
@@ -887,7 +918,7 @@ function displayResults() {
    var result = document.getElementById('result');
 }
 
-function createCorrectBox(studentAnswer, correctAnswer, title, num, points) {
+function createCorrectBox(title, num, points) {
   var dataDiv = document.getElementById('question-data');
 
   var box = document.createElement('div');
@@ -905,16 +936,6 @@ function createCorrectBox(studentAnswer, correctAnswer, title, num, points) {
   name.style.float = "left";
   name.style.paddingLeft = "10px";
 
-  var sAnswer = document.createElement('span');
-  sAnswer.innerHTML = "You Answered: " + studentAnswer;
-  sAnswer.style.float = "right";
-  sAnswer.style.paddingRight = "20px";
-
-  var cAnswer = document.createElement('span');
-  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
-  cAnswer.style.float = "right";
-  cAnswer.style.paddingRight = "20px";
-
   var pointsAwarded = document.createElement('span');
   pointsAwarded.innerHTML = "You Received " + points + " / " + points + " Points For This Question!"
   pointsAwarded.style.float = "right";
@@ -922,13 +943,11 @@ function createCorrectBox(studentAnswer, correctAnswer, title, num, points) {
 
   box.appendChild(name);
   box.appendChild(pointsAwarded);
-  box.appendChild(cAnswer);
-  box.appendChild(sAnswer);
 
   dataDiv.appendChild(box);
 }
 
-function createIncorrectBox(studentAnswer, correctAnswer, title, num, points) {
+function createIncorrectBox(title, num, points) {
   var dataDiv = document.getElementById('question-data');
 
   var box = document.createElement('div');
@@ -947,16 +966,6 @@ function createIncorrectBox(studentAnswer, correctAnswer, title, num, points) {
   name.style.float = "left";
   name.style.paddingLeft = "10px";
 
-  var sAnswer = document.createElement('span');
-  sAnswer.innerHTML = "You Answered: " + studentAnswer;
-  sAnswer.style.float = "right";
-  sAnswer.style.paddingRight = "20px";
-
-  var cAnswer = document.createElement('span');
-  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
-  cAnswer.style.float = "right";
-  cAnswer.style.paddingRight = "20px";
-
   var pointsAwarded = document.createElement('span');
   pointsAwarded.innerHTML = "You Received " + 0 + " / " + points + " Points For This Question"
   pointsAwarded.style.float = "right";
@@ -964,13 +973,11 @@ function createIncorrectBox(studentAnswer, correctAnswer, title, num, points) {
 
   box.appendChild(name);
   box.appendChild(pointsAwarded);
-  box.appendChild(cAnswer);
-  box.appendChild(sAnswer);
 
   dataDiv.appendChild(box);
 }
 
-function createCorrectTfBox(studentAnswer, correctAnswer, title, num, points) {
+function createCorrectTfBox(title, num, points) {
   var dataDiv = document.getElementById('question-data');
 
   var box = document.createElement('div');
@@ -988,23 +995,6 @@ function createCorrectTfBox(studentAnswer, correctAnswer, title, num, points) {
   name.style.float = "left";
   name.style.paddingLeft = "10px";
 
-  var sAnswer = document.createElement('span');
-  if(studentAnswer == 1) {
-    studentAnswer = "true";
-  }
-  else {
-    studentAnswer = "false";
-  }
-
-  sAnswer.innerHTML = "You Answered: " + studentAnswer;
-  sAnswer.style.float = "right";
-  sAnswer.style.paddingRight = "20px";
-
-  var cAnswer = document.createElement('span');
-  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
-  cAnswer.style.float = "right";
-  cAnswer.style.paddingRight = "20px";
-
   var pointsAwarded = document.createElement('span');
   pointsAwarded.innerHTML = "You Received " + points + " / " + points + " Points For This Question!"
   pointsAwarded.style.float = "right";
@@ -1012,13 +1002,11 @@ function createCorrectTfBox(studentAnswer, correctAnswer, title, num, points) {
 
   box.appendChild(name);
   box.appendChild(pointsAwarded);
-  box.appendChild(cAnswer);
-  box.appendChild(sAnswer);
 
   dataDiv.appendChild(box);
 }
 
-function createIncorrectTfBox(studentAnswer, correctAnswer, title, num, points) {
+function createIncorrectTfBox(title, num, points) {
   var dataDiv = document.getElementById('question-data');
 
   var box = document.createElement('div');
@@ -1037,23 +1025,6 @@ function createIncorrectTfBox(studentAnswer, correctAnswer, title, num, points) 
   name.style.float = "left";
   name.style.paddingLeft = "10px";
 
-  var sAnswer = document.createElement('span');
-  if(studentAnswer == 1) {
-    studentAnswer = "true";
-  }
-  else {
-    studentAnswer = "false";
-  }
-
-  sAnswer.innerHTML = "You Answered: " + studentAnswer;
-  sAnswer.style.float = "right";
-  sAnswer.style.paddingRight = "20px";
-
-  var cAnswer = document.createElement('span');
-  cAnswer.innerHTML = "The Correct Answer Is: " + correctAnswer;
-  cAnswer.style.float = "right";
-  cAnswer.style.paddingRight = "20px";
-
   var pointsAwarded = document.createElement('span');
   pointsAwarded.innerHTML = "You Received " + 0 + " / " + points + " Points For This Question"
   pointsAwarded.style.float = "right";
@@ -1061,8 +1032,6 @@ function createIncorrectTfBox(studentAnswer, correctAnswer, title, num, points) 
 
   box.appendChild(name);
   box.appendChild(pointsAwarded);
-  box.appendChild(cAnswer);
-  box.appendChild(sAnswer);
 
   dataDiv.appendChild(box);
 }
