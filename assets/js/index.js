@@ -1,7 +1,65 @@
 var examCodes = [], students = [], done = [];
 var stopEnter = false, canCount = false, canChangeCircle = true;
 var key = initKey();
+let leaverCount = 0;
 var timer = 0;
+
+(function() {
+    // Expose to global
+    var examCodes = [], students = [], done = [];
+    var stopEnter = false, canCount = false, canChangeCircle = true;
+    var key = initKey();
+    var leaverCount = 0;
+    var timer = 0;
+
+    window['examCodes'] = examCodes; window['students'] = students; window['done'] = done;
+    window['stopEnter'] = stopEnter; window['canCount'] = canCount; window['canChangeCircle'] = canChangeCircle;
+    window['key'] = key; window['time'] = timer;
+
+    //code to call when document leaves full screen
+    document.onfullscreenchange = function ( event ) {
+      if(document.fullscreenElement == null) {
+        console.log(leaverCount)
+        let timerInterval;
+        if(leaverCount <= 3) {
+            Swal.fire({
+              title: 'Are You Sure You Want To Leave?',
+              html: 'You have <strong></strong> seconds to go back to your test or the test ends and your score is recorded! (Max 3 leaves)',
+              confirmButtonText: 'Yes, end it!',
+              cancelButtonText: 'No, Go Back!',
+              showCancelButton: true,
+              showConfirmButton: true,
+              allowEscapeKey: false,
+              allowEnterKey: false,
+              timer: 7000,
+              onBeforeOpen: () => {
+                timerInterval = setInterval(() => {
+                  Swal.getContent().querySelector('strong').textContent = Swal.getTimerLeft() / 1000
+                }, 100)
+              },
+              onClose: () => {
+                clearInterval(timerInterval)
+              }
+              }).then((result) => {
+                if (!result.value) {
+                  toggleFullScreen();
+                  leaverCount++;
+                }
+                else if(result.value) {
+                  endTest();
+                }
+                if (result.dismiss === Swal.DismissReason.timer) {
+                  endTest();
+                }
+            });
+          }
+          else{
+            endTest();
+          }
+      };
+    }
+})();
+
 
 // var data;
 // 	$.ajax({
@@ -357,7 +415,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  //toggleFullScreen();
+  toggleFullScreen();
 
   canCount = true;
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
@@ -1035,46 +1093,6 @@ function createIncorrectTfBox(title, num, points) {
 
   dataDiv.appendChild(box);
 }
-
-//code to call when document leaves full screen
-document.onfullscreenchange = function ( event ) {
-  if(document.fullscreenElement == null) {
-    let timerInterval;
-    Swal.fire({
-      title: 'Are You Sure You Want To Leave?',
-      html: 'You have <strong></strong> seconds to go back to your test or the test ends and your score is recorded!',
-      confirmButtonText: 'Yes, end it!',
-      cancelButtonText: 'No, Go Back!',
-      showCancelButton: true,
-      showConfirmButton: true,
-      allowEscapeKey: false,
-      allowEnterKey: false,
-      timer: 10000,
-      onBeforeOpen: () => {
-        timerInterval = setInterval(() => {
-          Swal.getContent().querySelector('strong')
-            .textContent = Swal.getTimerLeft() / 1000
-        }, 100)
-      },
-      onClose: () => {
-        clearInterval(timerInterval)
-      }
-      }).then((result) => {
-        if (!result.value) {
-          toggleFullScreen();
-        }
-        else if(result.value) {
-          endTest();
-        }
-        if (
-          // Read more about handling dismissals
-          result.dismiss === Swal.DismissReason.timer
-        ) {
-          endTest();
-        }
-      });
-    };
-  }
 
 // window.onbeforeunload = function() {
 //    return "Dude, are you sure you want to leave? Think of the kittens!";
