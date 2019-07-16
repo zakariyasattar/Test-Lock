@@ -1,20 +1,10 @@
 var examCodes = [], students = [], done = [];
 var stopEnter = false, canCount = false, canChangeCircle = true;
-var key = initKey();
-let leaverCount = 0;
-var timer = 0;
+var key = initKey(); var timer = 0;
 
 (function() {
     // Expose to global
-    var examCodes = [], students = [], done = [];
-    var stopEnter = false, canCount = false, canChangeCircle = true;
-    var key = initKey();
     var leaverCount = 0;
-    var timer = 0;
-
-    window['examCodes'] = examCodes; window['students'] = students; window['done'] = done;
-    window['stopEnter'] = stopEnter; window['canCount'] = canCount; window['canChangeCircle'] = canChangeCircle;
-    window['key'] = key; window['time'] = timer;
 
     //code to call when document leaves full screen
     document.onfullscreenchange = function ( event ) {
@@ -58,6 +48,7 @@ var timer = 0;
           }
       };
     }
+
 })();
 
 
@@ -134,9 +125,7 @@ window.onload = function() {
   // });
 
   setInterval(function(){
-    if(canCount) {
-      timer++;
-    }
+    if(canCount) { timer++; }
   }, 60000);
 
   document.getElementById('submit-exam').style.display = 'initial';
@@ -937,8 +926,28 @@ function displayResults() {
     var total = 0;
 
     for(var i = 0; i < answers.length; i++) {
-      if(dbAnswers.questions[i].type != "tf") {
-        if(parseInt(answers[i].split(";")[1]) == dbAnswers.questions[i].checked) {
+      var answer = "";
+      var fr = false;
+
+      if(dbAnswers.questions[i].type == "tf") {
+        if(answers[i].split(";")[1] == "1") {
+          answer = "false";
+        }
+        else {
+          answer = "true";
+        }
+      }
+      else if(dbAnswers.questions[i].type == "mc") {
+        answer = parseInt(answers[i].split(";")[1])
+      }
+      else {
+        fr = true;
+
+        createFrBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+      }
+
+      if(!fr) {
+        if(answer == dbAnswers.questions[i].checked) {
           total += parseInt(dbAnswers.questions[i].points);
           createCorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
@@ -946,34 +955,53 @@ function displayResults() {
           createIncorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
       }
-      else {
-        var answer = "";
-        if(answers[i].split(";")[1] == "1") {
-          answer = "false";
-        }
-        else {
-          answer = "true";
-        }
-
-        if(answer == dbAnswers.questions[i].choices[0]) {
-          total += parseInt(dbAnswers.questions[i].points);
-          createCorrectTfBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
-        }
-        else {
-          createIncorrectTfBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
-        }
-      }
     }
 
     firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses").push(localStorage.getItem('StudentName') + ":" + ((total / dbAnswers.examTotalPoints) * 100).toFixed(1) + ":" + timer);
 
+    var min = " Minutes"
+
+    if(timer == 1) {
+      min = " Minute"
+    }
+
     document.getElementById('score').innerHTML = ((total / dbAnswers.examTotalPoints) * 100).toFixed(1) + "%";
-    document.getElementById('score-num').innerHTML = (total + " / " + dbAnswers.examTotalPoints);
+    document.getElementById('score-num').innerHTML = (total + " / " + dbAnswers.examTotalPoints + " in " + timer + min);
 
   });
 
 
    var result = document.getElementById('result');
+}
+
+function createFrBox(title, num, points) {
+  var dataDiv = document.getElementById('question-data');
+
+  var box = document.createElement('div');
+  box.style.width = "90vw";
+  box.style.marginTop = "10px";
+  box.style.border = "1px solid black";
+  box.style.padding = "15px";
+  box.style.height = "50px";
+  box.style.background = "#798893";
+  box.style.color = "white";
+  box.style.borderRadius = "6px";
+  box.className = "questionBox";
+
+  var name = document.createElement('span');
+  name.innerHTML = parseInt(num) + 1 + " | " + title;
+  name.style.float = "left";
+  name.style.paddingLeft = "10px";
+
+  var pointsAwarded = document.createElement('span');
+  pointsAwarded.innerHTML = "Free Response Questions Require Manual Grading (Points Possible: " + points + ")"
+  pointsAwarded.style.float = "right";
+  pointsAwarded.style.paddingRight = "20px";
+
+  box.appendChild(name);
+  box.appendChild(pointsAwarded);
+
+  dataDiv.appendChild(box);
 }
 
 function createCorrectBox(title, num, points) {
@@ -1006,65 +1034,6 @@ function createCorrectBox(title, num, points) {
 }
 
 function createIncorrectBox(title, num, points) {
-  var dataDiv = document.getElementById('question-data');
-
-  var box = document.createElement('div');
-  box.style.width = "90vw";
-  box.style.marginTop = "10px";
-  box.style.border = "1px solid black";
-  box.style.padding = "15px";
-  box.style.height = "50px";
-  box.style.background = "#cc2d2d";
-  box.style.color = "white";
-  box.style.borderRadius = "6px";
-  box.className = "questionBox";
-
-  var name = document.createElement('span');
-  name.innerHTML = parseInt(num) + 1 + " | " + title;
-  name.style.float = "left";
-  name.style.paddingLeft = "10px";
-
-  var pointsAwarded = document.createElement('span');
-  pointsAwarded.innerHTML = "You Received " + 0 + " / " + points + " Points For This Question"
-  pointsAwarded.style.float = "right";
-  pointsAwarded.style.paddingRight = "20px";
-
-  box.appendChild(name);
-  box.appendChild(pointsAwarded);
-
-  dataDiv.appendChild(box);
-}
-
-function createCorrectTfBox(title, num, points) {
-  var dataDiv = document.getElementById('question-data');
-
-  var box = document.createElement('div');
-  box.style.width = "90vw";
-  box.style.marginTop = "10px";
-  box.style.border = "1px solid black";
-  box.style.padding = "15px";
-  box.style.height = "50px";
-  box.style.background = "#84f277";
-  box.style.borderRadius = "6px";
-  box.className = "questionBox";
-
-  var name = document.createElement('span');
-  name.innerHTML = parseInt(num) + 1 + " | " + title;
-  name.style.float = "left";
-  name.style.paddingLeft = "10px";
-
-  var pointsAwarded = document.createElement('span');
-  pointsAwarded.innerHTML = "You Received " + points + " / " + points + " Points For This Question!"
-  pointsAwarded.style.float = "right";
-  pointsAwarded.style.paddingRight = "20px";
-
-  box.appendChild(name);
-  box.appendChild(pointsAwarded);
-
-  dataDiv.appendChild(box);
-}
-
-function createIncorrectTfBox(title, num, points) {
   var dataDiv = document.getElementById('question-data');
 
   var box = document.createElement('div');

@@ -763,7 +763,7 @@ function goHomeFromExams() {
 }
 
 function goExamsFromExam() {
-  
+
 }
 
 //function to calc precentile range
