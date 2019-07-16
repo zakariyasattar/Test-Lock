@@ -1488,6 +1488,7 @@ function createExamBox(name, classAvg, ref, code) {
 //delete current exam
 function deleteExam() {
   var code = document.getElementById('exam-code').innerHTML;
+  var modifiedCode = "";
 
   swal({
     title: "Are you sure?",
@@ -1500,18 +1501,24 @@ function deleteExam() {
     if (willDelete) {
       var data = false;
 
-      firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + code).remove();
-
-      var ref = (firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/"));
-      ref.once('value', function(snapshot) {
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/").once('value').then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
-          data = true;
+          if(childSnapshot.key.substring(1) == code) {
+            modifiedCode = childSnapshot.key;
+          }
+        });
+        firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + modifiedCode).remove();
+
+        var ref = (firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/"));
+        ref.once('value', function(snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            data = true;
+          });
+          if(!data) {
+            ref.push("no_exams");
+          }
         });
       });
-
-      if(!data) {
-        ref.push("no_exams");
-      }
 
       firebase.database().ref('exam-codes').on('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
@@ -1527,6 +1534,7 @@ function deleteExam() {
 
       $("#exam-wrapper").empty();
       $( "#exam" ).empty();
+
       loadClass(localStorage.getItem("className"));
 
       if(localStorage.getItem("CreatedExamCode").toUpperCase() == code) {
