@@ -51,7 +51,6 @@ var key = initKey(); var timer = 0;
 
 })();
 
-
 // var data;
 // 	$.ajax({
 // 	  type: "GET",
@@ -65,8 +64,8 @@ var key = initKey(); var timer = 0;
 //         var name = data[i][3] + " " + data[i][2];
 //         var className = data[i][10];
 //
-//         firebase.database().ref("Teachers/Matthew Fahrenbacher/Classes/" + className + "/Students").push(id + ";" + name);
-//         firebase.database().ref("Teachers/Matthew Fahrenbacher/Classes/" + className + "/Exams/YQIMW/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
+//         // firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/BNFHZQ/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
 //       }
 // 	  }
 // });

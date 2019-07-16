@@ -11,6 +11,7 @@ var exams = [];
 var examData = [];
 var totalPoints;
 var autoSaveCounter = 0;
+var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 //when page loads, populateDashboard()
 window.onload = function() {
@@ -82,6 +83,7 @@ $('#profile').click(function(){
 });
 
 function createQuiz() {
+  var examCounter = 0;
 
   if(examCodes.length == 0){
     // Pull all exam codes and seperate the datapoints from each other
@@ -119,17 +121,19 @@ function createQuiz() {
     ]
   };
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + randomCode.toUpperCase()).push(examInit);
-
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/").once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.val() == "no_exams") {
         firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/").child(childSnapshot.key).remove();
       }
+      else {
+        examCounter++;
+      }
     });
   });
 
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + alphabet[examCounter] + randomCode.toUpperCase()).push(examInit);
 
   createQuestion(true, 4);
 
@@ -248,11 +252,23 @@ function saveExam(alert) {
     $.extend(examInit, { questions });
   }
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).once('value').then(function(snapshot) {
+  var code = "";
+
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/").once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      if(childSnapshot.key != "responses" && childSnapshot.key != "taken") {
-        firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + document.getElementById('exam-code').innerHTML).child(childSnapshot.key).set(examInit);
+      console.log(childSnapshot.key.substring(1), document.getElementById('exam-code').innerHTML)
+      if(childSnapshot.key.substring(1) == document.getElementById('exam-code').innerHTML) {
+        code = childSnapshot.key;
       }
+    });
+    console.log(code)
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code).once('value').then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        console.log(childSnapshot.key)
+        if(childSnapshot.key != "responses" && childSnapshot.key != "taken") {
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code).child(childSnapshot.key).set(examInit);
+        }
+      });
     });
   });
 }
@@ -309,88 +325,98 @@ function createQuestionTracker(i, populating) {
 
 //populate exam for autosave
 function populateExam(code, ref) {
-  firebase.database().ref(ref).once('value').then(function(snapshot) {
+  var refs = ref.split('/'); refs.pop();
+
+  firebase.database().ref(refs.join().split(',').join('/')).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      var val = childSnapshot.val();
-      if(val.examCode != undefined){
-        var counter = 0;
+      if(childSnapshot.key.substring(1) == code) {
+        firebase.database().ref(refs.join().split(',').join('/') + "/" + childSnapshot.key).once('value').then(function(snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            var val = childSnapshot.val();
+            console.log(val);
+            if(val.examCode != undefined){
+              var counter = 0;
 
-        document.getElementById('last-saved').innerHTML = "Last Sync: " + val.lastSaved;
-        document.getElementById('exam-code').innerHTML = val.examCode;
-        document.getElementById('date').value = val.examDate;
-        document.getElementById('description').value = val.examDescription;
-        document.getElementById('nameOfExam').value = val.examTitle;
-        document.getElementsByClassName('time')[0].value = val.examTotalMins;
+              document.getElementById('last-saved').innerHTML = "Last Sync: " + val.lastSaved;
+              document.getElementById('exam-code').innerHTML = val.examCode;
+              document.getElementById('date').value = val.examDate;
+              document.getElementById('description').value = val.examDescription;
+              document.getElementById('nameOfExam').value = val.examTitle;
+              document.getElementsByClassName('time')[0].value = val.examTotalMins;
 
-        for(var i = 0; i < Object.keys(val.questions).length; i++) {
-          var localQuestions = document.getElementsByClassName('question');
-          var question = childSnapshot.val().questions[i];
+              for(var i = 0; i < Object.keys(val.questions).length; i++) {
+                var localQuestions = document.getElementsByClassName('question');
+                var question = childSnapshot.val().questions[i];
 
-          if(question.choices != undefined && question.type != "matching") {
-            createQuestion(true, Object.keys(question.choices).length);
-            createQuestionTracker(i + 1, true);
+                if(question.choices != undefined && question.type != "matching") {
+                  createQuestion(true, Object.keys(question.choices).length);
+                  createQuestionTracker(i + 1, true);
 
-            localQuestions[i].childNodes[3].value = question.title;
-            localQuestions[i].childNodes[5].childNodes[1].value = question.points;
-            localQuestions[i].childNodes[4].value = question.type;
+                  localQuestions[i].childNodes[3].value = question.title;
+                  localQuestions[i].childNodes[5].childNodes[1].value = question.points;
+                  localQuestions[i].childNodes[4].value = question.type;
 
-            changeQuestionType(question.type, i, 'mc');
+                  changeQuestionType(question.type, i, 'mc');
 
-            if(question.type == "mc") {
-              for(var j = 0; j < Object.keys(question.choices).length; j++){
-                if(question.choices[j].value != undefined){
-                  localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
-                  if(j == question.checked) {
-                    setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
+                  if(question.type == "mc") {
+                    for(var j = 0; j < Object.keys(question.choices).length; j++){
+                      if(question.choices[j].value != undefined){
+                        localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
+                        if(j == question.checked) {
+                          setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
+                        }
+                      }
+                      else {
+                        localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
+                        if(j == question.checked) {
+                          setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
+                        }
+                      }
+                    }
+                  }
+
+                  else if(question.type == "fr"){
+                    localQuestions[i].childNodes[6].value = (question.choices[0]);
+                  }
+
+                  else if(question.type == "tf") {
+                    if(question.choices[0] == 'true') {
+                      localQuestions[i].childNodes[7].childNodes[0].checked = true;
+                    }
+                    else {
+                      localQuestions[i].childNodes[7].childNodes[2].checked = true;
+                    }
                   }
                 }
-                else {
-                  localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
-                  if(j == question.checked) {
-                    setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
+
+                else if(question.type == "matching") {
+                  createQuestion(true, question.numBoxes);
+                  createQuestionTracker(i + 1, true);
+                  changeQuestionType(question.type, i, "mc");
+
+                  localQuestions[i].childNodes[3].value = question.title;
+                  localQuestions[i].childNodes[5].childNodes[1].value = question.points;
+                  localQuestions[i].childNodes[4].value = question.type;
+
+                  localQuestions[i].childNodes[0].value = question.numBoxes;
+                  for(var j = 0; j < question.numBoxes; j++) {
+                    createMatchingElement(localQuestions[i].childNodes[7], j + 1);
+                  }
+
+                  var localBoxes = document.getElementsByClassName('matchingbox');
+                  for(var k = 0; k < localBoxes.length; k++) {
+                    localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
+                    localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
                   }
                 }
               }
             }
-
-            else if(question.type == "fr"){
-              localQuestions[i].childNodes[6].value = (question.choices[0]);
-            }
-
-            else if(question.type == "tf") {
-              if(question.choices[0] == 'true') {
-                localQuestions[i].childNodes[7].childNodes[0].checked = true;
-              }
-              else {
-                localQuestions[i].childNodes[7].childNodes[2].checked = true;
-              }
-            }
-          }
-
-          else if(question.type == "matching") {
-            createQuestion(true, question.numBoxes);
-            createQuestionTracker(i + 1, true);
-            changeQuestionType(question.type, i, "mc");
-
-            localQuestions[i].childNodes[3].value = question.title;
-            localQuestions[i].childNodes[5].childNodes[1].value = question.points;
-            localQuestions[i].childNodes[4].value = question.type;
-
-            localQuestions[i].childNodes[0].value = question.numBoxes;
-            for(var j = 0; j < question.numBoxes; j++) {
-              createMatchingElement(localQuestions[i].childNodes[7], j + 1);
-            }
-
-            var localBoxes = document.getElementsByClassName('matchingbox');
-            for(var k = 0; k < localBoxes.length; k++) {
-              localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
-              localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
-            }
-          }
-        }
+          });
+        });
       }
     });
   });
+
   setTimeout(function(){ document.getElementsByClassName('points')[0].value = getAllPoints(); }, 200);
 }
 
@@ -429,9 +455,8 @@ function loadClass(name) {
       });
 
       for(var key in childSnapshot.val()) {
-
         if(childSnapshot.val() != "no_exams") {
-          createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.val()[key].examCode, childSnapshot.val()[key].examCode);
+          createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.key, childSnapshot.val()[key].examCode);
           var val = childSnapshot.val()[key].examTitle;
 
           if(localStorage.getItem("CreatedExamCode") != "") {
@@ -508,7 +533,7 @@ function generateCode() {
     return code;
   }
   else {
-    generateCode(); // Rerun Code if code exists already
+    generateCode(); // Rerun generateCode() if code exists already
   }
 }
 
@@ -527,6 +552,7 @@ x.addListener(removeDropDown) // Attach listener function on state changes
 
 // function to display all data in the table by className
 function displayExamData(name) {
+  console.log(name)
   var cumAvg = 0;
   var classLength = 0;
   var highest = "a:-1000";
@@ -565,7 +591,7 @@ function displayExamData(name) {
 
     for (var prop in obj) {
       for(var initData in obj[prop]){
-        if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length == 3) {
+        if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length > 1) {
           var code = obj[prop][initData].examCode;
 
           document.getElementById('edit-exam').innerHTML = name;
@@ -575,7 +601,7 @@ function displayExamData(name) {
             document.getElementById('create-exam').style.display = "initial";
             document.getElementById('main').style.display = "none";
             document.body.style.background = "white";
-            populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code)
+            populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop)
           };
 
           // skip loop if the property is from prototype
@@ -622,10 +648,11 @@ function displayExamData(name) {
             table.appendChild(init);
           }
         }
-        else if(Object.keys(obj[prop]).length == 3 && !populated){
+        else if(Object.keys(obj[prop]).length > 1 && !populated){
           populated = true;
           for(var response in obj[prop].responses){
             standardDeviation.push(parseInt(obj[prop].responses[response].split(":")[1]));
+
             examData.push(obj[prop].responses[response]);
             cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
             classLength = Object.keys(obj[prop].responses).length;
@@ -639,6 +666,8 @@ function displayExamData(name) {
             }
 
             var tr = document.createElement('tr');
+            tr.onclick = function() { loadStudentExamData(obj[prop].responses[response].split(":")[0]); }
+
             table.appendChild(document.createElement('br'));
 
       			var name = document.createElement('td');
@@ -766,6 +795,14 @@ function goExamsFromExam() {
 
 }
 
+function loadStudentExamData(name) {
+  alert(name);
+  document.getElementById('examSpecific').style.display = "none";
+  document.getElementById('student-exam-data').style.display = "initial";
+
+
+}
+
 //function to calc precentile range
 function getPercentile(val, exam) {
   var numBelow = 0;
@@ -827,6 +864,8 @@ function sort(func) {
 
     for(var i = 0; i < examData.length; i++){
       var tr = document.createElement('tr');
+      tr.onclick = function() { loadStudentExamData(examData[i].split(":")[0]); }
+
       table.appendChild(document.createElement('br'));
 
       var name = document.createElement('td');
@@ -889,6 +928,8 @@ function sort(func) {
 
       for(var i = 0; i < testExamData.length; i++){
         var tr = document.createElement('tr');
+        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0]); }
+
         table.appendChild(document.createElement('br'));
 
         var name = document.createElement('td');
@@ -951,6 +992,8 @@ function sort(func) {
 
       for(var i = testExamData.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
+      tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0]); }
+
         table.appendChild(document.createElement('br'));
 
         var name = document.createElement('td');
@@ -1013,6 +1056,8 @@ function sort(func) {
 
       for(var i = scores.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
+        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0]); }
+
         table.appendChild(document.createElement('br'));
 
         var name = document.createElement('td');
@@ -1075,6 +1120,8 @@ function sort(func) {
 
       for(var i = 0; i < scores.length; i++){
         var tr = document.createElement('tr');
+        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0]); }
+
         table.appendChild(document.createElement('br'));
 
         var name = document.createElement('td');
@@ -1137,6 +1184,8 @@ function sort(func) {
 
       for(var i = times.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
+        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0]); }
+
         table.appendChild(document.createElement('br'));
 
         var name = document.createElement('td');
@@ -1198,6 +1247,8 @@ function sort(func) {
 
       for(var i = 0; i < times.length; i++){
         var tr = document.createElement('tr');
+        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0]); }
+
         table.appendChild(document.createElement('br'));
 
         var name = document.createElement('td');
@@ -1320,6 +1371,7 @@ function searchExams() {
 
 // create div based on name and avg
 function createExamBox(name, classAvg, ref, code) {
+  console.log(ref);
   var gradients = [
     "linear-gradient( 135deg, #FEB692 10%, #EA5455 100%)",
     "linear-gradient( 135deg, #72EDF2 10%, #5151E5 100%)",
@@ -1338,6 +1390,7 @@ function createExamBox(name, classAvg, ref, code) {
   };
 
   firebase.database().ref(ref).on('value', function(snapshot) {
+    console.log(snapshot.val())
     for(var obj in snapshot.val()) {
       if(snapshot.val()[obj].examCode == code && snapshot.val().responses == undefined) {
         classBox.onclick = function() {
@@ -1377,6 +1430,8 @@ function createExamBox(name, classAvg, ref, code) {
   difBackground.appendChild(document.createElement('hr'));
   classBox.appendChild(difBackground);
 
+  console.log(classAvg)
+
   if(classAvg == 'NaN') {
     var descriptor = document.createElement('span');
     descriptor.innerHTML = "No Responses!";
@@ -1386,7 +1441,17 @@ function createExamBox(name, classAvg, ref, code) {
     button.style.borderRadius = "5px";
     button.style.padding = "10px";
     button.style.marginTop = "10px";
-    button.innerHTML = "Display Test Info";
+    button.style.boxShadow = "3px 5px lightgray"
+    button.innerHTML = "Display Exam Info";
+
+    button.onmouseover = function() {
+      this.style.transform = "translate(2px)";
+    }
+
+    button.onmouseleave = function() {
+      this.style.transform = "translate(0px)";
+      this.style.transition = "all .5s";
+    }
 
     button.onclick = function() {
       classBox.onclick = function() {};

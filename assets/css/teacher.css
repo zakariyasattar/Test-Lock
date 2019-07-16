@@ -125,6 +125,7 @@
 
   tr:hover {
     background: white;
+    cursor: pointer;
   }
 
   #topPage {
