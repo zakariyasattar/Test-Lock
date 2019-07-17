@@ -1496,11 +1496,14 @@ function createExamBox(name, classAvg, ref, code) {
 
     button.onclick = function() {
       classBox.onclick = function() {};
+
       document.getElementById('main').style.display = "none";
       document.getElementById('create-exam').style.display = "none";
       document.getElementById('display').style.display = "block";
       document.getElementById('display-code').innerHTML = code;
       document.body.style.backgroundImage = "none";
+
+      
     }
 
     classBox.appendChild(descriptor);

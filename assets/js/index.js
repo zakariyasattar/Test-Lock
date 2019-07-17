@@ -333,7 +333,8 @@ function retrieveName() {
           taken = true;
         }
       });
-      if(taken) {
+      if(taken || !taken) {
+        document.getElementById('userName').style.color = "black";
         localStorage.setItem('idNum', id);
         firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
           snapshot.forEach(function(childSnapshot) {
@@ -407,6 +408,7 @@ function displayQuiz() {
 
   canCount = true;
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
+  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/currentlyTaking").push(localStorage.getItem('idNum'));
 }
 
 //pull and populate exam
@@ -899,6 +901,13 @@ function submitExam() {
     student_answers.push(i + ";" + checked);
   }
 
+  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/currentlyTaking").once('value').then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      if(childSnapshot.val() == localStorage.getItem('idNum')) {
+        firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/currentlyTaking").child(childSnapshot.key).remove();
+      }
+    });
+  });
 
   localStorage.setItem("student_answers", JSON.stringify(student_answers));
 
@@ -913,7 +922,6 @@ function displayResults() {
   var answers = JSON.parse(localStorage.getItem('student_answers'));
   var dbAnswers;
 
-  console.log("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode"));
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.toJSON().questions != undefined) {

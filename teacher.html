@@ -242,10 +242,18 @@
     </div>
 
     <div id="display" style="display: none">
+        <a style="margin: 35px" href="#" onclick="
+      document.getElementById('display').style.display = 'none';
+      document.getElementById('main').style.display = 'initial';
+      document.getElementById('create-exam').style.display = 'none';
+      document.body.style.backgroundImage = 'linear-gradient(to top, rgb(223, 233, 243) 0%, white 100%)';
+        ">
+      <span class="glyphicon glyphicon-hand-left"></span> Go Back To Exams</a>
       <center><h1 style="font-size: 10vw;"><span id="display-code"></span></h1></center>
       <hr/>
 
-      <div id="joined-students">
+      <div id="joined-students" style="background-image: none">
+        
       </div>
     </div>
 
