@@ -13,6 +13,12 @@ var totalPoints;
 var autoSaveCounter = 0;
 var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+// HAS LOADED
+var examDataHasLoaded = false;
+var classDataHasLoaded = false;
+var userDataHasLoaded = false;
+
+
 //when page loads, populateDashboard()
 window.onload = function() {
   populateDashboard();
@@ -426,88 +432,100 @@ function setChecked(div) {
 
 //load class based on name
 function loadClass(name) {
-  var examCounter = 0;
-  var collectiveAvg = 0;
-  var classAvg = 0;
-  var classCounter = 0;
-  var counter = -1
+  if(!classDataHasLoaded) {
+    var examCounter = 0;
+    var collectiveAvg = 0;
+    var classAvg = 0;
+    var classCounter = 0;
+    var counter = -1
 
-  document.getElementById('welcome-div').style.display = "none";
-  document.getElementById('wrapper').style.display = "none";
-  document.getElementById('classSpecific').style.display = "initial";
-  document.getElementById('exam-wrapper').style.display = "grid";
-  document.getElementById('main-header').innerHTML = "Welcome to " + name;
-  document.body.style.backgroundImage = "linear-gradient(to top, #dfe9f3 0%, white 100%)";
+    document.getElementById('welcome-div').style.display = "none";
+    document.getElementById('wrapper').style.display = "none";
+    document.getElementById('classSpecific').style.display = "initial";
+    document.getElementById('exam-wrapper').style.display = "grid";
+    document.getElementById('main-header').innerHTML = "Welcome to " + name;
+    document.body.style.backgroundImage = "linear-gradient(to top, #dfe9f3 0%, white 100%)";
 
-  localStorage.setItem('createExamClass', name);
+    localStorage.setItem('createExamClass', name);
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
-    exams.push(snapshot.val());
-    counter++;
-    snapshot.forEach(function(childSnapshot) {
-      childSnapshot.child('responses').forEach(function(exam) {
-        classCounter++;
-        examCounter++;
-        var grade = exam.val().split(":")[1];
-        collectiveAvg += parseInt(grade);
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
+      exams.push(snapshot.val());
+      counter++;
+      snapshot.forEach(function(childSnapshot) {
+        childSnapshot.child('responses').forEach(function(exam) {
+          classCounter++;
+          examCounter++;
+          var grade = exam.val().split(":")[1];
+          collectiveAvg += parseInt(grade);
 
-        classAvg += parseInt(grade);
-      });
+          classAvg += parseInt(grade);
+        });
 
-      for(var key in childSnapshot.val()) {
-        if(childSnapshot.val() != "no_exams") {
-          createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.key, childSnapshot.val()[key].examCode);
-          var val = childSnapshot.val()[key].examTitle;
+        for(var key in childSnapshot.val()) {
+          if(childSnapshot.val() != "no_exams") {
+            createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.key, childSnapshot.val()[key].examCode);
+            var val = childSnapshot.val()[key].examTitle;
 
-          if(localStorage.getItem("CreatedExamCode") != "") {
-            var button = document.getElementById('cached-code');
-            if(button != null) {
-              button.id = "cached-exam-button";
-              button.style.display = "inline-block";
+            if(localStorage.getItem("CreatedExamCode") != "") {
+              var button = document.getElementById('cached-code');
+              if(button != null) {
+                button.id = "cached-exam-button";
+                button.style.display = "inline-block";
 
-              button.onclick = function() {
-                document.getElementById('create-exam').style.display = "initial";
-                document.getElementById('main').style.display = "none";
-                document.body.style.background = "white";
+                button.onclick = function() {
+                  document.getElementById('create-exam').style.display = "initial";
+                  document.getElementById('main').style.display = "none";
+                  document.body.style.background = "white";
 
-                populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
+                  populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
+                }
               }
             }
-          }
 
-          if(childSnapshot.val()[key].examTitle == ""){
-            val = childSnapshot.val()[key].examCode;
-          }
+            if(childSnapshot.val()[key].examTitle == ""){
+              val = childSnapshot.val()[key].examCode;
+            }
 
-          if(localStorage.getItem("CreatedExamCode") != null && localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
-            setTimeout(function(){
-              document.getElementById('cached-exam-button').style.display = "initial";
-              document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
-            }, 2);
+            if(localStorage.getItem("CreatedExamCode") != null && localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
+              setTimeout(function(){
+                document.getElementById('cached-exam-button').style.display = "initial";
+                document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
+              }, 2);
+            }
+            else if(document.getElementById('cached-exam-button') != null){
+              document.getElementById('cached-exam-button').style.display = "none";
+            }
+            break;
           }
-          else if(document.getElementById('cached-exam-button') != null){
-            document.getElementById('cached-exam-button').style.display = "none";
+          else {
+            document.getElementById('no-exams').style.display = "initial";
           }
-          break;
         }
-        else {
-          document.getElementById('no-exams').style.display = "initial";
-        }
+        classAvg = 0;
+        classCounter = 0;
+      });
+
+      collectiveAvg = collectiveAvg / examCounter;
+      collectiveAvg = (collectiveAvg).toFixed(1);
+
+      if(collectiveAvg == "NaN"){
+        document.getElementById('avg-grade-number').innerHTML = "No Data";
       }
-      classAvg = 0;
-      classCounter = 0;
+      else{
+        document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
+      }
     });
+  }
+  else {
+    document.getElementById('classSpecific').style.display = "initial";
+    document.getElementById('welcome-div').style.display = "none";
+    document.getElementById('wrapper').style.display = "none";
+    document.getElementById('doesNotExist').style.display = "none";
 
-    collectiveAvg = collectiveAvg / examCounter;
-    collectiveAvg = (collectiveAvg).toFixed(1);
-
-    if(collectiveAvg == "NaN"){
-      document.getElementById('avg-grade-number').innerHTML = "No Data";
-    }
-    else{
-      document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
-    }
-  });
+    document.getElementById('exam-wrapper').style.display = "grid";
+    document.body.style.backgroundImage = "linear-gradient(to top, rgb(223, 233, 243) 0%, white 100%)";
+  }
+  classDataHasLoaded = true;
 }
 
 // Generate random exam code
@@ -552,191 +570,204 @@ x.addListener(removeDropDown) // Attach listener function on state changes
 
 // function to display all data in the table by className
 function displayExamData(name) {
-  console.log(name)
-  var cumAvg = 0;
-  var classLength = 0;
-  var highest = "a:-1000";
-  var lowest = "a:1000";
-  var quickest = "a:1000";
-  var slowest = "a:-1000";
-  var table;
-  var populated = false;
-  var standardDeviation = [];
+  if(!examDataHasLoaded) {
+    var cumAvg = 0;
+    var classLength = 0;
+    var highest = "a:-1000";
+    var lowest = "a:1000";
+    var quickest = "a:1000";
+    var slowest = "a:-1000";
+    var table;
+    var populated = false;
+    var standardDeviation = [];
 
-  document.getElementById('welcome-div').style.display = "none";
-  document.getElementById('wrapper').style.display = "none";
-  document.getElementById('classSpecific').style.display = "none";
-  document.getElementById('exam-wrapper').style.display = "none";
-  document.getElementById('examSpecific').style.display = "initial";
-  document.getElementById('sort-menu').style.display = "initial";
-  document.getElementById('exam-name').innerHTML = name;
-  document.body.style.backgroundImage = "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)";
+    document.getElementById('welcome-div').style.display = "none";
+    document.getElementById('wrapper').style.display = "none";
+    document.getElementById('classSpecific').style.display = "none";
+    document.getElementById('exam-wrapper').style.display = "none";
+    document.getElementById('examSpecific').style.display = "initial";
+    document.getElementById('sort-menu').style.display = "initial";
+    document.getElementById('exam-name').innerHTML = name;
+    document.body.style.backgroundImage = "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)";
 
-  var i = document.createElement('i');
-  i.className = "glyphicon glyphicon-circle-arrow-up";
-  i.id = "topPage";
+    var i = document.createElement('i');
+    i.className = "glyphicon glyphicon-circle-arrow-up";
+    i.id = "topPage";
 
-  i.onclick = function() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  };
+    i.onclick = function() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    };
 
-  document.getElementById('main').appendChild(document.createElement('br'));
-  document.getElementById('main').appendChild(i);
+    document.getElementById('main').appendChild(document.createElement('br'));
+    document.getElementById('main').appendChild(i);
 
-  for (var key in exams) {
-    // skip loop if the property is from prototype
-    if (!arr.hasOwnProperty(key)) continue;
-    var obj = exams[key];
+    for (var key in exams) {
+      // skip loop if the property is from prototype
+      if (!arr.hasOwnProperty(key)) continue;
+      var obj = exams[key];
 
-    for (var prop in obj) {
-      for(var initData in obj[prop]){
-        if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length > 1) {
-          var code = obj[prop][initData].examCode;
+      for (var prop in obj) {
+        for(var initData in obj[prop]){
+          if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length > 1) {
+            var code = obj[prop][initData].examCode;
 
-          document.getElementById('edit-exam').innerHTML = name;
-          document.getElementById('edit-current-exam').style.display = "initial";
+            document.getElementById('edit-exam').innerHTML = name;
+            document.getElementById('edit-current-exam').style.display = "initial";
 
-          document.getElementById('edit-current-exam').onclick = function() {
-            document.getElementById('create-exam').style.display = "initial";
-            document.getElementById('main').style.display = "none";
-            document.body.style.background = "white";
-            populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop)
-          };
+            document.getElementById('edit-current-exam').onclick = function() {
+              document.getElementById('create-exam').style.display = "initial";
+              document.getElementById('main').style.display = "none";
+              document.body.style.background = "white";
+              populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop)
+            };
 
-          // skip loop if the property is from prototype
-          if(!obj.hasOwnProperty(prop)) continue;
+            // skip loop if the property is from prototype
+            if(!obj.hasOwnProperty(prop)) continue;
 
-          var dbName = obj[prop][initData].examTitle;
-          if(dbName == "") {
-            dbName = obj[prop][initData].examCode;
-          }
-
-          if(dbName == name) {
-            var random = document.createElement('div');
-            var table = document.createElement('table');
-
-            table.id = "random";
-            table.className = "table table-striped";
-            table.style.width = "100vw";
-
-            var init = document.createElement('tr');
-            init.style.color = "darkgray";
-
-            var initName = document.createElement('td');
-            initName.innerHTML = "Name";
-            initName.style.paddingLeft = "66px";
-            initName.id = "name";
-
-            var initScore = document.createElement('td');
-            initScore.innerHTML = "Score (%)"
-            initScore.id = "score";
-
-            var initPercentile = document.createElement('td');
-            initPercentile.innerHTML = "Percentile";
-            initPercentile.id = "percentile";
-
-            var initTime = document.createElement('td');
-            initTime.innerHTML = "Time";
-            initTime.id = "time";
-
-            init.appendChild(initName);
-            init.appendChild(initScore);
-            init.appendChild(initPercentile);
-            init.appendChild(initTime);
-
-            table.appendChild(init);
-          }
-        }
-        else if(Object.keys(obj[prop]).length > 1 && !populated){
-          populated = true;
-          for(var response in obj[prop].responses){
-            standardDeviation.push(parseInt(obj[prop].responses[response].split(":")[1]));
-
-            examData.push(obj[prop].responses[response]);
-            cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
-            classLength = Object.keys(obj[prop].responses).length;
-
-            if(parseInt(obj[prop].responses[response].split(":")[1]) > parseInt(highest.split(":")[1])) {
-              highest = obj[prop].responses[response];
+            var dbName = obj[prop][initData].examTitle;
+            if(dbName == "") {
+              dbName = obj[prop][initData].examCode;
             }
 
-            if(parseInt(obj[prop].responses[response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
-              lowest = obj[prop].responses[response];
+            if(dbName == name) {
+              var random = document.createElement('div');
+              var table = document.createElement('table');
+
+              table.id = "random";
+              table.className = "table table-striped";
+              table.style.width = "100vw";
+
+              var init = document.createElement('tr');
+              init.style.color = "darkgray";
+
+              var initName = document.createElement('td');
+              initName.innerHTML = "Name";
+              initName.style.paddingLeft = "66px";
+              initName.id = "name";
+
+              var initScore = document.createElement('td');
+              initScore.innerHTML = "Score (%)"
+              initScore.id = "score";
+
+              var initPercentile = document.createElement('td');
+              initPercentile.innerHTML = "Percentile";
+              initPercentile.id = "percentile";
+
+              var initTime = document.createElement('td');
+              initTime.innerHTML = "Time";
+              initTime.id = "time";
+
+              init.appendChild(initName);
+              init.appendChild(initScore);
+              init.appendChild(initPercentile);
+              init.appendChild(initTime);
+
+              table.appendChild(init);
             }
+          }
+          else if(Object.keys(obj[prop]).length > 1 && !populated){
+            populated = true;
+            for(var response in obj[prop].responses){
+              standardDeviation.push(parseInt(obj[prop].responses[response].split(":")[1]));
 
-            var tr = document.createElement('tr');
-            tr.onclick = function() { loadStudentExamData(obj[prop].responses[response].split(":")[0]); }
+              examData.push(obj[prop].responses[response]);
+              cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
+              classLength = Object.keys(obj[prop].responses).length;
 
-            table.appendChild(document.createElement('br'));
+              if(parseInt(obj[prop].responses[response].split(":")[1]) > parseInt(highest.split(":")[1])) {
+                highest = obj[prop].responses[response];
+              }
 
-      			var name = document.createElement('td');
-            name.style.paddingLeft = "66px";
-            name.id = "name";
-      			var score = document.createElement('td');
-      			var percentile = document.createElement('td');
-            var time = document.createElement('td');
+              if(parseInt(obj[prop].responses[response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
+                lowest = obj[prop].responses[response];
+              }
 
-      			name.innerHTML = obj[prop].responses[response].split(":")[0];
-            name.id = "name";
+              var tr = document.createElement('tr');
+              tr.onclick = function() { loadStudentExamData(obj[prop].responses[response].split(":")[0]); }
 
-      			score.innerHTML = parseInt(obj[prop].responses[response].split(":")[1]).toFixed(1) + "%";
-            score.id = "score";
+              table.appendChild(document.createElement('br'));
 
-            time.innerHTML = obj[prop].responses[response].split(":")[2] + " Mins";
-            time.id = "time";
+        			var name = document.createElement('td');
+              name.style.paddingLeft = "66px";
+              name.id = "name";
+        			var score = document.createElement('td');
+        			var percentile = document.createElement('td');
+              var time = document.createElement('td');
 
-      			percentile.innerHTML = getPercentile(obj[prop].responses[response], obj[prop].responses) + "th";
-            percentile.id = "percentile";
+        			name.innerHTML = obj[prop].responses[response].split(":")[0];
+              name.id = "name";
 
-      			tr.appendChild(name);
-      			tr.appendChild(score);
-      			tr.appendChild(percentile);
-            tr.appendChild(time);
-      			table.appendChild(tr);
+        			score.innerHTML = parseInt(obj[prop].responses[response].split(":")[1]).toFixed(1) + "%";
+              score.id = "score";
 
-            random.appendChild(table);
-            document.getElementById('main').appendChild(random);
+              time.innerHTML = obj[prop].responses[response].split(":")[2] + " Mins";
+              time.id = "time";
+
+        			percentile.innerHTML = getPercentile(obj[prop].responses[response], obj[prop].responses) + "th";
+              percentile.id = "percentile";
+
+        			tr.appendChild(name);
+        			tr.appendChild(score);
+        			tr.appendChild(percentile);
+              tr.appendChild(time);
+        			table.appendChild(tr);
+
+              random.appendChild(table);
+              document.getElementById('main').appendChild(random);
+            }
           }
         }
       }
     }
-  }
 
-    var overallData = document.getElementById('overall-data');
-    var ul = document.createElement('ul');
-    ul.style.float = "right";
-    ul.style.marginRight = "15vw";
+      var overallData = document.getElementById('overall-data');
+      var ul = document.createElement('ul');
+      ul.style.float = "right";
+      ul.style.marginRight = "15vw";
 
-    var avg = document.createElement('li');
-    avg.innerHTML = "Class Average: " + (cumAvg / classLength).toFixed(1) + '%';
-    avg.style.fontSize = "20px";
+      var avg = document.createElement('li');
+      avg.innerHTML = "Class Average: " + (cumAvg / classLength).toFixed(1) + '%';
+      avg.style.fontSize = "20px";
 
-    var highestScorer = document.createElement('li');
-    highestScorer.innerHTML = "Highest Scorer: " + highest.split(":")[0] + " (" + highest.split(":")[1] + "%)";
-    highestScorer.style.fontSize = "20px";
+      var highestScorer = document.createElement('li');
+      highestScorer.innerHTML = "Highest Scorer: " + highest.split(":")[0] + " (" + highest.split(":")[1] + "%)";
+      highestScorer.style.fontSize = "20px";
 
-    var lowestScorer = document.createElement('li');
-    lowestScorer.innerHTML = "Lowest Scorer: " + lowest.split(":")[0] + " (" + lowest.split(":")[1] + "%)";
-    lowestScorer.style.fontSize = "20px";
+      var lowestScorer = document.createElement('li');
+      lowestScorer.innerHTML = "Lowest Scorer: " + lowest.split(":")[0] + " (" + lowest.split(":")[1] + "%)";
+      lowestScorer.style.fontSize = "20px";
 
-    var standardDev = document.createElement('li');
+      var standardDev = document.createElement('li');
 
-    // calc SD
-    n = standardDeviation.length;
-    mean = standardDeviation.reduce((a,b) => a+b)/n;
-    sd = Math.sqrt(standardDeviation.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
+      // calc SD
+      n = standardDeviation.length;
+      mean = standardDeviation.reduce((a,b) => a+b)/n;
+      sd = Math.sqrt(standardDeviation.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
 
-    standardDev.innerHTML = "Standard Deviation (σ): " + sd.toFixed(3);
-    standardDev.style.fontSize = "20px";
+      standardDev.innerHTML = "Standard Deviation (σ): " + sd.toFixed(3);
+      standardDev.style.fontSize = "20px";
 
-    ul.appendChild(avg);
-    ul.appendChild(highestScorer);
-    overallData.appendChild(document.createElement('br'));
-    ul.appendChild(lowestScorer);
-    ul.appendChild(standardDev);
+      ul.appendChild(avg);
+      ul.appendChild(highestScorer);
+      overallData.appendChild(document.createElement('br'));
+      ul.appendChild(lowestScorer);
+      ul.appendChild(standardDev);
 
-    overallData.appendChild(ul);
+      overallData.appendChild(ul);
+    }
+    else {
+      var possibleTables = document.getElementsByClassName('table');
+      possibleTables[0].style.display = "table";
+
+      document.getElementById('topPage').style.display = "initial";
+      document.getElementById('examSpecific').style.display = "inherit";
+      document.getElementById('classSpecific').style.display = "none";
+      document.getElementById('exam-wrapper').style.display = "none";
+
+      document.body.style.backgroundImage = "linear-gradient(135deg, rgb(245, 247, 250) 0%, rgb(195, 207, 226) 100%);";
+    }
+    examDataHasLoaded = true;
 }
 
 //function to remove all class='active'
@@ -784,23 +815,34 @@ function goHomeFromExams() {
   document.getElementById('wrapper').style.display = "grid";
   document.getElementById('doesNotExist').style.display = "none";
   document.getElementById('no-exams').style.display = "none";
-
   document.getElementById('exam-wrapper').style.display = "none";
-  $(document.getElementById('exam-wrapper')).empty()
 
   document.body.style.backgroundImage = "none"
 }
 
 function goExamsFromExam() {
+  var possibleTables = document.getElementsByClassName('table');
 
+  for(var i = 0; i < possibleTables.length; i++) {
+    possibleTables[i].style.display = "none";
+  }
+
+  document.getElementById('topPage').style.display = "none";
+  document.getElementById('examSpecific').style.display = "none";
+  document.getElementById('classSpecific').style.display = "initial";
+  document.getElementById('exam-wrapper').style.display = "grid";
+
+  document.body.style.backgroundImage = "linear-gradient(to top, rgb(223, 233, 243) 0%, white 100%)";
+  $(document.getElementById('overall-data')).empty()
+}
+
+function goHomeFromExamData() {
+  goExamsFromExam(); goHomeFromExams();
 }
 
 function loadStudentExamData(name) {
-  alert(name);
   document.getElementById('examSpecific').style.display = "none";
   document.getElementById('student-exam-data').style.display = "initial";
-
-
 }
 
 //function to calc precentile range
@@ -992,7 +1034,7 @@ function sort(func) {
 
       for(var i = testExamData.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
-      tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0]); }
+        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0]); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1371,7 +1413,6 @@ function searchExams() {
 
 // create div based on name and avg
 function createExamBox(name, classAvg, ref, code) {
-  console.log(ref);
   var gradients = [
     "linear-gradient( 135deg, #FEB692 10%, #EA5455 100%)",
     "linear-gradient( 135deg, #72EDF2 10%, #5151E5 100%)",
@@ -2140,39 +2181,42 @@ function createClassBox(className, numStudentsInClass, numExamsInClass) {
 
 //populate main dashboard of page when page loads
 function populateDashboard() {
-  var ref = firebase.database().ref('Teachers');
-  var counter = 0;
-  var exists = false;
+  if(!userDataHasLoaded) {
+    var ref = firebase.database().ref('Teachers');
+    var counter = 0;
+    var exists = false;
 
-  ref.once('value', function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-      if(childSnapshot.key == userName) {
-        exists = true;
-        arr.push(childSnapshot.child("Classes").val());
+    ref.once('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        if(childSnapshot.key == userName) {
+          exists = true;
+          arr.push(childSnapshot.child("Classes").val());
 
-        for (var key in arr) {
-          var x = 0;
-          // skip loop if the property is from prototype
-          if (!arr.hasOwnProperty(key)) continue;
-          var obj = arr[key];
-          for (var prop in obj) {
+          for (var key in arr) {
+            var x = 0;
             // skip loop if the property is from prototype
-            if(!obj.hasOwnProperty(prop)) continue;
+            if (!arr.hasOwnProperty(key)) continue;
+            var obj = arr[key];
+            for (var prop in obj) {
+              // skip loop if the property is from prototype
+              if(!obj.hasOwnProperty(prop)) continue;
 
-            if(obj[prop].Exams[Object.keys(obj[prop].Exams)[0]] == "no_exams") {
-              createClassBox(prop, Object.keys(obj[prop].Students).length, 0);
-            }
+              if(obj[prop].Exams[Object.keys(obj[prop].Exams)[0]] == "no_exams") {
+                createClassBox(prop, Object.keys(obj[prop].Students).length, 0);
+              }
 
-            else {
-              createClassBox(prop, Object.keys(obj[prop].Students).length, Object.keys(obj[prop].Exams).length);
+              else {
+                createClassBox(prop, Object.keys(obj[prop].Students).length, Object.keys(obj[prop].Exams).length);
+              }
             }
           }
         }
+      });
+      if(!exists) {
+        document.getElementById('doesNotExist').style.display = "initial";
       }
     });
-    if(!exists) {
-      document.getElementById('doesNotExist').style.display = "initial";
-    }
-  });
+  }
 
+  userDataHasLoaded = true;
 }

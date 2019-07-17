@@ -33,6 +33,9 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="941839358228-410f7ai6fkiqqob91o0uv5p07djgu2m6.apps.googleusercontent.com">
 
+    <!-- Plot.ly JS -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
   </head>
 
   <!-- Main Body -->
@@ -44,6 +47,7 @@
             <a class="navbar-brand" href="teacher.html">
               <span id="logo" alt="Logo" class="glyphicon glyphicon-tint"></span>
             </a>
+
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" class="active" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Leaderboard</a></li>
@@ -137,8 +141,8 @@
             <!-- <a href="javascript:location.reload(); "><i class="glyphicon glyphicon-arrow-left"></i> &nbsp Go Back To Classes</a> -->
 
             <ol class="breadcrumb" style="background: white;">
-              <li><a href="#">Classes</a></li>
-              <li><a href="#">Exams</a></li>
+              <li><a href="javascript:goHomeFromExamData();">Classes</a></li>
+              <li><a href="javascript:goExamsFromExam();">Exams</a></li>
               <li class="active"><span id="this-exam"></span></li>
             </ol>
 
