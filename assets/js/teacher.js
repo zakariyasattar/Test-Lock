@@ -15,7 +15,6 @@ var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 // HAS LOADED
 var examDataHasLoaded = false;
-var classDataHasLoaded = false;
 var userDataHasLoaded = false;
 
 
@@ -432,7 +431,9 @@ function setChecked(div) {
 
 //load class based on name
 function loadClass(name) {
-  if(!classDataHasLoaded) {
+    if($("#exam-wrapper") != undefined) {
+      $("#exam-wrapper").empty();
+    }
     var examCounter = 0;
     var collectiveAvg = 0;
     var classAvg = 0;
@@ -515,17 +516,6 @@ function loadClass(name) {
         document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
       }
     });
-  }
-  else {
-    document.getElementById('classSpecific').style.display = "initial";
-    document.getElementById('welcome-div').style.display = "none";
-    document.getElementById('wrapper').style.display = "none";
-    document.getElementById('doesNotExist').style.display = "none";
-
-    document.getElementById('exam-wrapper').style.display = "grid";
-    document.body.style.backgroundImage = "linear-gradient(to top, rgb(223, 233, 243) 0%, white 100%)";
-  }
-  classDataHasLoaded = true;
 }
 
 // Generate random exam code
@@ -843,6 +833,19 @@ function goHomeFromExamData() {
 function loadStudentExamData(name) {
   document.getElementById('examSpecific').style.display = "none";
   document.getElementById('student-exam-data').style.display = "initial";
+  document.body.style.backgroundImage = "none";
+
+  //linear-gradient(135deg, rgb(245, 247, 250) 0%, rgb(195, 207, 226) 100%);
+
+  var table = document.getElementsByClassName('table');
+  for(var i = 0; i < table.length; i++) {
+    table[i].style.display = "none";
+  }
+
+  // firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/").on('value', function(snapshot) {
+  //
+  // });
+
 }
 
 //function to calc precentile range
@@ -868,6 +871,7 @@ function sort(func) {
   for(var t = 0; t < tables.length; t++) {
     tables[t].style.display = "none";
   }
+
   var testExamData = examData.slice();
   testExamData.sort();
 
@@ -1503,7 +1507,11 @@ function createExamBox(name, classAvg, ref, code) {
       document.getElementById('display-code').innerHTML = code;
       document.body.style.backgroundImage = "none";
 
-      
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code + "/currentlyTaking/").on('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          createCurrentTakingBox(retrieveName(childSnapshot.val()));
+        });
+      });
     }
 
     classBox.appendChild(descriptor);
@@ -1527,6 +1535,43 @@ function createExamBox(name, classAvg, ref, code) {
 
   wrapper.appendChild(classBox);
   document.getElementById('main').appendChild(wrapper);
+}
+
+//get student name by ID
+function retrieveName(id) {
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Students/").on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      if(childSnapshot.val().split(";")[0] == id){
+        return childSnapshot.val().split(";")[1];
+      }
+    });
+  });
+
+  return "Not Found";
+}
+
+// create currentlyTaking box
+function createCurrentTakingBox(name) {
+  var currentlyTakingDiv = document.getElementById('joined-students');
+  var gradients = [
+    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "linear-gradient(to top, #a3bded 0%, #6991c7 100%)",
+    "linear-gradient(60deg, #29323c 0%, #485563 100%)",
+    "linear-gradient(-60deg, #ff5858 0%, #f09819 100%)",
+    "linear-gradient(to top, #4481eb 0%, #04befe 100%)",
+    "linear-gradient(to right, #0acffe 0%, #495aff 100%)",
+    "linear-gradient(-225deg, #A445B2 0%, #D41872 52%, #FF0066 100%)"
+  ];
+
+  var box = document.createElement('div');
+  box.id = 'currentlyTakingBox';
+  box.style.backgroundImage = gradients[Math.floor(Math.random()*gradients.length)];
+  box.innerHTML = name;
+
+  var center = document.createElement('center');
+  center.appendChild(box);
+
+  currentlyTakingDiv.appendChild(center);
 }
 
 //delete current exam

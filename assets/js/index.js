@@ -33,6 +33,7 @@ var key = initKey(); var timer = 0;
               }).then((result) => {
                 if (!result.value) {
                   toggleFullScreen();
+
                   leaverCount++;
                 }
                 else if(result.value) {
@@ -300,10 +301,20 @@ function submitExamCode() {
       document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[2];
       document.getElementById('id-input').style.display = 'initial';
 
-      localStorage.setItem('ExamCode', code);
+      getCodeLetter(code, data.split(";")[1], data.split(";")[2])
       stopEnter = true;
     }
   }
+}
+
+function getCodeLetter(code, teacher, className) {
+  firebase.database().ref("Teachers/" + teacher + "/Classes/" + className).once('value', function(snapshot) {
+    for(exam in snapshot.val().Exams) {
+      if(exam.substring(1) == code) {
+        localStorage.setItem('ExamCode', exam);
+      }
+    }
+  });
 }
 
 function retrieveName() {
@@ -379,14 +390,15 @@ function findCode(code) {
 // function to display quiz to student
 function displayQuiz() {
   var code = localStorage.getItem("ExamCode");
+  var teacher = localStorage.getItem("teacher");
+
   localStorage.setItem("StudentName", document.getElementById('userName').innerHTML);
   var i = 0;
 
   for(var x = 0; x < examCodes.length; x++){
     var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
     var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-    if(plaintext.split(";")[0] == code){
+    if(plaintext.split(";")[0] == code.substring(1) && plaintext.split(";")[1] == teacher){
       i = x;
       break;
     }
@@ -404,7 +416,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  // toggleFullScreen();
 
   canCount = true;
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
@@ -416,15 +428,24 @@ function populateExam(code, ref) {
   firebase.database().ref(ref).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       var val = childSnapshot.val();
+
       if(val.examCode != undefined){
         var counter = 0;
 
         document.getElementById('exam-code').innerHTML = val.examCode + " | " + localStorage.getItem("StudentName");
         document.getElementById('date').innerHTML = val.examTeacher + " | " + val.examDate.split("-")[1] + "-" + val.examDate.split("-")[2] + "-" + val.examDate.split("-")[0];
         document.getElementById('description').value = val.examDescription;
-        document.getElementById('nameOfExam').innerHTML = val.examTitle;
+
+        var title = val.examTitle;
+        if(title == "") {
+          title = "Untitled";
+        }
+        document.getElementById('nameOfExam').innerHTML = title;
+
         document.getElementsByClassName('points')[0].innerHTML = val.examTotalPoints;
         document.getElementsByClassName('time')[0].innerHTML = val.examTotalMins;
+
+        $(document.getElementById('finalDiv')).empty();
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
           done.push(1);
@@ -793,6 +814,7 @@ function createQuestionTracker(i, populating) {
     createQuestionTracker(1, false);
   }
   var manager = document.getElementById('questionNums');
+  var finalDiv = document.getElementById('finalDiv');
 
   var tracker = document.createElement('span');
   tracker.innerHTML = "&#x25CC;"
@@ -838,7 +860,8 @@ function createQuestionTracker(i, populating) {
 
   tracker.appendChild(text);
 
-  manager.appendChild(tracker);
+  finalDiv.appendChild(tracker);
+  manager.appendChild(finalDiv);
   manager.scrollTop = (manager.clientHeight + manager.clientHeight);
 }
 
@@ -921,16 +944,17 @@ function submitExam() {
 function displayResults() {
   var answers = JSON.parse(localStorage.getItem('student_answers'));
   var dbAnswers;
+  var responseStructure = {};
 
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.toJSON().questions != undefined) {
         dbAnswers = childSnapshot.toJSON();
-        console.log(dbAnswers)
       }
     });
 
     var total = 0;
+    console.log(answers)
 
     for(var i = 0; i < answers.length; i++) {
       var answer = "";
@@ -964,7 +988,10 @@ function displayResults() {
       }
     }
 
+    console.log(answers)
+
     firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses").push(localStorage.getItem('StudentName') + ":" + ((total / dbAnswers.examTotalPoints) * 100).toFixed(1) + ":" + timer);
+    firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses").push(responseStructure);
 
     var min = " Minutes"
 
