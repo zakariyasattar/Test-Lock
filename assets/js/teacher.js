@@ -456,7 +456,7 @@ function loadClass(name) {
         childSnapshot.child('responses').forEach(function(exam) {
           classCounter++;
           examCounter++;
-          var grade = exam.val().split(":")[1];
+          var grade = exam.val()[Object.keys(exam.val())[0]].score;
           collectiveAvg += parseInt(grade);
 
           classAvg += parseInt(grade);
@@ -659,18 +659,19 @@ function displayExamData(name) {
           else if(Object.keys(obj[prop]).length > 1 && !populated){
             populated = true;
             for(var response in obj[prop].responses){
-              standardDeviation.push(parseInt(obj[prop].responses[response].split(":")[1]));
+              var data = obj[prop].responses[response][Object.keys(obj[prop].responses[response])[0]];
 
-              examData.push(obj[prop].responses[response]);
-              cumAvg += parseInt(obj[prop].responses[response].split(":")[1]);
+              standardDeviation.push(parseInt(data.score));
+              examData.push(data.name + ":" + data.score + ":" + data.time);
+              cumAvg += parseInt(data.score);
               classLength = Object.keys(obj[prop].responses).length;
 
-              if(parseInt(obj[prop].responses[response].split(":")[1]) > parseInt(highest.split(":")[1])) {
-                highest = obj[prop].responses[response];
+              if(parseInt(data.score) > highest) {
+                highest = parseInt(data.score);
               }
 
-              if(parseInt(obj[prop].responses[response].split(":")[1]) < parseInt(lowest.split(":")[1])) {
-                lowest = obj[prop].responses[response];
+              if(parseInt(data.score) < lowest) {
+                lowest = parseInt(data.score);
               }
 
               var tr = document.createElement('tr');
@@ -685,16 +686,16 @@ function displayExamData(name) {
         			var percentile = document.createElement('td');
               var time = document.createElement('td');
 
-        			name.innerHTML = obj[prop].responses[response].split(":")[0];
+        			name.innerHTML = data.name;
               name.id = "name";
 
-        			score.innerHTML = parseInt(obj[prop].responses[response].split(":")[1]).toFixed(1) + "%";
+        			score.innerHTML = data.score + "%";
               score.id = "score";
 
-              time.innerHTML = obj[prop].responses[response].split(":")[2] + " Mins";
+              time.innerHTML = data.time + " Mins";
               time.id = "time";
 
-        			percentile.innerHTML = getPercentile(obj[prop].responses[response], obj[prop].responses) + "th";
+        			percentile.innerHTML = getPercentileOriginal(parseInt(data.score), obj[prop].responses, data.name) + "th";
               percentile.id = "percentile";
 
         			tr.appendChild(name);
@@ -731,9 +732,8 @@ function displayExamData(name) {
       var standardDev = document.createElement('li');
 
       // calc SD
-      n = standardDeviation.length;
-      mean = standardDeviation.reduce((a,b) => a+b)/n;
-      sd = Math.sqrt(standardDeviation.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
+      mean = standardDeviation.reduce((a,b) => a+b)/standardDeviation.length;
+      sd = Math.sqrt(standardDeviation.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/standardDeviation.length);
 
       standardDev.innerHTML = "Standard Deviation (σ): " + sd.toFixed(3);
       standardDev.style.fontSize = "20px";
@@ -758,6 +758,22 @@ function displayExamData(name) {
       document.body.style.backgroundImage = "linear-gradient(135deg, rgb(245, 247, 250) 0%, rgb(195, 207, 226) 100%);";
     }
     examDataHasLoaded = true;
+}
+
+function getPercentileOriginal(score, exam, name) {
+  console.log(exam)
+  var numBelow = 0;
+  var numEqual = 0;
+
+  for(var student in exam) {
+    if(score > parseInt(exam[student].score)) {
+      numBelow++;
+    }
+    else if(score == parseInt(exam[student].score) && name != exam[student].name) {
+      numEqual++;
+    }
+  }
+  return 100 * (numBelow / (Object.keys(exam).length)).toFixed(1);
 }
 
 //function to remove all class='active'

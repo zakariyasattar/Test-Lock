@@ -918,6 +918,7 @@ function submitExam() {
   var student_answers = [];
 
   for(var i = 0; i < document.getElementsByClassName('question').length; i++) {
+    console.log(document.getElementsByClassName('question'))
     var question = document.getElementsByClassName('question')[i];
     var checked = getChecked(question);
 
@@ -954,7 +955,6 @@ function displayResults() {
     });
 
     var total = 0;
-    console.log(answers)
 
     for(var i = 0; i < answers.length; i++) {
       var answer = "";
@@ -988,10 +988,14 @@ function displayResults() {
       }
     }
 
-    console.log(answers)
+    var studentExamData = {
+      "score" : ((total / dbAnswers.examTotalPoints) * 100).toFixed(1),
+      "time" : timer,
+      "answers" : answers,
+      "name" : localStorage.getItem('StudentName')
+    }
 
-    firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses").push(localStorage.getItem('StudentName') + ":" + ((total / dbAnswers.examTotalPoints) * 100).toFixed(1) + ":" + timer);
-    firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses").push(responseStructure);
+    firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses/" + localStorage.getItem('StudentName')).push(studentExamData);
 
     var min = " Minutes"
 
