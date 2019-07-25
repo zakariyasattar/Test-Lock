@@ -918,7 +918,6 @@ function submitExam() {
   var student_answers = [];
 
   for(var i = 0; i < document.getElementsByClassName('question').length; i++) {
-    console.log(document.getElementsByClassName('question'))
     var question = document.getElementsByClassName('question')[i];
     var checked = getChecked(question);
 
@@ -959,13 +958,23 @@ function displayResults() {
     for(var i = 0; i < answers.length; i++) {
       var answer = "";
       var fr = false;
+      var tf = false;
 
       if(dbAnswers.questions[i].type == "tf") {
-        if(answers[i].split(";")[1] == "1") {
+        tf = true;
+        if(answers[i].split(";")[1] == 1) {
           answer = "false";
         }
         else {
           answer = "true";
+        }
+
+        if(answer == dbAnswers.questions[i].choices[0]){
+          total += parseInt(dbAnswers.questions[i].points);
+          createCorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        }
+        else {
+          createIncorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
       }
       else if(dbAnswers.questions[i].type == "mc") {
@@ -973,11 +982,10 @@ function displayResults() {
       }
       else {
         fr = true;
-
         createFrBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
       }
 
-      if(!fr) {
+      if(!fr && !tf) {
         if(answer == dbAnswers.questions[i].checked) {
           total += parseInt(dbAnswers.questions[i].points);
           createCorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
