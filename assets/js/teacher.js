@@ -87,6 +87,7 @@ $('#profile').click(function(){
   });
 });
 
+// create initial framework for exams
 function createQuiz() {
   var examCounter = 0;
 
@@ -147,7 +148,6 @@ function createQuiz() {
   document.body.style.background = "white";
   document.getElementById('exam-code').innerHTML = randomCode.toUpperCase();
 }
-
 
 // Alert After Save
 function successfulSave() {
@@ -760,15 +760,14 @@ function displayExamData(name) {
 }
 
 function getPercentileOriginal(score, exam, name) {
-  console.log(exam)
   var numBelow = 0;
   var numEqual = 0;
 
   for(var student in exam) {
-    if(score > parseInt(exam[student].score)) {
+    if(score > parseInt(exam[student][Object.keys(exam[student])[0]].score)) {
       numBelow++;
     }
-    else if(score == parseInt(exam[student].score) && name != exam[student].name) {
+    else if(score == parseInt(exam[student][Object.keys(exam[student])[0]].score) && name != exam[student][Object.keys(exam[student])[0]].name) {
       numEqual++;
     }
   }
@@ -862,7 +861,7 @@ function loadStudentExamData(name, code) {
     var data = (snapshot.val().responses[name][Object.keys(snapshot.val().responses[name])[0]]);
 
     var studentPoints = data.score / 100 * snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
-    document.getElementById('score-num').innerHTML = studentPoints + " / " + snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
+    document.getElementById('score-num').innerHTML = (studentPoints).toFixed(0) + " / " + snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
     document.getElementById('score').innerHTML = data.score + "%";
 
     for(var i = 0; i < Object.keys(data.answers).length; i++) {
@@ -874,16 +873,106 @@ function loadStudentExamData(name, code) {
         else {
           answer = "false";
         }
-        createGradedQuestion(answer, snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].choices[0]);
+        createGradedQuestion(
+          // PARAM: studAnswer
+          answer,
+          // PARAM: corrAnswer
+          snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].choices[0],
+          // PARAM: numAnswerChoices
+          Object.keys(snapshot.val()[Object.keys(snapshot.val())[0]].questions).length,
+          // PARAM: numPoints
+          snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].points,
+          // PARAM: questions
+          snapshot.val()[Object.keys(snapshot.val())[0]].questions[i]
+        );
       }
     }
   });
-
 }
 
 //create Question box for every graded question
-function createGradedQuestion(studAnswer, corrAnswer) {
-  // COPY PASTE: function createQuestion() -- modify
+function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswerPoints, questions) {
+  console.log(studAnswer, corrAnswer, numAnswerChoices, numAnswerPoints, questions)
+  var exam = document.getElementById('question-data');
+
+  var question = document.createElement('div');
+  question.className = "question";
+  question.id = document.getElementsByClassName('question').length + 1;
+
+  var num = document.createElement('span');
+  num.innerHTML = document.getElementsByClassName('question').length + 1 + ". ";
+  num.style.color = "#97a5aa";
+
+  var hr = document.createElement('hr');
+
+  var question_title = document.createElement('input');
+  question_title.readOnly = true;
+  question_title.value = questions.title;
+  question_title.id = "question-title";
+
+  question.appendChild(num);
+  question.appendChild(question_title);
+
+  var points = document.createElement('div');
+  points.id = "points";
+  var span = document.createElement('span');
+  span.innerHTML = "( ";
+
+  var numPoints = document.createElement('span');
+  numPoints.type = "text";
+  numPoints.id = "numPoints";
+  numPoints.innerHTML = numAnswerPoints;
+
+  var finishingSpan =  document.createElement('span');
+  finishingSpan.innerHTML = " points)";
+
+  points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
+
+  question.appendChild(points);
+
+  var answer_choices = document.createElement('div');
+  answer_choices.className = "mc";
+
+  for(var i = 0; i < numAnswerChoices; i++) {
+    var label = document.createElement('label');
+    label.id = "label";
+
+    var input = document.createElement('input');
+    input.disabled = true;
+    input.style.outline = "none";
+    input.type = "radio";
+    input.className = "option-input radio";
+    input.name = num.innerHTML;
+
+    var span = document.createElement('span');
+    if(questions.type != "tf" && questions.type != "fr") {
+      span.innerHTML = questions.choices[0];
+    }
+    else if(questions.type == "tf"){
+      if(i == 0) {
+        span.innerHTML = "True";
+      }
+      else {
+        span.innerHTML = "False";
+      }
+    }
+    span.style.fontWeight = "normal"
+
+    var answer_choice = document.createElement('span');
+    answer_choice.className = "option";
+    answer_choice.id = "question-choice";
+
+    label.appendChild(input);
+    label.appendChild(answer_choice);
+    label.appendChild(span);
+    answer_choices.appendChild(label);
+  }
+  question.appendChild(answer_choices);
+
+  exam.appendChild(question);
+  exam.appendChild(document.createElement('br'));
+  exam.appendChild(hr);
+
 }
 
 //function to calc precentile range
@@ -1138,7 +1227,7 @@ function sort(func) {
 
       table.appendChild(init);
 
-      for(var i = scores.length - 1; i >= 0; i--){
+      for(var i = 0; i < scores.length; i++){
         var tr = document.createElement('tr');
         tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0]); }
 
@@ -1202,7 +1291,7 @@ function sort(func) {
 
       table.appendChild(init);
 
-      for(var i = 0; i < scores.length; i++){
+      for(var i = scores.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
         tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0]); }
 
