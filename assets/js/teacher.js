@@ -591,8 +591,6 @@ function displayExamData(name) {
     document.getElementById('main').appendChild(document.createElement('br'));
     document.getElementById('main').appendChild(i);
 
-    console.log(exams);
-
     for (var key in exams) {
       // skip loop if the property is from prototype
       if (!arr.hasOwnProperty(key)) continue;
@@ -667,12 +665,12 @@ function displayExamData(name) {
               cumAvg += parseInt(data.score);
               classLength = Object.keys(obj[prop].responses).length;
 
-              if(parseInt(data.score) > highest) {
-                highest = parseInt(data.score);
+              if(parseInt(data.score) > parseInt(highest.split(":")[1])) {
+                highest = data.name + ":" + parseInt(data.score);
               }
 
-              if(parseInt(data.score) < lowest) {
-                lowest = parseInt(data.score);
+              if(parseInt(data.score) < parseInt(lowest.split(":")[1])) {
+                lowest = data.name + ":" + parseInt(data.score);
               }
 
               var tr = document.createElement('tr');
