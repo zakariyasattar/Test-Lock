@@ -674,7 +674,8 @@ function displayExamData(name) {
               }
 
               var tr = document.createElement('tr');
-              tr.onclick = function() { loadStudentExamData(data.name, prop); }
+              tr.className = response;
+              tr.onclick = function() { loadStudentExamData(this.className, prop); }
 
               table.appendChild(document.createElement('br'));
 
@@ -864,35 +865,53 @@ function loadStudentExamData(name, code) {
     document.getElementById('score-num').innerHTML = (studentPoints).toFixed(0) + " / " + snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
     document.getElementById('score').innerHTML = data.score + "%";
 
+    var corrAnswer = "";
+
     for(var i = 0; i < Object.keys(data.answers).length; i++) {
-      // createGradedQuestion(data.answers[i], sn, correct)
+      console.log(Object.keys(data.answers))
+
       if(snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].type == "tf") {
-        if(data.answers[i].split(";")[1] == 0) {
-          answer = "true";
-        }
-        else {
-          answer = "false";
-        }
-        createGradedQuestion(
-          // PARAM: studAnswer
-          answer,
-          // PARAM: corrAnswer
-          snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].choices[0],
-          // PARAM: numAnswerChoices
-          Object.keys(snapshot.val()[Object.keys(snapshot.val())[0]].questions).length,
-          // PARAM: numPoints
-          snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].points,
-          // PARAM: questions
-          snapshot.val()[Object.keys(snapshot.val())[0]].questions[i]
-        );
+        corrAnswer = snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].choices[0];
       }
+      else if(snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].type == "mc"){
+        corrAnswer = snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].checked;
+      }
+      else if(snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].type == "fr") {
+        corrAnswer = "hello"
+      }
+      createGradedQuestion(
+        // PARAM: studAnswer
+        data.answers[i].split(";")[1],
+        // PARAM: corrAnswer
+        corrAnswer,
+        // PARAM: numAnswerChoices
+        Object.keys(snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].choices).length,
+        // PARAM: numPoints
+        snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].points,
+        // PARAM: questions
+        snapshot.val()[Object.keys(snapshot.val())[0]].questions[i]
+      );
     }
   });
 }
 
 //create Question box for every graded question
 function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswerPoints, questions) {
-  console.log(studAnswer, corrAnswer, numAnswerChoices, numAnswerPoints, questions)
+  var awardedPoints = 0;
+  if(corrAnswer == "true"){
+    corrAnswer = "0";
+    numAnswerChoices = 2;
+  }
+  else if(corrAnswer == 'false') {
+    corrAnswer = "1";
+    numAnswerChoices = 2;
+  }
+
+  var correct = false;
+  if(studAnswer == corrAnswer) {
+    correct = true;
+  }
+
   var exam = document.getElementById('question-data');
 
   var question = document.createElement('div');
@@ -913,8 +932,13 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
   question.appendChild(num);
   question.appendChild(question_title);
 
+  if(correct) {
+    awardedPoints = numAnswerPoints;
+  }
+
   var points = document.createElement('div');
   points.id = "points";
+
   var span = document.createElement('span');
   span.innerHTML = "( ";
 
@@ -924,7 +948,7 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
   numPoints.innerHTML = numAnswerPoints;
 
   var finishingSpan =  document.createElement('span');
-  finishingSpan.innerHTML = " points)";
+  finishingSpan.innerHTML = " points)  -  points awarded: " + awardedPoints;
 
   points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
 
@@ -936,6 +960,33 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
   for(var i = 0; i < numAnswerChoices; i++) {
     var label = document.createElement('label');
     label.id = "label";
+    label.style.width = "95%"
+    if((correct && i == studAnswer) || i == corrAnswer) {
+      label.style.background = "#8fd875";
+
+      var correctAnswer = document.createElement('span');
+      correctAnswer.innerHTML = "Correct Answer"
+      correctAnswer.style.float = "right";
+      correctAnswer.style.fontWeight = "normal";
+      correctAnswer.style.marginTop  = "10px";
+      correctAnswer.style.color = "white";
+      correctAnswer.style.marginRight  = "15px";
+
+      label.appendChild(correctAnswer);
+    }
+    else if(!correct && i == studAnswer) {
+      label.style.background = "#f90421";
+      label.style.color = "white";
+
+      var incorrectAnswer = document.createElement('span');
+      incorrectAnswer.innerHTML = "Student Answer"
+      incorrectAnswer.style.float = "right";
+      incorrectAnswer.style.fontWeight = "normal";
+      incorrectAnswer.style.marginTop  = "10px";
+      incorrectAnswer.style.color = "white";
+      incorrectAnswer.style.marginRight  = "15px";
+      label.appendChild(incorrectAnswer);
+    }
 
     var input = document.createElement('input');
     input.disabled = true;
@@ -946,7 +997,7 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
 
     var span = document.createElement('span');
     if(questions.type != "tf" && questions.type != "fr") {
-      span.innerHTML = questions.choices[0];
+      span.innerHTML = questions.choices[i];
     }
     else if(questions.type == "tf"){
       if(i == 0) {
@@ -955,6 +1006,12 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
       else {
         span.innerHTML = "False";
       }
+    }
+    else if(questions.type == "fr") {
+      var ta = document.createElement('textarea');
+      ta.className = "fr";
+      ta.placeholder = "NOTE: This question requires manual grading";
+      question.appendChild(ta);
     }
     span.style.fontWeight = "normal"
 

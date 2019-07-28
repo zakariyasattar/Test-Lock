@@ -448,7 +448,7 @@ function populateExam(code, ref) {
         $(document.getElementById('finalDiv')).empty();
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
-          done.push(1);
+          done.push(0);
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 

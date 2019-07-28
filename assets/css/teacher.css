@@ -192,8 +192,12 @@
     transition: all .2s ease-in-out;
   }
 
-  /* Create Exam Dashboard */
+  #question-data #points{
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
 
+  /* Create Exam Dashboard */
   #nameOfExam {
     border: none;
     color: #777061;
