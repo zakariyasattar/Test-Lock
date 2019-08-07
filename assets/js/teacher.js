@@ -861,14 +861,14 @@ function loadStudentExamData(name, code) {
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + code).once('value', function(snapshot) {
     var data = (snapshot.val().responses[name][Object.keys(snapshot.val().responses[name])[0]]);
 
-    var studentPoints = data.score / 100 * snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
+    var studentPoints = data.totalScore / 100 * snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
     document.getElementById('score-num').innerHTML = (studentPoints).toFixed(0) + " / " + snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
-    document.getElementById('score').innerHTML = data.score + "%";
+    document.getElementById('score').innerHTML = data.totalScore + "%";
 
     var corrAnswer = "";
+    localStorage.setItem("totalPointsExcludingFr", 0);
 
     for(var i = 0; i < Object.keys(data.answers).length; i++) {
-      console.log(Object.keys(data.answers))
 
       if(snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].type == "tf") {
         corrAnswer = snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].choices[0];
@@ -877,7 +877,7 @@ function loadStudentExamData(name, code) {
         corrAnswer = snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].checked;
       }
       else if(snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].type == "fr") {
-        corrAnswer = "hello"
+        corrAnswer = "";
       }
       createGradedQuestion(
         // PARAM: studAnswer
@@ -889,14 +889,20 @@ function loadStudentExamData(name, code) {
         // PARAM: numPoints
         snapshot.val()[Object.keys(snapshot.val())[0]].questions[i].points,
         // PARAM: questions
-        snapshot.val()[Object.keys(snapshot.val())[0]].questions[i]
+        snapshot.val()[Object.keys(snapshot.val())[0]].questions[i],
+        // PARAM: studName
+        name,
+        // PARAM: examCurrentCode
+        code,
+        // PARAM: examTotalPoints
+        snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints
       );
     }
   });
 }
 
 //create Question box for every graded question
-function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswerPoints, questions) {
+function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswerPoints, questions, studName, examCurrentCode, examTotalPoints) {
   var awardedPoints = 0;
   if(corrAnswer == "true"){
     corrAnswer = "0";
@@ -910,6 +916,10 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
   var correct = false;
   if(studAnswer == corrAnswer) {
     correct = true;
+  }
+
+  if(questions.type != "fr") {
+    localStorage.setItem("totalPointsExcludingFr", parseInt(localStorage.getItem("totalPointsExcludingFr")) + parseInt(questions.points))
   }
 
   var exam = document.getElementById('question-data');
@@ -947,7 +957,8 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
   numPoints.id = "numPoints";
   numPoints.innerHTML = numAnswerPoints;
 
-  var finishingSpan =  document.createElement('span');
+  var finishingSpan = document.createElement('span');
+  finishingSpan.className = "pa";
   finishingSpan.innerHTML = " points)  -  points awarded: " + awardedPoints;
 
   points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
@@ -1007,12 +1018,6 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
         span.innerHTML = "False";
       }
     }
-    else if(questions.type == "fr") {
-      var ta = document.createElement('textarea');
-      ta.className = "fr";
-      ta.placeholder = "NOTE: This question requires manual grading";
-      question.appendChild(ta);
-    }
     span.style.fontWeight = "normal"
 
     var answer_choice = document.createElement('span');
@@ -1024,7 +1029,66 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
     label.appendChild(span);
     answer_choices.appendChild(label);
   }
-  question.appendChild(answer_choices);
+
+  if(questions.type == "fr") {
+    var ta = document.createElement('textarea');
+    $(ta).attr("readonly", true);
+    ta.className = "fr";
+    ta.value = studAnswer;
+
+    var pointsAwardedSpan = document.createElement('span');
+    pointsAwardedSpan.innerHTML = "Points Awarded - ";
+
+    var numAcceptedPoints = document.createElement('input');
+    numAcceptedPoints.maxLength = questions.points.length;
+
+    numAcceptedPoints.onkeyup = function () {
+      this.value = this.value.replace(/[^\d]/,'');
+      this.value = this.value.replace('-', '');
+
+      if(this.value != "") {
+        document.getElementsByClassName('pa')[parseInt(num.innerHTML.substring(0, num.innerHTML.indexOf("."))) - 1].innerHTML = " points)  -  points awarded: " + this.value;
+      }
+      else {
+        document.getElementsByClassName('pa')[parseInt(num.innerHTML.substring(0, num.innerHTML.indexOf("."))) - 1].innerHTML = " points)  -  points awarded: 0";
+      }
+
+      var cleanVersion = this.value;
+
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + name).once('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          console.log(childSnapshot.val())
+          var questionNum;
+          var answers = childSnapshot.val().answers;
+
+          for(var k = 0; k < answers.length; k++) {
+            if(isNaN(parseInt(answers[k].split(";")[1]))) {
+              answers[k] = answers[k].split(";")[0] + ";" + answers[k].split(";")[1] + ";" + cleanVersion;
+            }
+          }
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + name + "/" + childSnapshot.key).update({ 'answers': answers });
+
+          var newScore = ((localStorage.getItem("totalPointsExcludingFr") + cleanVersion) / examTotalPoints * 100).toFixed(1);
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + name + "/" + childSnapshot.key).update({ 'score': newScore });
+        });
+      });
+    }
+
+    numAcceptedPoints.placeholder = "0 - " + questions.points;
+    numAcceptedPoints.style.padding = "5px";
+    numAcceptedPoints.style.fontSize = "15px";
+    numAcceptedPoints.style.border = "1px solid #808080";
+    numAcceptedPoints.style.borderRadius = "3px";
+    numAcceptedPoints.style.marginTop = "20px";
+
+    question.appendChild(ta);
+    question.appendChild(document.createElement('br'));
+    question.appendChild(pointsAwardedSpan);
+    question.appendChild(numAcceptedPoints);
+  }
+  else {
+    question.appendChild(answer_choices);
+  }
 
   exam.appendChild(question);
   exam.appendChild(document.createElement('br'));
