@@ -792,22 +792,26 @@ function display(title) {
     document.getElementById('pong').style.display = "initial";
     document.getElementById('leaderboard').style.display = "none";
     document.getElementById('feedback').style.display = "none";
+    document.getElementById('create-exam').style.display = "none"
   }
   else if(title == '<a href="#">Dashboard</a>') {
     document.getElementById('main').style.display = "initial";
     document.getElementById('pong').style.display = "none";
     document.getElementById('leaderboard').style.display = "none";
     document.getElementById('feedback').style.display = "none";
+    document.getElementById('create-exam').style.display = "none"
   }
   else if(title == '<a href="#">Leaderboard</a>') {
-    populateLeaderboard();
+    populateLeaderboard(); // takes care of all other display calls
     document.getElementById('feedback').style.display = "none";
+    document.getElementById('create-exam').style.display = "none"
   }
   else if(title == '<a href="#">Feedback</a>') {
     document.getElementById('main').style.display = "none";
     document.getElementById('pong').style.display = "none";
     document.getElementById('leaderboard').style.display = "none";
     document.getElementById('feedback').style.display = "initial";
+    document.getElementById('create-exam').style.display = "none"
 
     var iframe = $("#feedback-form");
     iframe.attr("src", 'https://forms.id/f/zakariyasattar.id.blockstack/56856430b7');

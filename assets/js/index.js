@@ -112,24 +112,25 @@ function signOut() {
 
 // for displayQuiz()
 window.onload = function() {
-  // $("#create-exam").on('change', "input:radio", function() {
-  //   done[(this.parentNode.parentNode.parentNode.id - 1)] = 1;
-  //
-  //   console.log(document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].childNodes[0])
-  //   // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
-  //
-  //   if(done.indexOf('0') == -1) {
-  //     document.getElementById('submit-exam').style.display = 'initial';
-  //     document.getElementById('submit-exam-disabled').style.display = "none";
-  //   }
-  // });
+  $("#create-exam").on('change', "input:radio", function() {
+    if(parseInt(this.name.substring(0, 1))) {  //MC
+      done[parseInt(this.name.substring(0, 1)) - 1] = 1;
+    }
+    else {  //TF
+      done[parseInt(this.parentNode.parentNode.id) - 1] = 1;
+    }
+
+    // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
+
+    if(done.indexOf(0) == -1) {
+      document.getElementById('submit-exam').style.display = 'initial';
+      document.getElementById('submit-exam-disabled').style.display = "none";
+    }
+  });
 
   setInterval(function(){
     if(canCount) { timer++; }
   }, 60000);
-
-  document.getElementById('submit-exam').style.display = 'initial';
-  document.getElementById('submit-exam-disabled').style.display = "none";
 
   $(window).scroll(function(){
     for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
@@ -591,12 +592,23 @@ function createTrueFalse() {
 // function for Free-Response
 function createFreeResponse() {
   var ta = document.createElement('textarea');
+
+  // read when user changes text area
+  ta.oninput = function() {
+    setTimeout(function(){
+      done[parseInt(ta.parentNode.id) - 1] = 1;
+
+      if(done.indexOf(0) == -1) {
+        document.getElementById('submit-exam').style.display = 'initial';
+        document.getElementById('submit-exam-disabled').style.display = "none";
+      }
+    }, 100)
+  }
+
   ta.className = "fr";
   ta.placeholder = "NOTE: This question requires manual grading";
-
   return ta;
 }
-
 
 // function to create matching boxes
 function createMatching(){
