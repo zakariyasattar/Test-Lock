@@ -1042,6 +1042,18 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
     var numAcceptedPoints = document.createElement('input');
     numAcceptedPoints.maxLength = questions.points.length;
 
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName).once('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        var questionNum;
+        var answers = childSnapshot.val().answers;
+
+        if(answers[2].split(";")[2] != undefined) {
+          setTimeout(function(){ document.getElementsByClassName('pa')[parseInt(num.innerHTML.substring(0, num.innerHTML.indexOf("."))) - 1].innerHTML = " points)  -  points awarded: " + answers[2].split(";")[2]; }, 100);
+          numAcceptedPoints.value = answers[2].split(";")[2];
+        }
+      });
+    });
+
     numAcceptedPoints.onkeyup = function () {
       this.value = this.value.replace(/[^\d]/,'');
       this.value = this.value.replace('-', '');
@@ -1055,9 +1067,8 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
 
       var cleanVersion = this.value;
 
-      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + name).once('value', function(snapshot) {
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName).once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
-          console.log(childSnapshot.val())
           var questionNum;
           var answers = childSnapshot.val().answers;
 
@@ -1066,10 +1077,13 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
               answers[k] = answers[k].split(";")[0] + ";" + answers[k].split(";")[1] + ";" + cleanVersion;
             }
           }
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + name + "/" + childSnapshot.key).update({ 'answers': answers });
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName + "/" + childSnapshot.key).update({ 'answers': answers });
 
-          var newScore = ((localStorage.getItem("totalPointsExcludingFr") + cleanVersion) / examTotalPoints * 100).toFixed(1);
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + name + "/" + childSnapshot.key).update({ 'score': newScore });
+          var newScore = (((parseInt(localStorage.getItem("totalPointsExcludingFr")) + parseInt(cleanVersion)) / examTotalPoints) * 100).toFixed(1);
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName + "/" + childSnapshot.key).update({ 'totalScore': newScore });
+
+          document.getElementById("score").innerHTML = newScore + "%";
+          document.getElementById("score-num").innerHTML = (parseInt(localStorage.getItem("totalPointsExcludingFr")) + parseInt(cleanVersion)) + " / " + examTotalPoints;
         });
       });
     }
@@ -1683,7 +1697,6 @@ function createExamBox(name, classAvg, ref, code) {
   };
 
   firebase.database().ref(ref).on('value', function(snapshot) {
-    console.log(snapshot.val())
     for(var obj in snapshot.val()) {
       if(snapshot.val()[obj].examCode == code && snapshot.val().responses == undefined) {
         classBox.onclick = function() {
@@ -1722,8 +1735,6 @@ function createExamBox(name, classAvg, ref, code) {
   difBackground.appendChild(option_vertical);
   difBackground.appendChild(document.createElement('hr'));
   classBox.appendChild(difBackground);
-
-  console.log(classAvg)
 
   if(classAvg == 'NaN') {
     var descriptor = document.createElement('span');
