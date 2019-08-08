@@ -973,21 +973,25 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
     label.id = "label";
     label.style.width = "95%"
     if((correct && i == studAnswer) || i == corrAnswer) {
-      label.style.background = "#8fd875";
+      label.style.background = "#e4f7e4";
+      label.style.borderTop = "1px solid #00cc00"
+      label.style.borderBottom = "1px solid #00cc00"
 
       var correctAnswer = document.createElement('span');
       correctAnswer.innerHTML = "Correct Answer"
       correctAnswer.style.float = "right";
       correctAnswer.style.fontWeight = "normal";
       correctAnswer.style.marginTop  = "10px";
-      correctAnswer.style.color = "white";
+      correctAnswer.style.color = "#00cc00";
       correctAnswer.style.marginRight  = "15px";
 
       label.appendChild(correctAnswer);
     }
     else if(!correct && i == studAnswer) {
-      label.style.background = "#f90421";
-      label.style.color = "white";
+      label.style.background = "#f2ebeb";
+      label.style.borderTop = "1px solid #cc5252"
+      label.style.borderBottom = "1px solid #cc5252"
+      label.style.color = "#cc5252";
 
       var incorrectAnswer = document.createElement('span');
       incorrectAnswer.innerHTML = "Student Answer"
