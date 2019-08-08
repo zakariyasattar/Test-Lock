@@ -327,7 +327,7 @@ function retrieveName() {
       var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
       var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
-      if(plaintext.split(";")[0] == localStorage.getItem('ExamCode')){
+      if(plaintext.split(";")[0] == localStorage.getItem('ExamCode').substring(1)){
         i = x;
         break;
       }

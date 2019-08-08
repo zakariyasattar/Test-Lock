@@ -553,6 +553,7 @@ function removeDropDown(x) {
  }
 }
 
+// JS media query for dropdown nav
 var x = window.matchMedia("(min-width: 601px)") // Specify what to set media-queries at
 removeDropDown(x) // Call listener function at run time
 x.addListener(removeDropDown) // Attach listener function on state changes
@@ -845,6 +846,7 @@ function goHomeFromExamData() {
   goExamsFromExam(); goHomeFromExams();
 }
 
+// function to display student exam data
 function loadStudentExamData(name, code) {
   document.getElementById('examSpecific').style.display = "none";
   document.getElementById('student-exam-data').style.display = "initial";
@@ -918,7 +920,7 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
     correct = true;
   }
 
-  if(questions.type != "fr") {
+  if(questions.type != "fr" && correct) {
     localStorage.setItem("totalPointsExcludingFr", parseInt(localStorage.getItem("totalPointsExcludingFr")) + parseInt(questions.points))
   }
 
@@ -998,7 +1000,7 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
       incorrectAnswer.style.float = "right";
       incorrectAnswer.style.fontWeight = "normal";
       incorrectAnswer.style.marginTop  = "10px";
-      incorrectAnswer.style.color = "white";
+      incorrectAnswer.style.color = "#cc5252";
       incorrectAnswer.style.marginRight  = "15px";
       label.appendChild(incorrectAnswer);
     }
@@ -1913,6 +1915,7 @@ function restructureQuestions() {
   }
 }
 
+// function to restructure matching boxes
 function restructureBoxes() {
   var boxes = document.getElementsByClassName('matchingbox');
 
@@ -2219,9 +2222,9 @@ function createQuestion(loading, numAnswerChoices) {
     var mc = document.createElement('option'); mc.value = "mc"; mc.innerHTML = "Multiple Choice";
     var fr = document.createElement('option'); fr.value = "fr"; fr.innerHTML = "Free Response";
     var tf = document.createElement('option'); tf.value = "tf"; tf.innerHTML = "True | False";
-    var matching = document.createElement('option'); matching.value = "matching"; matching.innerHTML = "Matching"
+    // var matching = document.createElement('option'); matching.value = "matching"; matching.innerHTML = "Matching"
 
-  question_type.appendChild(mc); question_type.appendChild(fr); question_type.appendChild(tf); question_type.appendChild(matching);
+  question_type.appendChild(mc); question_type.appendChild(fr); question_type.appendChild(tf); //question_type.appendChild(matching);
   question_type.id = "question-type";
 
   var previous;
@@ -2234,7 +2237,6 @@ function createQuestion(loading, numAnswerChoices) {
     changeQuestionType(this.children[this.selectedIndex].value, question.id - 1, previous);
     question_type.blur();
   }
-
 
   question.appendChild(num);
   question.appendChild(moveDiv);
@@ -2350,7 +2352,6 @@ function swapDiv(elem, numToSwap){
     return true;
   }
 }
-
 
 // append new answer choice to question based on num
 function createNewOptionChoice(num) {
