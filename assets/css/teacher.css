@@ -288,6 +288,7 @@
   #question-choice {
     border: none;
   }
+  
   #question-choice:focus {
     border: none;
     border-bottom: 1px solid black;

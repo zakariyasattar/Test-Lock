@@ -260,15 +260,12 @@ function saveExam(alert) {
 
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/").once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      console.log(childSnapshot.key.substring(1), document.getElementById('exam-code').innerHTML)
       if(childSnapshot.key.substring(1) == document.getElementById('exam-code').innerHTML) {
         code = childSnapshot.key;
       }
     });
-    console.log(code)
     firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code).once('value').then(function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
-        console.log(childSnapshot.key)
         if(childSnapshot.key != "responses" && childSnapshot.key != "taken") {
           firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code).child(childSnapshot.key).set(examInit);
         }
@@ -338,6 +335,7 @@ function populateExam(code, ref) {
           snapshot.forEach(function(childSnapshot) {
             var val = childSnapshot.val();
             console.log(val);
+
             if(val.examCode != undefined){
               var counter = 0;
 
@@ -356,63 +354,65 @@ function populateExam(code, ref) {
                   createQuestion(true, Object.keys(question.choices).length);
                   createQuestionTracker(i + 1, true);
 
-                  localQuestions[i].childNodes[3].value = question.title;
-                  localQuestions[i].childNodes[5].childNodes[1].value = question.points;
-                  localQuestions[i].childNodes[4].value = question.type;
+                  console.log(localQuestions[i].childNodes);
+
+                  localQuestions[i].childNodes[4].value = question.title;
+                  localQuestions[i].childNodes[6].childNodes[1].value = question.points;
+                  localQuestions[i].childNodes[5].value = question.type;
 
                   changeQuestionType(question.type, i, 'mc');
 
                   if(question.type == "mc") {
                     for(var j = 0; j < Object.keys(question.choices).length; j++){
                       if(question.choices[j].value != undefined){
-                        localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j].value);
+                        localQuestions[i].childNodes[7].childNodes[j].childNodes[2].value = (question.choices[j].value);
                         if(j == question.checked) {
-                          setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
+                          setChecked(localQuestions[i].childNodes[7].childNodes[j].childNodes[1]);
                         }
                       }
                       else {
-                        localQuestions[i].childNodes[6].childNodes[j].childNodes[2].value = (question.choices[j]);
+                        localQuestions[i].childNodes[7].childNodes[j].childNodes[2].value = (question.choices[j]);
                         if(j == question.checked) {
-                          setChecked(localQuestions[i].childNodes[6].childNodes[j].childNodes[1]);
+                          setChecked(localQuestions[i].childNodes[7].childNodes[j].childNodes[1]);
                         }
                       }
                     }
                   }
 
                   else if(question.type == "fr"){
-                    localQuestions[i].childNodes[6].value = (question.choices[0]);
+                    localQuestions[i].childNodes[8].value = (question.choices[0]);
                   }
 
                   else if(question.type == "tf") {
                     if(question.choices[0] == 'true') {
-                      localQuestions[i].childNodes[7].childNodes[0].checked = true;
+                      localQuestions[i].childNodes[8].childNodes[0].checked = true;
                     }
                     else {
-                      localQuestions[i].childNodes[7].childNodes[2].checked = true;
+                      localQuestions[i].childNodes[8].childNodes[2].checked = true;
                     }
                   }
                 }
 
-                else if(question.type == "matching") {
-                  createQuestion(true, question.numBoxes);
-                  createQuestionTracker(i + 1, true);
-                  changeQuestionType(question.type, i, "mc");
-
-                  localQuestions[i].childNodes[3].value = question.title;
-                  localQuestions[i].childNodes[5].childNodes[1].value = question.points;
-                  localQuestions[i].childNodes[4].value = question.type;
-
-                  localQuestions[i].childNodes[0].value = question.numBoxes;
-                  for(var j = 0; j < question.numBoxes; j++) {
-                    createMatchingElement(localQuestions[i].childNodes[7], j + 1);
-                  }
-
-                  var localBoxes = document.getElementsByClassName('matchingbox');
-                  for(var k = 0; k < localBoxes.length; k++) {
-                    localBoxes[k].childNodes[1].value = question.choices[k].split(";")[0];
-                    localBoxes[k].childNodes[3].value = question.choices[k].split(";")[1];
-                  }
-                }
+                // else if(question.type == "matching") {
+                //   createQuestion(true, question.numBoxes);
+                //   createQuestionTracker(i + 1, true);
+                //   changeQuestionType(question.type, i, "mc");
+                //
+                //   localQuestions[i].childNodes[3].value = question.title;
+                //   localQuestions[i].childNodes[5].childNodes[1].value = question.points;
+                //   localQuestions[i].childNodes[4].value = question.type;
+                //
+                //   localQuestions[i].childNodes[0].value = question.numBoxes;
+                //   for(var j = 0; j < question.numBoxes; j++) {
+                //     createMatchingElement(localQuestions[i].childNodes[6], j + 1);
+                //   }
+                //
+                //   var localBoxes = document.getElementsByClassName('matchingbox');
+                //   for(var k = 0; k < localBoxes.length; k++) {
+                //     localBoxes[k].childNodes[0].value = question.choices[k].split(";")[0];
+                //     localBoxes[k].childNodes[2].value = question.choices[k].split(";")[1];
+                //   }
+                // }
               }
             }
           });
@@ -2179,6 +2179,18 @@ function createQuestion(loading, numAnswerChoices) {
   trash.style.marginRight = "5px";
   trash.style.color = "lightgray";
 
+  $(trash).click(function(){
+    question.remove(); hr.remove(); br.remove();
+    restructureManager(); restructureQuestions(); saveExam();
+  });
+
+  $(trash).hover(function(){
+    trash.style.cursor="pointer";
+    trash.style.color = "black";
+  }, function(){
+    trash.style.color = "lightgray";
+  });
+
   var moveDiv = document.createElement('span');
   moveDiv.id = "moveDiv"
   moveDiv.className = "glyphicon glyphicon-refresh";
@@ -2194,28 +2206,32 @@ function createQuestion(loading, numAnswerChoices) {
     }
   });
 
-  $(trash).click(function(){
-    question.remove(); hr.remove(); br.remove();
-    restructureManager(); restructureQuestions(); saveExam();
+  var imgUpload = document.createElement('span');
+  imgUpload.className = "glyphicon glyphicon-picture";
+  imgUpload.style.display = "none";
+  imgUpload.style.marginRight = "7px";
+  imgUpload.style.color = "lightgray";
+
+  $(imgUpload).hover(function(){
+    imgUpload.style.cursor="pointer";
+    imgUpload.style.color = "black";
+  }, function(){
+    imgUpload.style.color = "lightgray";
   });
 
   $(question).hover(function(){
     num.style.display = "none";
     trash.style.display = "initial";
     moveDiv.style.display = "initial";
+    imgUpload.style.display = "initial";
     num.style.cursor = "pointer";
   }, function(){
     num.style.display = "initial";
     trash.style.display = "none";
+    imgUpload.style.display = "none";
     moveDiv.style.display = "none";
   });
 
-  $(trash).hover(function(){
-    trash.style.cursor="pointer";
-    trash.style.color = "black";
-  }, function(){
-    trash.style.color = "lightgray";
-  });
 
   var question_title = document.createElement('input');
   question_title.type = "text";
@@ -2243,6 +2259,7 @@ function createQuestion(loading, numAnswerChoices) {
   }
 
   question.appendChild(num);
+  question.appendChild(imgUpload);
   question.appendChild(moveDiv);
   question.appendChild(trash);
   question.appendChild(question_title);
