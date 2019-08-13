@@ -676,7 +676,8 @@ function displayExamData(name) {
 
               var tr = document.createElement('tr');
               tr.className = response;
-              tr.onclick = function() { loadStudentExamData(this.className, prop); }
+              var examCode = prop;
+              tr.onclick = function() { loadStudentExamData(this.className, examCode); }
 
               table.appendChild(document.createElement('br'));
 
@@ -1182,7 +1183,10 @@ function sort(func) {
 
     for(var i = 0; i < examData.length; i++){
       var tr = document.createElement('tr');
-      tr.onclick = function() { loadStudentExamData(examData[i].split(":")[0]); }
+
+      var iTracker = i;
+      console.log(examData[iTracker]);
+      tr.onclick = function() { loadStudentExamData(examData[iTracker].split(":")[0]); }
 
       table.appendChild(document.createElement('br'));
 
