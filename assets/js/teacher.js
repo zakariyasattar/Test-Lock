@@ -210,28 +210,28 @@ function saveExam(alert) {
     var children = question.childNodes;
 
     var jsonArg1 = new Object();
-    jsonArg1.title = children[3].value;
-    jsonArg1.type = children[4].value;
-    jsonArg1.points = children[5].childNodes[1].value;
+    jsonArg1.title = children[4].value;
+    jsonArg1.type = children[5].value;
+    jsonArg1.points = children[6].childNodes[1].value;
     jsonArg1.checked = -1;
     jsonArg1.choices = [];
 
     if(jsonArg1.type == 'mc') {
-      for(var j = 0; j < children[6].childNodes.length - 1; j++){
-        jsonArg1.choices.push(children[6].childNodes[j].childNodes[2].value);
+      for(var j = 0; j < children[7].childNodes.length - 1; j++){
+        jsonArg1.choices.push(children[7].childNodes[j].childNodes[2].value);
 
-        if(children[6].childNodes[j].childNodes[1].checked == true) {
+        if(children[7].childNodes[j].childNodes[1].checked == true) {
           jsonArg1.checked = j;
         }
       }
     }
 
     else if(jsonArg1.type == 'fr') {
-      jsonArg1.choices.push(children[7].value);
+      jsonArg1.choices.push(children[8].value);
     }
 
     else if(jsonArg1.type == 'tf') {
-      if(children[7].childNodes[0].checked) {
+      if(children[8].childNodes[0].checked) {
         jsonArg1.choices.push("true");
       }
       else {
@@ -244,8 +244,8 @@ function saveExam(alert) {
       jsonArg1.numBoxes = boxes.length;
 
       for(var i = 0; i < boxes.length; i++) {
-        var question = boxes[i].childNodes[2].value;
-        var result = boxes[i].childNodes[4].value;
+        var question = boxes[i].childNodes[3].value;
+        var result = boxes[i].childNodes[5].value;
 
         jsonArg1.choices.push(question + ";" + result);
       }
@@ -334,7 +334,6 @@ function populateExam(code, ref) {
         firebase.database().ref(refs.join().split(',').join('/') + "/" + childSnapshot.key).once('value').then(function(snapshot) {
           snapshot.forEach(function(childSnapshot) {
             var val = childSnapshot.val();
-            console.log(val);
 
             if(val.examCode != undefined){
               var counter = 0;
@@ -353,8 +352,6 @@ function populateExam(code, ref) {
                 if(question.choices != undefined && question.type != "matching") {
                   createQuestion(true, Object.keys(question.choices).length);
                   createQuestionTracker(i + 1, true);
-
-                  console.log(localQuestions[i].childNodes);
 
                   localQuestions[i].childNodes[4].value = question.title;
                   localQuestions[i].childNodes[6].childNodes[1].value = question.points;
@@ -2216,6 +2213,10 @@ function createQuestion(loading, numAnswerChoices) {
   imgUpload.style.marginRight = "7px";
   imgUpload.style.color = "lightgray";
 
+  imgUpload.onclick = function() {
+    uploadImage(num.innerHTML.substring(0, num.innerHTML.indexOf(".")));
+  }
+
   $(imgUpload).hover(function(){
     imgUpload.style.cursor="pointer";
     imgUpload.style.color = "black";
@@ -2356,6 +2357,44 @@ function createQuestion(loading, numAnswerChoices) {
     createQuestionTracker(document.getElementsByClassName('question').length, false);
     saveExam(false);
   }
+}
+
+// upload images
+function uploadImage(num) {
+  swal({
+        title: 'title',
+        html: true,
+        text: "<input type='file' id='fileToUploadAlert' accept='image/*'>\n",
+        showCancelButton: true,
+        confirmButtonColor: "#07A803",
+        confirmButtonText: "Upload",
+        closeOnConfirm: false,
+        showLoaderOnConfirm: true
+    }, function () {
+        var files = $('input#fileToUploadAlert').prop('files');
+        if (files.length === 0) {
+            swal.showInputError("You need to upload a file!");
+            return false
+        }
+
+        callback(files[0]);
+    });
+
+  // var thefile = document.getElementById('input');
+  // var reader = new FileReader();
+  //
+  // reader.onloadend = function(){
+  //     var imagem = reader.result;
+  // }
+  // if(thefile){
+  //     reader.readAsDataURL(thefile);
+  // }
+  //
+  // swal({
+  //   title: "Esta é a imagem que pretende inserir?",
+  //   text: "<img src='"+imagem+"' style='width:150px;'>",
+  //   html:true,
+  // });
 }
 
 //function to swap divs

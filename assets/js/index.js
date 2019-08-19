@@ -52,24 +52,24 @@ var key = initKey(); var timer = 0;
 
 })();
 
-// var data;
-// 	$.ajax({
-// 	  type: "GET",
-// 	  url: "data.csv",
-// 	  dataType: "text",
-// 	  success: function(response)
-// 	  {
-//   		data = $.csv.toArrays(response);
-//       for(var i = 0; i < data.length; i++){
-//         var id = data[i][0];
-//         var name = data[i][3] + " " + data[i][2];
-//         var className = data[i][10];
-//
-//         // firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/CRQNPD/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
-//       }
-// 	  }
-// });
+var data;
+	$.ajax({
+	  type: "GET",
+	  url: "data.csv",
+	  dataType: "text",
+	  success: function(response)
+	  {
+  		data = $.csv.toArrays(response);
+      for(var i = 0; i < data.length; i++){
+        var id = data[i][0];
+        var name = data[i][3] + " " + data[i][2];
+        var className = data[i][10];
+
+        firebase.database().ref("Teachers/Tricia Brown/Classes/" + className + "/Students").push(id + ";" + name);
+        //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/CRQNPD/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
+      }
+	  }
+});
 
 // pull all exam codes then encrypt them
 firebase.database().ref('exam-codes').on('value', function(snapshot) {
