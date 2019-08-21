@@ -2213,8 +2213,30 @@ function createQuestion(loading, numAnswerChoices) {
   imgUpload.style.marginRight = "7px";
   imgUpload.style.color = "lightgray";
 
-  imgUpload.onclick = function() {
-    uploadImage(num.innerHTML.substring(0, num.innerHTML.indexOf(".")));
+  imgUpload.onclick = async function() {
+    const { value: file } = await Swal.fire({
+      title: 'Select image',
+      input: 'file',
+      inputAttributes: {
+        accept: 'image/*',
+        'aria-label': 'Upload your image'
+      }
+    })
+
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        Swal.fire({
+          title: 'Is this picture correct?',
+          imageUrl: e.target.result,
+          imageAlt: 'Picture to upload',
+          showCancelButton: true,
+          confirmButtonText: "Upload!"
+        });
+        uploadImage(num.innerHTML.substring(0, num.innerHTML.indexOf(".")), e.target.result);
+      }
+      reader.readAsDataURL(file)
+    }
   }
 
   $(imgUpload).hover(function(){
@@ -2360,41 +2382,8 @@ function createQuestion(loading, numAnswerChoices) {
 }
 
 // upload images
-function uploadImage(num) {
-  swal({
-        title: 'title',
-        html: true,
-        text: "<input type='file' id='fileToUploadAlert' accept='image/*'>\n",
-        showCancelButton: true,
-        confirmButtonColor: "#07A803",
-        confirmButtonText: "Upload",
-        closeOnConfirm: false,
-        showLoaderOnConfirm: true
-    }, function () {
-        var files = $('input#fileToUploadAlert').prop('files');
-        if (files.length === 0) {
-            swal.showInputError("You need to upload a file!");
-            return false
-        }
-
-        callback(files[0]);
-    });
-
-  // var thefile = document.getElementById('input');
-  // var reader = new FileReader();
-  //
-  // reader.onloadend = function(){
-  //     var imagem = reader.result;
-  // }
-  // if(thefile){
-  //     reader.readAsDataURL(thefile);
-  // }
-  //
-  // swal({
-  //   title: "Esta é a imagem que pretende inserir?",
-  //   text: "<img src='"+imagem+"' style='width:150px;'>",
-  //   html:true,
-  // });
+function uploadImage(num, img) {
+  
 }
 
 //function to swap divs
