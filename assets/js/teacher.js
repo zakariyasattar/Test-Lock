@@ -2213,31 +2213,9 @@ function createQuestion(loading, numAnswerChoices) {
   imgUpload.style.marginRight = "7px";
   imgUpload.style.color = "lightgray";
 
-  imgUpload.onclick = async function() {
-    const { value: file } = await Swal.fire({
-      title: 'Select image',
-      input: 'file',
-      inputAttributes: {
-        accept: 'image/*',
-        'aria-label': 'Upload your image'
-      }
-    })
-
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        Swal.fire({
-          title: 'Is this picture correct?',
-          imageUrl: e.target.result,
-          imageAlt: 'Picture to upload',
-          showCancelButton: true,
-          confirmButtonText: "Upload!"
-        });
-        uploadImage(num.innerHTML.substring(0, num.innerHTML.indexOf(".")), e.target.result);
-      }
-      reader.readAsDataURL(file)
-    }
-  }
+  imgUpload.onclick =  function() {
+    uploadImage(num.innerHTML.substring(0, num.innerHTML.indexOf(".")));
+  };
 
   $(imgUpload).hover(function(){
     imgUpload.style.cursor="pointer";
@@ -2383,7 +2361,53 @@ function createQuestion(loading, numAnswerChoices) {
 
 // upload images
 function uploadImage(num, img) {
-  
+  var alertDiv = document.createElement('div');
+  alertDiv.id = "alertDiv";
+
+  var header = document.createElement('h1');
+  header.style.textDecoration = "underline dodgerblue";
+  header.style.color = "#1ece76"
+  header.innerHTML = "Upload Image To Question " + num;
+  alertDiv.appendChild(header);
+
+  var imgInput = document.createElement('input');
+  imgInput.type = "file";
+  imgInput.style.border = "1px solid dodgerblue";
+  imgInput.style.padding = "10px";
+  imgInput.style.fontSize = "10px"
+  imgInput.style.borderRadius = "5px";
+
+  var center = document.createElement('center');
+  center.appendChild(imgInput)
+
+  alertDiv.appendChild(document.createElement('br'));
+  alertDiv.appendChild(center);
+  alertDiv.appendChild(document.createElement('hr'));
+
+  var imgOut = document.createElement('img');
+  imgOut.id = "imgOut"
+  alertDiv.appendChild(imgOut);
+
+  imgInput.onchange = function (evt) {
+    var tgt = evt.target || window.event.srcElement,
+        files = tgt.files;
+
+    // FileReader support
+    if (FileReader && files && files.length) {
+        var fr = new FileReader();
+        fr.onload = function () {
+            imgOut.src = fr.result;
+        }
+        fr.readAsDataURL(files[0]);
+    }
+  }
+
+  html.appendChild(alertDiv);
+
+  document.body.style.opacity = "0.1"
+  document.body.style.filter = "blur(5px)";
+  document.body.style.overflowX = "hidden";
+  document.body.style.overflowY = "hidden";
 }
 
 //function to swap divs
