@@ -552,19 +552,14 @@
   #label {
     -webkit-transition: all .25s ease;
     transition: all .25s ease;
-    width: 75%;
+    width: 100%;
     padding-left: 5px;
     padding-bottom: 10px;
   }
 
-  .imgSrc {
-    position: relative;
-    float: right;
-    right: 30%;
-    z-index: 1001;
-    top: 15vh;
-
-    width: 500px;
+  .imgView {
+    width: 70% !important;
+    
   }
 
   #alertDiv {

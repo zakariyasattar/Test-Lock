@@ -2208,6 +2208,11 @@ function createQuestion(loading, numAnswerChoices) {
     }
   });
 
+  var viewImage = document.createElement("a");
+  viewImage.innerHTML = "View Image";
+  viewImage.style.marginLeft = "10px";
+  viewImage.style.display = "none";
+
   var imgUpload = document.createElement('span');
   imgUpload.className = "glyphicon glyphicon-picture";
   imgUpload.style.display = "none";
@@ -2215,7 +2220,7 @@ function createQuestion(loading, numAnswerChoices) {
   imgUpload.style.color = "lightgray";
 
   imgUpload.onclick =  function() {
-    uploadImage(num.innerHTML.substring(0, num.innerHTML.indexOf(".")));
+    uploadImage(num.innerHTML.substring(0, num.innerHTML.indexOf(".")), viewImage);
   };
 
   $(imgUpload).hover(function(){
@@ -2285,8 +2290,10 @@ function createQuestion(loading, numAnswerChoices) {
   finishingSpan.innerHTML = " points)";
 
   points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
+  points.appendChild(viewImage);
 
   question.appendChild(points);
+
 
   var answer_choices = document.createElement('div');
   answer_choices.className = "mc";
@@ -2348,12 +2355,6 @@ function createQuestion(loading, numAnswerChoices) {
 
   question.appendChild(answer_choices);
 
-  var imgSrc = document.createElement('img');
-  imgSrc.id = "img" + num.innerHTML;
-  imgSrc.className = "imgSrc";
-  imgSrc.src = '';
-
-  exam.appendChild(imgSrc);
   exam.appendChild(question);
 
   exam.appendChild(br);
@@ -2368,8 +2369,7 @@ function createQuestion(loading, numAnswerChoices) {
 }
 
 // upload images
-function uploadImage(num) {
-  var src = "";
+function uploadImage(num, imgLink) {
   var alertDiv = document.createElement('div');
   alertDiv.id = "alertDiv";
 
@@ -2397,6 +2397,17 @@ function uploadImage(num) {
   imgOut.id = "imgOut"
   alertDiv.appendChild(imgOut);
 
+  var shortDescription = document.createElement('input');
+  shortDescription.style.margin = "20px";
+  shortDescription.style.borderRadius = "5px";
+  shortDescription.style.border = "1px solid black";
+  shortDescription.placeholder = "Short description..."
+  shortDescription.style.width = "90%";
+  shortDescription.style.height = "30px";
+  shortDescription.style.padding = "5px";
+  shortDescription.style.fontSize = "15px";
+  alertDiv.appendChild(shortDescription)
+
   var cancel = document.createElement('button');
   cancel.id = "imgUploadCancel";
   cancel.innerHTML = "Cancel";
@@ -2417,9 +2428,15 @@ function uploadImage(num) {
   upload.onclick = function() {
     if(imgOut.src != "") {
       saveExam(false);
-      document.getElementsByClassName('imgSrc')[num - 1].src = imgOut.src;
-      document.getElementsByClassName('imgSrc')[num - 1].style.height = "200px";
-      document.getElementsByClassName('imgSrc')[num - 1].style.border = "1px solid black";
+
+      imgLink.style.display = "initial"
+      imgLink.onclick = function() {
+        swal({
+          icon: imgOut.src,
+          text: shortDescription.value,
+          className: "imgView"
+        });
+      }
 
       document.body.style.opacity = "1"
       document.body.style.filter = "blur(0px)";
