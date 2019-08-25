@@ -214,8 +214,14 @@ function saveExam(alert) {
     jsonArg1.type = children[5].value;
     jsonArg1.points = children[6].childNodes[1].value;
     jsonArg1.checked = -1;
-    jsonArg1.imgSrc = "";
+    jsonArg1.imgSrc = children[6].childNodes[3].className;
+
+    if(alert != true && alert != false) {
+      jsonArg1.imgShortDescription = alert;
+    }
+    
     jsonArg1.choices = [];
+
 
     if(jsonArg1.type == 'mc') {
       for(var j = 0; j < children[7].childNodes.length - 1; j++){
@@ -253,7 +259,7 @@ function saveExam(alert) {
     }
 
     pluginArrayArg.push(jsonArg1);
-    var questions = JSON.parse(JSON.stringify(pluginArrayArg))
+    var questions = JSON.parse(JSON.stringify(pluginArrayArg));
     $.extend(examInit, { questions });
   }
 
@@ -357,6 +363,17 @@ function populateExam(code, ref) {
                   localQuestions[i].childNodes[4].value = question.title;
                   localQuestions[i].childNodes[6].childNodes[1].value = question.points;
                   localQuestions[i].childNodes[5].value = question.type;
+
+                  if(question.imgSrc != "") {
+                    localQuestions[i].childNodes[6].childNodes[3].style.display = "initial";
+                    localQuestions[i].childNodes[6].childNodes[3].onclick = function() {
+                      swal({
+                        icon: question.imgSrc,
+                        text: question.imgShortDescription,
+                        className: "imgView"
+                      });
+                    }
+                  }
 
                   changeQuestionType(question.type, i, 'mc');
 
@@ -2427,8 +2444,6 @@ function uploadImage(num, imgLink) {
 
   upload.onclick = function() {
     if(imgOut.src != "") {
-      saveExam(false);
-
       imgLink.style.display = "initial"
       imgLink.onclick = function() {
         swal({
@@ -2437,13 +2452,15 @@ function uploadImage(num, imgLink) {
           className: "imgView"
         });
       }
+      imgLink.className = imgOut.src;
 
       document.body.style.opacity = "1"
       document.body.style.filter = "blur(0px)";
       document.body.style.overflowX = "auto";
       document.body.style.overflowY = "auto";
 
-      alertDiv.remove()
+      alertDiv.remove();
+      saveExam(shortDescription.value);
     }
   }
 
