@@ -214,6 +214,7 @@ function saveExam(alert) {
     jsonArg1.type = children[5].value;
     jsonArg1.points = children[6].childNodes[1].value;
     jsonArg1.checked = -1;
+    jsonArg1.imgSrc = "";
     jsonArg1.choices = [];
 
     if(jsonArg1.type == 'mc') {
@@ -2346,6 +2347,13 @@ function createQuestion(loading, numAnswerChoices) {
   answer_choices.appendChild(createNewAnswerChoice);
 
   question.appendChild(answer_choices);
+
+  var imgSrc = document.createElement('img');
+  imgSrc.id = "img" + num.innerHTML;
+  imgSrc.className = "imgSrc";
+  imgSrc.src = '';
+
+  exam.appendChild(imgSrc);
   exam.appendChild(question);
 
   exam.appendChild(br);
@@ -2360,7 +2368,8 @@ function createQuestion(loading, numAnswerChoices) {
 }
 
 // upload images
-function uploadImage(num, img) {
+function uploadImage(num) {
+  var src = "";
   var alertDiv = document.createElement('div');
   alertDiv.id = "alertDiv";
 
@@ -2388,6 +2397,39 @@ function uploadImage(num, img) {
   imgOut.id = "imgOut"
   alertDiv.appendChild(imgOut);
 
+  var cancel = document.createElement('button');
+  cancel.id = "imgUploadCancel";
+  cancel.innerHTML = "Cancel";
+
+  cancel.onclick = function() {
+    document.body.style.opacity = "1"
+    document.body.style.filter = "blur(0px)";
+    document.body.style.overflowX = "auto";
+    document.body.style.overflowY = "auto";
+
+    alertDiv.remove()
+  }
+
+  var upload = document.createElement('button');
+  upload.id = "imgUploadAccept";
+  upload.innerHTML = "Upload!";
+
+  upload.onclick = function() {
+    if(imgOut.src != "") {
+      saveExam(false);
+      document.getElementsByClassName('imgSrc')[num - 1].src = imgOut.src;
+      document.getElementsByClassName('imgSrc')[num - 1].style.height = "200px";
+      document.getElementsByClassName('imgSrc')[num - 1].style.border = "1px solid black";
+
+      document.body.style.opacity = "1"
+      document.body.style.filter = "blur(0px)";
+      document.body.style.overflowX = "auto";
+      document.body.style.overflowY = "auto";
+
+      alertDiv.remove()
+    }
+  }
+
   imgInput.onchange = function (evt) {
     var tgt = evt.target || window.event.srcElement,
         files = tgt.files;
@@ -2397,12 +2439,18 @@ function uploadImage(num, img) {
         var fr = new FileReader();
         fr.onload = function () {
             imgOut.src = fr.result;
+            imgOut.style.border = "1px solid black";
+            cancel.style.marginBottom = "20px";
+            upload.style.marginBottom = "20px";
         }
         fr.readAsDataURL(files[0]);
     }
   }
 
-  html.appendChild(alertDiv);
+  alertDiv.appendChild(upload);
+  alertDiv.appendChild(cancel);
+
+  document.getElementById('html').appendChild(alertDiv);
 
   document.body.style.opacity = "0.1"
   document.body.style.filter = "blur(5px)";
