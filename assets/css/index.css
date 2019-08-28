@@ -132,6 +132,10 @@ body {
    padding: 15px;
  }
 
+ .imgView {
+   width: 70% !important;
+ }
+
  #newBox {
    padding-left: 20px;
    padding-right: 20px;

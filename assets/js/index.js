@@ -417,7 +417,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  // toggleFullScreen();
+  toggleFullScreen();
 
   canCount = true;
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
@@ -458,6 +458,18 @@ function populateExam(code, ref) {
 
           localQuestions[i].childNodes[1].value = question.title;
           localQuestions[i].childNodes[2].childNodes[1].innerHTML = question.points;
+
+          if(question.imgSrc != "") {
+            var src = question.imgSrc;
+            localQuestions[i].childNodes[2].childNodes[3].style.display = "initial";
+            localQuestions[i].childNodes[2].childNodes[3].onclick = function() {
+              swal({
+                icon: src,
+                text: question.imgShortDescription,
+                className: "imgView"
+              });
+            }
+          }
 
           changeQuestionType(question.type, i);
 
@@ -770,6 +782,11 @@ function createQuestion(loading, numAnswerChoices) {
   question.appendChild(num);
   question.appendChild(question_title);
 
+  var viewImage = document.createElement("a");
+  viewImage.innerHTML = "View Image";
+  viewImage.style.marginLeft = "10px";
+  viewImage.style.display = "none";
+
   var points = document.createElement('div');
   points.id = "points";
   var span = document.createElement('span');
@@ -784,6 +801,7 @@ function createQuestion(loading, numAnswerChoices) {
   finishingSpan.innerHTML = " points)";
 
   points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
+  points.appendChild(viewImage);
 
   question.appendChild(points);
 
