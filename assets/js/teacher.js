@@ -53,13 +53,28 @@ window.onload = function() {
       var isInView = ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 
       if (isInView){
-        document.getElementById('question-manager').scrollTop = document.getElementById('question-tracker').clientHeight * (i - 1);
-        document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CF;"
-        document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "white";
+        if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1) {
+          document.getElementById('question-manager').scrollTop = document.getElementById('question-tracker').clientHeight * (i - 1);
+          document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CF;"
+          document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "white";
+          document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.marginRight = "10px";
+        }
+        else {
+          document.getElementById('question-manager').scrollTop = document.getElementById('question-tracker').clientHeight * (i - 1);
+          document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CF;"
+          document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "white";
+        }
       }
       else {
-        document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CC;";
-        document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "black";
+        if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1) {
+          document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CC;";
+          document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "black";
+          document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.marginRight = "0";
+        }
+        else {
+          document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CC;";
+          document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "black";
+        }
       }
     }
   })
@@ -219,7 +234,7 @@ function saveExam(alert) {
     if(alert != true && alert != false) {
       jsonArg1.imgShortDescription = alert;
     }
-    
+
     jsonArg1.choices = [];
 
 
@@ -300,14 +315,29 @@ function createQuestionTracker(i, populating) {
   tracker.id = "question-tracker";
   tracker.className = i;
 
-  $(tracker).hover(function(){
-    this.style.cursor = "pointer";
-    $(this).children()[0].innerHTML = "&#x25CF;";
-    this.childNodes[1].childNodes[0].style.color = "white";
-  }, function(){
-    this.childNodes[1].childNodes[0].style.color = "black";
-    $(this).children()[0].innerHTML = "&#x25CC;";
-  });
+    $(tracker).hover(function(){
+      if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1) {
+        this.style.cursor = "pointer";
+        $(this).children()[0].innerHTML = "&#x25CF;";
+        this.childNodes[1].childNodes[0].style.color = "white";
+        this.childNodes[1].childNodes[0].style.marginRight = "10px";
+      }
+      else {
+        this.style.cursor = "pointer";
+        $(this).children()[0].innerHTML = "&#x25CF;";
+        this.childNodes[1].childNodes[0].style.color = "white";
+      }
+    }, function(){
+      if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1) {
+        this.childNodes[1].childNodes[0].style.color = "black";
+        $(this).children()[0].innerHTML = "&#x25CC;";
+        this.childNodes[1].childNodes[0].style.marginRight = "0";
+      }
+      else {
+        this.childNodes[1].childNodes[0].style.color = "black";
+        $(this).children()[0].innerHTML = "&#x25CC;";
+      }
+    });
 
   tracker.onclick = function() {
     document.getElementById(i).scrollIntoView({block: "center"});

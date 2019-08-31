@@ -434,7 +434,15 @@ function populateExam(code, ref) {
         var counter = 0;
 
         document.getElementById('exam-code').innerHTML = val.examCode + " | " + localStorage.getItem("StudentName");
-        document.getElementById('date').innerHTML = val.examTeacher + " | " + val.examDate.split("-")[1] + "-" + val.examDate.split("-")[2] + "-" + val.examDate.split("-")[0];
+
+        if(val.examDate.split("-")[1] != null) {
+          document.getElementById('date').innerHTML = val.examTeacher + " | " + val.examDate.split("-")[1] + "-" + val.examDate.split("-")[2] + "-" + val.examDate.split("-")[0];
+        }
+        else {
+          var dateJS = new Date();
+          document.getElementById('date').innerHTML = val.examTeacher + " | " + (dateJS.getMonth()+1)+'-'+dateJS.getDate()+'-'+dateJS.getFullYear();
+        }
+
         document.getElementById('description').value = val.examDescription;
 
         var title = val.examTitle;
