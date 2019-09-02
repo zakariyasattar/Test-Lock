@@ -170,7 +170,7 @@ window.onload = function() {
           document.getElementsByClassName(i)[0].innerHTML = "&#x25CC;"
           document.getElementsByClassName(i)[0].appendChild(text);
           document.getElementsByClassName(i)[0].childNodes[1].style.color = "black";
-          document.getElementsByClassName(i)[0].childNodes[1].style.right = "22px";
+          document.getElementsByClassName(i)[0].childNodes[1].style.right = "22.5px";
         }
       }
     }
