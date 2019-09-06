@@ -417,7 +417,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  //toggleFullScreen();
 
   canCount = true;
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
@@ -860,13 +860,17 @@ function createQuestionTracker(i, populating) {
   tracker.style.position = "relative";
   tracker.style.bottom = "20px";
   tracker.style.color = "#58f";
-  tracker.style.left = "125px"
+  tracker.style.left = "125px";
 
   tracker.id = "question-tracker";
   tracker.className = i;
 
   $(tracker).hover(function(){
     var text = tracker.childNodes[1];
+
+    if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1 || /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
+      text.style.right = "22.5px";
+    }
 
     this.style.cursor = "pointer";
     this.innerHTML = "&#x25CF;";
@@ -879,6 +883,10 @@ function createQuestionTracker(i, populating) {
   }, function(){
     var text = tracker.childNodes[1];
     this.innerHTML = "&#x25CC;";
+
+    if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1 || /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
+      text.style.right = "27.5px";
+    }
 
     this.style.bottom = '20px';
     this.style.transition = 'all .5s';
@@ -895,6 +903,10 @@ function createQuestionTracker(i, populating) {
   var text = document.createElement('div');
   text.id = "text";
   text.innerHTML = i;
+
+  if(navigator.userAgent.toLowerCase().indexOf('safari/') > -1 || /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
+    text.style.right = "27.5px";
+  }
 
   tracker.appendChild(text);
 

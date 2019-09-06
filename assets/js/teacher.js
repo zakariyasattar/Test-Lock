@@ -154,7 +154,12 @@ function createQuiz() {
     });
   });
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + alphabet[examCounter] + randomCode.toUpperCase()).push(examInit);
+  if(examCounter < 26) {
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + alphabet[(alphabet.length - 1) - examCounter] + randomCode.toUpperCase()).push(examInit);
+  }
+  else {
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + alphabet[(alphabet.length - 1) - examCounter-26] +  alphabet[(alphabet.length - 1) - examCounter-26] + randomCode.toUpperCase()).push(examInit);
+  }
 
   createQuestion(true, 4);
 
@@ -1745,6 +1750,7 @@ function createExamBox(name, classAvg, ref, code) {
   ];
 
   var wrapper = document.getElementById('exam-wrapper');
+  var optionVert = false;
 
   var classBox = document.createElement('div');
   classBox.className = "examBox";
@@ -1774,6 +1780,10 @@ function createExamBox(name, classAvg, ref, code) {
   difBackground.style.borderRadius= "10px 10px 0 0";
   difBackground.className = 'wave';
 
+  difBackground.onclick = function() {
+
+  }
+
   var span = document.createElement('span');
   if(name == "") {
     name = code;
@@ -1785,10 +1795,54 @@ function createExamBox(name, classAvg, ref, code) {
   span.className = 'examName';
 
   var option_vertical = document.createElement('span');
+  option_vertical.id = "option_vertical"
   option_vertical.className = "glyphicon glyphicon-option-vertical";
-  option_vertical.style.float = "right";
-  option_vertical.style.padding = "10px";
-  option_vertical.style.display = "inline";
+
+  option_vertical.onclick = function() {
+    var boxClick = classBox.onclick.toString();
+    classBox.onclick = function() {}
+
+    var drop = document.createElement('div');
+    drop.className = "dropdown";
+
+    var dropDown = document.createElement('div');
+    dropDown.classNamw = "dropdown-content";
+    dropDown.id = "myDropdown";
+
+    var editor = document.createElement('a');
+    editor.innerHTML = "Open Editor";
+
+    var showData = document.createElement('a');
+    showData.innerHTML = "Show Exam Data";
+
+    var deleter = document.createElement('a');
+    deleter.innerHTML = "Delete Exam"
+
+    dropDown.appendChild(editor);
+    dropDown.appendChild(showData);
+    dropDown.appendChild(deleter);
+
+    drop.appendChild(dropDown)
+    classBox.appendChild(drop)
+
+    document.getElementById("myDropdown").classList.toggle("show");
+
+    // Close the dropdown menu if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
+    classBox.onclick = boxClick;
+  }
 
   difBackground.appendChild(span);
   difBackground.appendChild(option_vertical);
