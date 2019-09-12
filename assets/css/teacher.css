@@ -520,6 +520,31 @@
     scrollbar-width: none;
   }
 
+  #modal {
+    width: 500px;
+    height: 300px;
+    border: 1px solid black;
+    border-radius: 12px;
+    position: fixed;
+    bottom: 35vh;
+    left: 35vw;
+    background-color: white;
+    font-size: 20px;
+    padding-left: 100px;
+    padding-top: 40px;
+  }
+
+  .options {
+    text-decoration: underline;
+    padding: 10px;
+    color: #47ad84;
+  }
+
+  .options:hover {
+    color: darkgray;
+    cursor: pointer;
+  }
+
   #question-manager::-webkit-scrollbar {
     display: none;
   }

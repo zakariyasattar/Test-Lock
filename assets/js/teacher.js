@@ -1799,49 +1799,70 @@ function createExamBox(name, classAvg, ref, code) {
   option_vertical.className = "glyphicon glyphicon-option-vertical";
 
   option_vertical.onclick = function() {
-    var boxClick = classBox.onclick.toString();
+    // var boxClick = classBox.onclick;
     classBox.onclick = function() {}
 
-    var drop = document.createElement('div');
-    drop.className = "dropdown";
+    var modal = document.createElement('div');
+    modal.id = "modal";
 
-    var dropDown = document.createElement('div');
-    dropDown.classNamw = "dropdown-content";
-    dropDown.id = "myDropdown";
+    var ul = document.createElement('ul');
 
-    var editor = document.createElement('a');
-    editor.innerHTML = "Open Editor";
+    var edit = document.createElement('li');
+    edit.className = "options";
+    edit.innerHTML = "Edit Exam";
 
-    var showData = document.createElement('a');
-    showData.innerHTML = "Show Exam Data";
+    edit.onclick = function() {
+      document.getElementById('create-exam').style.display = "initial";
+      document.getElementById('main').style.display = "none";
+      document.body.style.background = "white";
 
-    var deleter = document.createElement('a');
-    deleter.innerHTML = "Delete Exam"
+      populateExam(code, ref);
+    }
 
-    dropDown.appendChild(editor);
-    dropDown.appendChild(showData);
-    dropDown.appendChild(deleter);
+    var results = document.createElement('li');
+    results.className = "options";
+    results.innerHTML = "View Results";
 
-    drop.appendChild(dropDown)
-    classBox.appendChild(drop)
+    results.onclick = function() {
+      displayExamData(name);
+      document.getElementById("this-exam").innerHTML = name;
+    }
 
-    document.getElementById("myDropdown").classList.toggle("show");
+    var deleteTest = document.createElement('li');
+    deleteTest.className = "options";
+    deleteTest.innerHTML = "Delete Exam";
 
-    // Close the dropdown menu if the user clicks outside of it
+    deleteTest.onclick = function() {
+      deleteExam(code);
+    }
+
+    ul.appendChild(edit); ul.appendChild(document.createElement('hr')); ul.appendChild(results);  ul.appendChild(document.createElement('hr')); ul.appendChild(deleteTest);
+    modal.appendChild(ul);
+
+    document.getElementById('html').appendChild(modal);
+    document.body.style.opacity = "0"
+    document.body.style.filter = "blur(30px)";
+    document.body.style.overflowY = "hidden";
+
     window.onclick = function(event) {
-      if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-          var openDropdown = dropdowns[i];
-          if (openDropdown.classList.contains('show')) {
-            openDropdown.classList.remove('show');
-          }
-        }
+      if (event.target != option_vertical && event.target != modal && document.getElementById('modal')) {
+        modal.remove();
+        document.body.style.overflowY = "auto";
+        document.body.style.opacity = "1"
+        document.body.style.filter = "blur(0px)";
       }
     }
 
-    classBox.onclick = boxClick;
+    $(document).keyup(function(e) {
+       if (e.key === "Escape") {
+         modal.remove();
+         document.body.style.overflowY = "auto";
+         document.body.style.opacity = "1";
+         document.body.style.filter = "blur(0px)";
+       }
+    });
+
+    // classBox.onclick = boxClick;
   }
 
   difBackground.appendChild(span);
@@ -1947,13 +1968,15 @@ function createCurrentTakingBox(name) {
 }
 
 //delete current exam
-function deleteExam() {
-  var code = document.getElementById('exam-code').innerHTML;
+function deleteExam(code) {
+  if(code == ""){
+    var code = document.getElementById('exam-code').innerHTML;
+  }
   var modifiedCode = "";
 
   swal({
     title: "Are you sure?",
-    text: "Once deleted, you will not be able to recover this exam!",
+    text: "Once deleted, you will not be able to recover this exam or any of its response data!",
     icon: "warning",
     buttons: true,
     dangerMode: true,
@@ -1993,19 +2016,22 @@ function deleteExam() {
       document.getElementById('main').style.display = "initial";
       document.body.style.background = "white";
 
-      $("#exam-wrapper").empty();
-      $( "#exam" ).empty();
+      setTimeout(function(){
+        $("#exam-wrapper").empty();
+        $("#exam").empty();
 
-      loadClass(localStorage.getItem("className"));
+        loadClass(localStorage.getItem("className"));
 
-      if(localStorage.getItem("CreatedExamCode").toUpperCase() == code) {
-        localStorage.setItem("CreatedExamCode", "");
-        document.getElementById('cached-exam-button').remove();
-      }
+        if(localStorage.getItem("CreatedExamCode").toUpperCase() == code) {
+          localStorage.setItem("CreatedExamCode", "");
+          document.getElementById('cached-exam-button').remove();
+        }
 
-      swal("Poof! Your exam has been deleted!", {
-        icon: "success",
-      });
+        swal("Poof! Your exam has been deleted!", {
+          icon: "success",
+        });
+    }, 100);
+
     }
   });
 }
