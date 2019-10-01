@@ -608,7 +608,7 @@ var x = window.matchMedia("(min-width: 601px)") // Specify what to set media-que
 removeDropDown(x) // Call listener function at run time
 x.addListener(removeDropDown) // Attach listener function on state changes
 
-// function to display all data in the table by className
+// function to display all data in the table by exam name
 function displayExamData(name) {
   if(!examDataHasLoaded) {
     var cumAvg = 0;
@@ -652,6 +652,8 @@ function displayExamData(name) {
           if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length > 1) {
             var code = obj[prop][initData].examCode;
 
+            localStorage.setItem('populatedExamCode', code);
+
             document.getElementById('edit-exam').innerHTML = name;
             document.getElementById('edit-current-exam').style.display = "initial";
 
@@ -667,7 +669,7 @@ function displayExamData(name) {
 
             var dbName = obj[prop][initData].examTitle;
             if(dbName == "") {
-              dbName = obj[prop][initData].examCode;
+              dbName = obj[prop][initData].examCode.substring(1);
             }
 
             if(dbName == name) {
@@ -708,6 +710,7 @@ function displayExamData(name) {
           }
           else if(Object.keys(obj[prop]).length > 1 && !populated){
             populated = true;
+
             for(var response in obj[prop].responses){
               var data = obj[prop].responses[response][Object.keys(obj[prop].responses[response])[0]];
 
@@ -1235,8 +1238,7 @@ function sort(func) {
       var tr = document.createElement('tr');
 
       var iTracker = i;
-      console.log(examData[iTracker]);
-      tr.onclick = function() { loadStudentExamData(examData[iTracker].split(":")[0]); }
+      tr.onclick = function() { loadStudentExamData(examData[iTracker].split(":")[0], localStorage.getItem("populatedExamCode")); }
 
       table.appendChild(document.createElement('br'));
 
@@ -1300,7 +1302,7 @@ function sort(func) {
 
       for(var i = 0; i < testExamData.length; i++){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0]); }
+        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1364,7 +1366,7 @@ function sort(func) {
 
       for(var i = testExamData.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0]); }
+        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1426,9 +1428,9 @@ function sort(func) {
 
       table.appendChild(init);
 
-      for(var i = 0; i < scores.length; i++){
+      for(var i = scores.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0]); }
+        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1490,9 +1492,9 @@ function sort(func) {
 
       table.appendChild(init);
 
-      for(var i = scores.length - 1; i >= 0; i--){
+      for(var i = 0; i < scores.length; i++){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0]); }
+        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1556,7 +1558,7 @@ function sort(func) {
 
       for(var i = times.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0]); }
+        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1619,7 +1621,7 @@ function sort(func) {
 
       for(var i = 0; i < times.length; i++){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0]); }
+        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 

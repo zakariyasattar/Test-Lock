@@ -469,12 +469,15 @@ body {
 }
 
 #logo {
-  font-size: 20px;
+  width: 32px;
+  height: 37px;
   color: black;
+  bottom: 10px;
+  position: relative;
 }
 
 #welcome-header {
-  left: 30vw;
+  left: 25vw;
   top: 17vh;
   position: absolute;
   font-size: 70px;
@@ -569,7 +572,7 @@ body {
 @media only screen and (max-width: 400px) {
   #welcome-header {
     font-size: 15px;
-    left: 22vw;
+    left: 20vw;
   }
 }
 
@@ -581,7 +584,7 @@ body {
 
 @media only screen and (min-width: 1919px) {
   #welcome-header {
-    left: 35vw;
+    left: 30vw;
   }
 }
 
@@ -591,7 +594,7 @@ body {
     margin-left: 20vw;
   }
   #welcome-header {
-    left: 30vw;
+    left: 22vw;
   }
 }
 
@@ -617,29 +620,29 @@ body {
   }
   #welcome-header {
     font-size: 55px;
-    left: 30vw;
+    left: 22vw;
   }
 }
 
 @media only screen and (max-width: 800px) {
   #initiator {
     width: 90vw;
-    margin-left: 5vw;
+    right: 5vw;
   }
   #welcome-header {
     font-size: 55px;
-    left: 15vw;
+    left: 10vw;
   }
 }
 
 @media only screen and (max-width: 750px) {
   #initiator {
     width: 95vw;
-    margin-left: 2.5vw;
+    right: 2.5vw;
   }
   #welcome-header {
-    font-size: 55px;
-    left: 22vw;
+    font-size: 45px;
+    left: 18vw;
   }
 }
 
@@ -655,7 +658,7 @@ body {
     margin-left: 2.5vw;
   }
   #welcome-header {
-    font-size: 50px;
+    font-size: 40px;
     left: 10vw;
   }
   g {

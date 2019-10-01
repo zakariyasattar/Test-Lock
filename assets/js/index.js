@@ -51,7 +51,7 @@ var key = initKey(); var timer = 0;
     }
 
 })();
-
+//
 // var data;
 // 	$.ajax({
 // 	  type: "GET",
@@ -62,11 +62,17 @@ var key = initKey(); var timer = 0;
 //   		data = $.csv.toArrays(response);
 //       for(var i = 0; i < data.length; i++){
 //         var id = data[i][0];
-//         var name = data[i][3] + " " + data[i][2];
+//         var names = data[i][3] + " " + data[i][2];
 //         var className = data[i][10];
 //
-//         firebase.database().ref("Teachers/Tricia Brown/Classes/" + className + "/Students").push(id + ";" + name);
-//         //firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Exams/CRQNPD/responses").push(name + ":" + Math.floor((Math.random() * 25) + 75) + ":" + Math.floor((Math.random() * 5) + 15));
+//         // firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
+//         var json = {
+//           name: names,
+//           score:  Math.floor((Math.random() * 25) + 75),
+//           time: 5,
+//           totalScore: Math.floor((Math.random() * 5) + 15)
+//         }
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/ZIPIXM/responses/" + names).push(json);
 //       }
 // 	  }
 // });
@@ -345,7 +351,7 @@ function retrieveName() {
           taken = true;
         }
       });
-      if(taken || !taken) {
+      if(!taken) {
         document.getElementById('userName').style.color = "black";
         localStorage.setItem('idNum', id);
         firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
@@ -417,7 +423,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  //toggleFullScreen();
+  toggleFullScreen();
 
   canCount = true;
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
