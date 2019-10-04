@@ -609,7 +609,7 @@ removeDropDown(x) // Call listener function at run time
 x.addListener(removeDropDown) // Attach listener function on state changes
 
 // function to display all data in the table by exam name
-function displayExamData(name) {
+function displayExamData(examName) {
   if(!examDataHasLoaded) {
     var cumAvg = 0;
     var classLength = 0;
@@ -627,7 +627,7 @@ function displayExamData(name) {
     document.getElementById('exam-wrapper').style.display = "none";
     document.getElementById('examSpecific').style.display = "initial";
     document.getElementById('sort-menu').style.display = "initial";
-    document.getElementById('exam-name').innerHTML = name;
+    document.getElementById('exam-name').innerHTML = examName;
     document.body.style.backgroundImage = "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)";
 
     var i = document.createElement('i');
@@ -654,7 +654,9 @@ function displayExamData(name) {
 
             localStorage.setItem('populatedExamCode', code);
 
-            document.getElementById('edit-exam').innerHTML = name;
+            console.log
+
+            document.getElementById('edit-exam').innerHTML = examName;
             document.getElementById('edit-current-exam').style.display = "initial";
 
             document.getElementById('edit-current-exam').onclick = function() {
@@ -672,7 +674,7 @@ function displayExamData(name) {
               dbName = obj[prop][initData].examCode.substring(1);
             }
 
-            if(dbName == name) {
+            if(dbName == examName) {
               var random = document.createElement('div');
               var table = document.createElement('table');
 
@@ -1137,7 +1139,8 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
           var answers = childSnapshot.val().answers;
 
           for(var k = 0; k < answers.length; k++) {
-            if(isNaN(parseInt(answers[k].split(";")[1]))) {
+            if(isNaN(answers[k].split(";")[1])) {
+              console.log(answers[k])
               answers[k] = answers[k].split(";")[0] + ";" + answers[k].split(";")[1] + ";" + cleanVersion;
             }
           }
