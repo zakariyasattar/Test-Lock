@@ -11,10 +11,10 @@ var key = initKey(); var timer = 0;
       if(document.fullscreenElement == null) {
         console.log(leaverCount)
         let timerInterval;
-        if(leaverCount <= 3) {
+        if(leaverCount <= 5) {
             Swal.fire({
               title: 'Are You Sure You Want To Leave?',
-              html: 'You have <strong></strong> seconds to go back to your test or the test ends and your score is recorded! (Max 3 leaves)',
+              html: 'You have <strong></strong> seconds to go back to your test or the test ends and your score is recorded! (Max 5 times for this dialog box)',
               confirmButtonText: 'Yes, end it!',
               cancelButtonText: 'No, Go Back!',
               showCancelButton: true,
@@ -351,7 +351,7 @@ function retrieveName() {
           taken = true;
         }
       });
-      if(!taken) {
+      if(!taken || taken) {
         document.getElementById('userName').style.color = "black";
         localStorage.setItem('idNum', id);
         firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
@@ -424,6 +424,12 @@ function displayQuiz() {
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
   toggleFullScreen();
+
+
+  // listen for alt+tab changes and act upon them
+  window.onblur = function() {
+    toggleFullScreen();
+  }
 
   canCount = true;
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
@@ -514,6 +520,25 @@ function populateExam(code, ref) {
       }
     });
   });
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
 
 //function to dynamically change type of question

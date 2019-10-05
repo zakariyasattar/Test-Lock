@@ -522,10 +522,14 @@ function loadClass(name) {
                 button.id = "cached-exam-button";
                 button.style.display = "inline-block";
 
+                console.log(button)
+
                 button.onclick = function() {
                   document.getElementById('create-exam').style.display = "initial";
                   document.getElementById('main').style.display = "none";
                   document.body.style.background = "white";
+
+                  console.log(localStorage.getItem("CreatedExamCode").toUpperCase())
 
                   populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
                 }
@@ -537,10 +541,9 @@ function loadClass(name) {
             }
 
             if(localStorage.getItem("CreatedExamCode") != null && localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
-              setTimeout(function(){
+              console.log(localStorage.getItem("CreatedExamCode").toUpperCase(), childSnapshot.val()[key].examCode)
                 document.getElementById('cached-exam-button').style.display = "initial";
                 document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
-              }, 2);
             }
             else if(document.getElementById('cached-exam-button') != null){
               document.getElementById('cached-exam-button').style.display = "none";
@@ -642,6 +645,8 @@ function displayExamData(examName) {
     document.getElementById('main').appendChild(document.createElement('br'));
     document.getElementById('main').appendChild(i);
 
+    var finalSelectedCode = "";
+
     for (var key in exams) {
       // skip loop if the property is from prototype
       if (!arr.hasOwnProperty(key)) continue;
@@ -654,17 +659,18 @@ function displayExamData(examName) {
 
             localStorage.setItem('populatedExamCode', code);
 
-            console.log
+            if(examName == obj[prop][initData].examTitle) {
+              finalSelectedCode = code;
+              document.getElementById('edit-exam').innerHTML = examName;
+              document.getElementById('edit-current-exam').style.display = "initial";
 
-            document.getElementById('edit-exam').innerHTML = examName;
-            document.getElementById('edit-current-exam').style.display = "initial";
-
-            document.getElementById('edit-current-exam').onclick = function() {
-              document.getElementById('create-exam').style.display = "initial";
-              document.getElementById('main').style.display = "none";
-              document.body.style.background = "white";
-              populateExam(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop)
-            };
+              document.getElementById('edit-current-exam').onclick = function() {
+                document.getElementById('create-exam').style.display = "initial";
+                document.getElementById('main').style.display = "none";
+                document.body.style.background = "white";
+                populateExam(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop)
+              };
+            }
 
             // skip loop if the property is from prototype
             if(!obj.hasOwnProperty(prop)) continue;
