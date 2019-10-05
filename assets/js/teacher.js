@@ -912,6 +912,7 @@ function loadStudentExamData(name, code) {
   document.getElementById('student-exam-data').style.display = "initial";
   document.body.style.backgroundImage = "none";
   var answer = "";
+  var finalId;
 
   //linear-gradient(135deg, rgb(245, 247, 250) 0%, rgb(195, 207, 226) 100%);
 
@@ -920,8 +921,32 @@ function loadStudentExamData(name, code) {
     table[i].style.display = "none";
   }
 
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Students").once('value', function(snapshot) {
+    for(var info in snapshot.val()) {
+      var data = snapshot.val()[info];
+      var id = data.split(";")[0];
+      var fullName = data.split(";")[1];
+
+      if(name == fullName) {
+        finalId = id;
+      }
+    }
+  });
+
   firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + code).once('value', function(snapshot) {
     var data = (snapshot.val().responses[name][Object.keys(snapshot.val().responses[name])[0]]);
+
+    document.getElementById('resetStatus').onclick = function() {
+      for(var takenKey in snapshot.val().taken) {
+        var id = (snapshot.val().taken[takenKey]);
+
+        if(id == finalId) {
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + code + "/taken/").child(takenKey).remove()
+        }
+      }
+
+      swal("Success!", name + "'s taken status has been reset. " + name + " should be able to retake exam now.", 'success')
+    }
 
     var studentPoints = data.totalScore / 100 * snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
     document.getElementById('score-num').innerHTML = (studentPoints).toFixed(0) + " / " + snapshot.val()[Object.keys(snapshot.val())[0]].examTotalPoints;
@@ -1804,7 +1829,6 @@ function createExamBox(name, classAvg, ref, code) {
   option_vertical.className = "glyphicon glyphicon-option-vertical";
 
   option_vertical.onclick = function() {
-    // var boxClick = classBox.onclick;
     classBox.onclick = function() {}
 
     var modal = document.createElement('div');
@@ -1867,7 +1891,15 @@ function createExamBox(name, classAvg, ref, code) {
        }
     });
 
-    // classBox.onclick = boxClick;
+
+
+    setTimeout(function(){
+      classBox.onclick = function() {
+        displayExamData(name);
+        document.getElementById("this-exam").innerHTML = name;
+      }
+    }, 3000);
+
   }
 
   difBackground.appendChild(span);
