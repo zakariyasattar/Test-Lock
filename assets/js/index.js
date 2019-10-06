@@ -14,18 +14,19 @@ var key = initKey(); var timer = 0;
         if(leaverCount <= 5) {
             Swal.fire({
               title: 'Are You Sure You Want To Leave?',
-              html: 'You have <strong></strong> seconds to go back to your test or the test ends and your score is recorded! (Max 5 times for this dialog box)',
+              html: 'You have <strong></strong> seconds to go back to your test or the test ends and your score is recorded! You can open this dialog <span></span> more times',
               confirmButtonText: 'Yes, end it!',
               cancelButtonText: 'No, Go Back!',
               showCancelButton: true,
               showConfirmButton: true,
               allowEscapeKey: false,
               allowEnterKey: false,
-              timer: 7000,
+              timer: 10000,
               onBeforeOpen: () => {
                 timerInterval = setInterval(() => {
-                  Swal.getContent().querySelector('strong').textContent = Swal.getTimerLeft() / 1000
+                  Swal.getContent().querySelector('strong').textContent = Swal.getTimerLeft() / 1000;
                 }, 100)
+                Swal.getContent().querySelector('span').textContent = 4 - leaverCount;
               },
               onClose: () => {
                 clearInterval(timerInterval)
