@@ -48,14 +48,14 @@
               <img id="logo" src="assets/images/test_lock_logo.png"></img>
             </a>
 
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
-            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Leaderboard</a></li>
+            <li id="navButton" class="navB" style="position: relative; top: 5px; left: 15px;" role="presentation" class="active" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Home</a></li>
+            <li id="navButton" class="navB" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
+            <li id="navButton" class="navB" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Leaderboard</a></li>
 
             <li id="dropdown" class="dropdown">
               <a class="dropdown-toggle" id="nav-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span style="font-size: 25px" class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span></a>
-              <ul id="nav-menu" class="dropdown-menu">
-                <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Dashboard</a></li>
+              <ul id="nav-menu" class="dropdown-menu" style="display: none">
+                <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Home</a></li>
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Leaderboard</a></li>
               </ul>
@@ -146,6 +146,7 @@
 
           <div id="exam">
             <div id="question-manager">
+              <div id="time">Current Time: <span id="currTime"></span></div>
               <center>
                 <div id="questionNums">
                   <button style="display: none" id="submit-exam" onclick="submitExam()">

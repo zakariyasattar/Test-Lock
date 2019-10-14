@@ -454,6 +454,13 @@ body {
    font-weight: normal
  }
 
+ #time {
+   float: left;
+   position: relative;
+   top: 2vh;
+   left: 10px;
+ }
+
 
  /* \\\\\\\\\ EXAM \\\\\\\\\ */
 

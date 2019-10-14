@@ -135,9 +135,18 @@ window.onload = function() {
     }
   });
 
+  setInterval(function(){ if(canCount) { timer++; } }, 60000);
+
   setInterval(function(){
-    if(canCount) { timer++; }
-  }, 60000);
+    var today = new Date();
+    if(today.getSeconds() < 10) {
+      document.getElementById("currTime").innerHTML = today.getHours() + ":" + today.getMinutes() + ":0" + today.getSeconds();
+    }
+    else {
+      document.getElementById("currTime").innerHTML = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    }
+
+  }, 1000)
 
   $(window).scroll(function(){
     for(var i = 1; i <= document.getElementsByClassName('question').length; i++) {
@@ -208,16 +217,33 @@ function removeAllActive() {
   document.getElementsByTagName("LI")[2].className = "";
 }
 
+document.getElementById("nav-toggle").onclick = function() {
+  if(document.getElementById('nav-menu').style.display == "initial"){
+    document.getElementById('nav-menu').style.display = "none";
+  }
+  else {
+    document.getElementById('nav-menu').style.display = "initial";
+  }
+}
+
 // remove dropdown if screen size can handle navbar
 function removeDropDown(x) {
  if (x.matches) { // If media query matches
    document.getElementById('dropdown').style.display = "none";
- } else {
+
+   for(var i = 0; i < document.getElementsByClassName('navB').length; i++) {
+     document.getElementsByClassName('navB')[i].style.display = "initial";
+   }
+ }
+ else {
    document.getElementById('dropdown').style.display = "initial";
+   for(var i = 0; i < document.getElementsByClassName('navB').length; i++) {
+     document.getElementsByClassName('navB')[i].style.display = "none";
+   }
  }
 }
 
-var x = window.matchMedia("(min-width: 601px)")
+var x = window.matchMedia("(min-width: 730px)")
 removeDropDown(x) // Call listener function at run time
 x.addListener(removeDropDown) // Attach listener function on state changes
 
@@ -242,6 +268,7 @@ function display(title) {
     document.body.style.background = 'white';
     populateLeaderboard();
   }
+  document.getElementById('nav-menu').style.display = "none";
 }
 
 function getStudent(id) {
@@ -424,7 +451,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  //toggleFullScreen();
 
 
   // listen for alt+tab changes and act upon them
@@ -470,6 +497,8 @@ function populateExam(code, ref) {
         $(document.getElementById('finalDiv')).empty();
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
+          // var currShuffledPos = shuffled[i];
+
           done.push(0);
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
@@ -521,6 +550,26 @@ function populateExam(code, ref) {
       }
     });
   });
+   setTimeout(function(){
+     var questions = (document.getElementsByClassName('question'));
+     var shuffled = [];
+
+     for(var k = 0; k < questions.length; k++) {
+       shuffled.push(k);
+     }
+     shuffled = shuffle(shuffled)
+     var nonaltered;
+
+     for(var i = 0; i < shuffled.length; i++) {
+       nonaltered = questions[i];
+       // document.getElementById('exam').replaceChild(questions[i], questions[shuffled[i]]);
+       // document.getElementById('exam').replaceChild(questions[shuffled[i]], nonaltered);
+       questions[i].parentNode.replaceChild(questions[shuffled[i]], questions[i]);
+       forms[1].parentNode.insertBefore(nonaltered, questions[i].nextSibling);
+       questions[shuffled[i]].parentNode.replaceChild(questions[i], questions[shuffled[i]]);
+       console.log(questions)
+     }
+   }, 500);
 }
 
 function shuffle(array) {
