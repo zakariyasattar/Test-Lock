@@ -415,6 +415,9 @@ body {
    padding-left: 5px;
    padding-bottom: 10px;
  }
+ #google-signin-pointer-max {
+   display: none;
+ }
 
  .option-input:hover {
    background: #9faab7;
@@ -576,13 +579,6 @@ body {
 }
 
 
-@media only screen and (max-width: 400px) {
-  #welcome-header {
-    font-size: 15px;
-    left: 20vw;
-  }
-}
-
 @media only screen and (max-height: 400px) {
   #initiator {
     height: 45vh;
@@ -693,6 +689,26 @@ body {
 }
 
 @media only screen and (max-width: 400px) {
+  #submit-exam-disabled {
+    width: 150px;
+  }
+  #question-tracker {
+    left: 0;
+  }
+  #time {
+    display: none;
+  }
+  #welcome-header {
+    font-size: 15px;
+    left: 20vw;
+  }
+  #google-signin-pointer {
+    display: none;
+  }
+
+  #google-signin-pointer-max {
+    display: initial;
+  }
   #initiator {
     width: 95vw;
     margin-left: 2.5vw;
@@ -707,12 +723,12 @@ body {
   }
   #exam-info {
     position: absolute;
-    left: 20vw;
+    left: 5vw;
     bottom: 100px;
   }
   #userName {
     position: absolute;
-    left: 15vw;
+    left: 5vw;
     bottom: 100px;
   }
   #initiator {

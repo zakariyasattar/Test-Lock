@@ -552,25 +552,26 @@ function populateExam(code, ref) {
   });
    setTimeout(function(){
      var questions = (document.getElementsByClassName('question'));
-     var shuffled = [];
+     var exam = document.getElementById('exam');
+     //convert HTMLcollection to array and shuffle
+     var questionsArr = shuffle(Array.prototype.slice.call( questions ));
+     $(exam).html("");
 
-     for(var k = 0; k < questions.length; k++) {
-       shuffled.push(k);
+     for(var m = 0; m < questionsArr.length; m++) {
+       exam.appendChild(questionsArr[m]);
+       exam.appendChild(document.createElement('br'));
+       exam.appendChild(document.createElement('hr'));
      }
-     shuffled = shuffle(shuffled)
-     var nonaltered;
 
-     for(var i = 0; i < shuffled.length; i++) {
-       nonaltered = questions[i];
-       // document.getElementById('exam').replaceChild(questions[i], questions[shuffled[i]]);
-       // document.getElementById('exam').replaceChild(questions[shuffled[i]], nonaltered);
-       questions[i].parentNode.replaceChild(questions[shuffled[i]], questions[i]);
-       forms[1].parentNode.insertBefore(nonaltered, questions[i].nextSibling);
-       questions[shuffled[i]].parentNode.replaceChild(questions[i], questions[shuffled[i]]);
-       console.log(questions)
-     }
+     restructureQuestions();
    }, 500);
 }
+
+// document.getElementById('exam').replaceChild(questions[i], questions[shuffled[i]]);
+// document.getElementById('exam').replaceChild(questions[shuffled[i]], nonaltered);
+// questions[i].parentNode.replaceChild(questions[shuffled[i]], questions[i]);
+// forms[1].parentNode.insertBefore(nonaltered, questions[i].nextSibling);
+// questions[shuffled[i]].parentNode.replaceChild(questions[i], questions[shuffled[i]]);
 
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
@@ -589,6 +590,18 @@ function shuffle(array) {
   }
 
   return array;
+}
+
+//function to restructure if question is deleted in the middle
+function restructureQuestions() {
+  var questions = document.getElementsByClassName('question');
+
+  for(var i = 0; i < questions.length; i++) {
+    var question = questions[i];
+
+    question.childNodes[0].innerHTML = i + 1 + ". "
+    question.id = i + 1;
+  }
 }
 
 //function to dynamically change type of question
