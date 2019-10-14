@@ -553,6 +553,7 @@ function populateExam(code, ref) {
    setTimeout(function(){
      var questions = (document.getElementsByClassName('question'));
      var exam = document.getElementById('exam');
+
      //convert HTMLcollection to array and shuffle
      var questionsArr = shuffle(Array.prototype.slice.call( questions ));
      $(exam).html("");
