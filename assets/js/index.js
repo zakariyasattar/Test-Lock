@@ -9,7 +9,6 @@ var key = initKey(); var timer = 0;
     //code to call when document leaves full screen
     document.onfullscreenchange = function ( event ) {
       if(document.fullscreenElement == null) {
-        console.log(leaverCount)
         let timerInterval;
         if(leaverCount <= 5) {
             Swal.fire({
@@ -556,23 +555,17 @@ function populateExam(code, ref) {
 
      //convert HTMLcollection to array and shuffle
      var questionsArr = shuffle(Array.prototype.slice.call( questions ));
-     $(exam).html("");
+
+     $('.questionBr').remove(); $('.questionHr').remove(); $('.question').remove();
 
      for(var m = 0; m < questionsArr.length; m++) {
        exam.appendChild(questionsArr[m]);
        exam.appendChild(document.createElement('br'));
        exam.appendChild(document.createElement('hr'));
      }
-
      restructureQuestions();
    }, 500);
 }
-
-// document.getElementById('exam').replaceChild(questions[i], questions[shuffled[i]]);
-// document.getElementById('exam').replaceChild(questions[shuffled[i]], nonaltered);
-// questions[i].parentNode.replaceChild(questions[shuffled[i]], questions[i]);
-// forms[1].parentNode.insertBefore(nonaltered, questions[i].nextSibling);
-// questions[shuffled[i]].parentNode.replaceChild(questions[i], questions[shuffled[i]]);
 
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
@@ -875,6 +868,10 @@ function createQuestion(loading, numAnswerChoices) {
   num.style.color = "#97a5aa";
 
   var hr = document.createElement('hr');
+  hr.className = "questionHr";
+
+  var br = document.createElement('br');
+  br.className = "questionBr";
 
   var question_title = document.createElement('input');
   question_title.readOnly = true;
@@ -932,7 +929,7 @@ function createQuestion(loading, numAnswerChoices) {
   question.appendChild(answer_choices);
 
   exam.appendChild(question);
-  exam.appendChild(document.createElement('br'));
+  exam.appendChild(br);
   exam.appendChild(hr);
 
 
