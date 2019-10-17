@@ -376,8 +376,31 @@ function gameOver() {
 }
 
 function submitToLeaderboard(id) {
-	if(parseInt(id) && id.length == 5){
-		firebase.database().ref('leaderboard').push(getStudent(id).split(";")[1] + ";" + points);
+	var possibleDuplicates = [];
+
+	firebase.database().ref('leaderboard').push(getStudent(id).split(";")[1] + ";" + points);
+
+	if(getStudent(id) != -1){
+		firebase.database().ref('leaderboard').on('value', function(snapshot) {
+			snapshot.forEach(function(childSnapshot) {
+				if(getStudent(id).split(";")[1] == childSnapshot.val().split(";")[0]) {
+					possibleDuplicates.push(childSnapshot.val() + ";" + childSnapshot.key);
+				}
+			});
+			var highest = -111111111;
+
+			for(var i = 0; i < possibleDuplicates.length; i++) {
+				if(possibleDuplicates[i].split(";")[1] > highest) {
+					highest = possibleDuplicates[i].split(";")[1];
+				}
+			}
+
+			for(i = 0; i < possibleDuplicates.length; i++) {
+				if(possibleDuplicates[i].split(";")[1] != highest) {
+					firebase.database().ref('leaderboard').child(possibleDuplicates[i].split(";")[2]).remove();
+				}
+			}
+		});
 		populateLeaderboard();
 	}
 	else{
@@ -423,6 +446,7 @@ function populateLeaderboard() {
 			index.style.paddingLeft = "20px";
 
 			name.innerHTML = leaderboard[i].split(";")[0];
+			name.className = "name";
 			name.style.paddingLeft = "10px";
 
 			score.innerHTML = leaderboard[i].split(";")[1];
