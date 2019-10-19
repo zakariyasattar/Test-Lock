@@ -357,13 +357,7 @@ function gameOver() {
 	ctx.textBaseline = "middle";
 	ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
-	if(points > 5) {
-		var id = prompt("Would you like to report your score? Input id below! (Double tap space bar to reopen if closed)");
-
-		if(id) {
-			submitToLeaderboard(id);
-		}
-	}
+	submitToLeaderboard(userName);
 
 	// Stop the Animation
 	cancelRequestAnimFrame(init);
@@ -375,42 +369,31 @@ function gameOver() {
 	restartBtn.draw();
 }
 
-function submitToLeaderboard(id) {
+function submitToLeaderboard(userName) {
 	var possibleDuplicates = [];
 
-	firebase.database().ref('leaderboard').push("Student;" + getStudent(id).split(";")[1] + ";" + points);
+	firebase.database().ref('leaderboard').push("Teacher;" + userName + ";" + points);
 
-	if(getStudent(id) != -1){
 		firebase.database().ref('leaderboard').on('value', function(snapshot) {
 			snapshot.forEach(function(childSnapshot) {
-				if(getStudent(id).split(";")[1] == childSnapshot.val().split(";")[0]) {
+				if(userName == childSnapshot.val().split(";")[1]) {
 					possibleDuplicates.push(childSnapshot.val() + ";" + childSnapshot.key);
 				}
 			});
 			var highest = -111111111;
 
 			for(var i = 0; i < possibleDuplicates.length; i++) {
-				if(possibleDuplicates[i].split(";")[1] > highest) {
-					highest = possibleDuplicates[i].split(";")[1];
+				if(possibleDuplicates[i].split(";")[2] > highest) {
+					highest = possibleDuplicates[i].split(";")[2];
 				}
 			}
 
 			for(i = 0; i < possibleDuplicates.length; i++) {
-				if(possibleDuplicates[i].split(";")[1] != highest) {
-					firebase.database().ref('leaderboard').child(possibleDuplicates[i].split(";")[2]).remove();
+				if(possibleDuplicates[i].split(";")[2] != highest) {
+					firebase.database().ref('leaderboard').child(possibleDuplicates[i].split(";")[3]).remove();
 				}
 			}
 		});
-		populateLeaderboard();
-	}
-	else{
-		swal("Error!", "hmmm, real ID?", "error");
-		var id = prompt("Would you like to report your score? Input id below! (Double tap space bar to reopen if closed)");
-
-		if(id) {
-			submitToLeaderboard(id);
-		}
-	}
 }
 
 function populateLeaderboard() {
