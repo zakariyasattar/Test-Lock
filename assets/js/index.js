@@ -270,6 +270,21 @@ function display(title) {
   document.getElementById('nav-menu').style.display = "none";
 }
 
+// search LB
+function searchLeaderboard() {
+  var input, filter, ul, tr, a, i, txtValue;
+
+  input = document.getElementById("lb-search");
+  tr = document.getElementById('leaderboard').getElementsByClassName("name");
+
+  for (i = 0; i < tr.length; i++) {
+    if(tr[i].innerHTML == input.value) {
+      tr[i].style.border = "1px solid black";
+      tr[i].scrollIntoView({behavior: "smooth"});
+    }
+  }
+}
+
 function getStudent(id) {
   students = mergeSort(students);
   //binary search for finding ID pos

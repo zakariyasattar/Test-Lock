@@ -2531,6 +2531,7 @@ function createQuestion(loading, numAnswerChoices) {
 
   var createNewAnswerChoice = document.createElement('a');
   createNewAnswerChoice.id = "createNewAnswerChoice";
+  createNewAnswerChoice.clasName = "newChoice";
   createNewAnswerChoice.href = "javascript:createNewOptionChoice(" +  num.innerHTML + ")";
   createNewAnswerChoice.appendChild(plus);
   createNewAnswerChoice.innerHTML += ' New Answer Choice'
@@ -2681,7 +2682,7 @@ function swapDiv(elem, numToSwap){
 
 // append new answer choice to question based on num
 function createNewOptionChoice(num) {
-  var val = document.getElementById(num).childNodes[6];
+  var val = document.getElementById(num).childNodes[7];
   val.childNodes[val.childNodes.length - 1].remove();
 
   var label = document.createElement('label');
@@ -2740,6 +2741,7 @@ function createNewOptionChoice(num) {
   var createNewAnswerChoice = document.createElement('a');
   createNewAnswerChoice.id = "createNewAnswerChoice";
   createNewAnswerChoice.href = "javascript:createNewOptionChoice(" +  num + ")";
+  createNewAnswerChoice.clasName = "newChoice";
   createNewAnswerChoice.appendChild(plus);
   createNewAnswerChoice.innerHTML += ' New Answer Choice';
 
