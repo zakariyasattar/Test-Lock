@@ -458,12 +458,15 @@ body {
  }
 
  #time {
-   float: left;
-   position: relative;
-   top: 2vh;
-   left: 10px;
+   position: absolute;
+   left: 15px;
+   top: 5px;
  }
-
+ #timeLeft {
+   position: absolute;
+   left: 15px;
+   top: 25px;
+ }
 
  /* \\\\\\\\\ EXAM \\\\\\\\\ */
 

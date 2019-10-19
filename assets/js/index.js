@@ -134,7 +134,22 @@ window.onload = function() {
     }
   });
 
-  setInterval(function(){ if(canCount) { timer++; } }, 60000);
+  document.getElementById('timeLeftInExam').innerHTML = localStorage.getItem("timeLimit") - 0 + " minutes";
+
+  setInterval(function(){
+    if(canCount) {
+      if(timer == (localStorage.getItem("timeLimit") - 5)) {
+        swal("Timer Warning", "5 minutes remaining in this exam", "info");
+      }
+      if(timer <= localStorage.getItem("timeLimit")) {
+        timer++;
+        document.getElementById('timeLeftInExam').innerHTML = localStorage.getItem("timeLimit") - timer + " minutes";
+      }
+      else {
+        window.location.reload();
+      }
+    }
+  }, 60000);
 
   setInterval(function(){
     var today = new Date();
@@ -474,6 +489,15 @@ function displayQuiz() {
   }
 
   canCount = true;
+
+  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      if(childSnapshot.val().examCode != undefined) {
+        localStorage.setItem("timeLimit", childSnapshot.val().examTotalMins);
+      }
+    });
+  });
+
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
   firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/currentlyTaking").push(localStorage.getItem('idNum'));
 }
