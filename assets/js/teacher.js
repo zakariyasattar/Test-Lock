@@ -72,8 +72,10 @@ window.onload = function() {
           document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.marginRight = "0";
         }
         else {
-          document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CC;";
-          document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "black";
+          if(document.getElementsByClassName(i)[0] != undefined) {
+            document.getElementsByClassName(i)[0].childNodes[0].innerHTML = "&#x25CC;";
+            document.getElementsByClassName(i)[0].childNodes[1].childNodes[0].style.color = "black";
+          }
         }
       }
     }
@@ -1897,15 +1899,12 @@ function createExamBox(name, classAvg, ref, code) {
        }
     });
 
-
-
     setTimeout(function(){
       classBox.onclick = function() {
         displayExamData(name);
         document.getElementById("this-exam").innerHTML = name;
       }
     }, 3000);
-
   }
 
   difBackground.appendChild(span);
@@ -1943,9 +1942,22 @@ function createExamBox(name, classAvg, ref, code) {
       document.getElementById('display-code').innerHTML = code;
       document.body.style.backgroundImage = "none";
 
-      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code + "/currentlyTaking/").on('value', function(snapshot) {
+      var randomStr = Math.random().toString(36).substring(7);
+      setCorrectExamCode(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass')+ "/Exams/", randomStr);
+
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem(randomStr) + "/taken").on('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
-          createCurrentTakingBox(retrieveName(childSnapshot.val()));
+          var name = "";
+
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Students/").once('value', function(s) {
+            s.forEach(function(cs) {
+              if(cs.val().split(";")[0] == childSnapshot.val()){
+                name = cs.val().split(";")[1];
+              }
+            })
+          });
+
+          setTimeout(function(){ createCurrentTakingBox(name); }, 55);
         });
       });
     }
@@ -1973,18 +1985,16 @@ function createExamBox(name, classAvg, ref, code) {
   document.getElementById('main').appendChild(wrapper);
 }
 
-//get student name by ID
-function retrieveName(id) {
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Students/").on('value', function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-      if(childSnapshot.val().split(";")[0] == id){
-        return childSnapshot.val().split(";")[1];
+function setCorrectExamCode(code, ref, randomNum) {
+  firebase.database().ref(ref).once('value', function(snapshot) {
+    for(var v in snapshot.val()) {
+      if(v.substring(1) == code) {
+        localStorage.setItem(randomNum, v)
       }
-    });
+    }
   });
-
-  return "Not Found";
 }
+
 
 // create currentlyTaking box
 function createCurrentTakingBox(name) {
