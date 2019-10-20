@@ -568,6 +568,7 @@ function loadClass(name) {
       }
       else{
         document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
+        localStorage.setItem("avg-grade-number", collectiveAvg + "%");
       }
     });
 }
@@ -1873,7 +1874,41 @@ function createExamBox(name, classAvg, ref, code) {
       deleteExam(code);
     }
 
-    ul.appendChild(edit); ul.appendChild(document.createElement('hr')); ul.appendChild(results);  ul.appendChild(document.createElement('hr')); ul.appendChild(deleteTest);
+    var displayInfo = document.createElement('li');
+    displayInfo.className = "options";
+    displayInfo.innerHTML = "Display Exam Info";
+
+
+    displayInfo.onclick = function() {
+      document.getElementById('main').style.display = "none";
+      document.getElementById('create-exam').style.display = "none";
+      document.getElementById('display').style.display = "block";
+      document.getElementById('display-code').innerHTML = code;
+      document.body.style.backgroundImage = "none";
+
+      var randomStr = Math.random().toString(36).substring(7);
+      setCorrectExamCode(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass')+ "/Exams/", randomStr);
+
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem(randomStr) + "/taken").on('value', function(snapshot) {
+        $("#joined-students").html("");
+        snapshot.forEach(function(childSnapshot) {
+          var name = "";
+
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Students/").once('value', function(s) {
+            s.forEach(function(cs) {
+              if(cs.val().split(";")[0] == childSnapshot.val()){
+                name = cs.val().split(";")[1];
+              }
+            })
+          });
+
+          setTimeout(function(){ createCurrentTakingBox(name); }, 55);
+        });
+      });
+    }
+
+    ul.appendChild(edit); ul.appendChild(document.createElement('hr')); ul.appendChild(results); ul.appendChild(document.createElement('hr')); ul.appendChild(deleteTest); ul.appendChild(document.createElement('hr')); ul.appendChild(displayInfo);
+
     modal.appendChild(ul);
 
     document.getElementById('html').appendChild(modal);
@@ -1946,6 +1981,7 @@ function createExamBox(name, classAvg, ref, code) {
       setCorrectExamCode(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass')+ "/Exams/", randomStr);
 
       firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem(randomStr) + "/taken").on('value', function(snapshot) {
+        $("#joined-students").html("");
         snapshot.forEach(function(childSnapshot) {
           var name = "";
 

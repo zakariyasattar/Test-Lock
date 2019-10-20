@@ -547,8 +547,8 @@
 
   .options {
     text-decoration: underline;
-    padding: 10px;
-    color: #47ad84;
+    padding: 3px;
+    color: #337ab7
   }
 
   .options:hover {

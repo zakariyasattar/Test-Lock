@@ -246,8 +246,11 @@
       document.getElementById('main').style.display = 'initial';
       document.getElementById('create-exam').style.display = 'none';
       document.body.style.backgroundImage = 'linear-gradient(to top, rgb(223, 233, 243) 0%, white 100%)';
+      document.getElementById('avg-grade-number').innerHTML = localStorage.getItem('avg-grade-number');
         ">
-      <span class="glyphicon glyphicon-hand-left"></span> Go Back To Exams</a>
+      <span class="glyphicon glyphicon-hand-left"></span> Go Back To Exams
+
+    </a>
       <center><h1 style="font-size: 10vw;"><span id="display-code"></span></h1></center>
       <hr/>
 
