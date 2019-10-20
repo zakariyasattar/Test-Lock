@@ -805,6 +805,13 @@
     bottom: 20px;
   }
 
+  #report-bug-form {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    bottom: 20px;
+  }
+
   #hrInBetween {
     transform: rotate(90deg);
     display: inline-block;

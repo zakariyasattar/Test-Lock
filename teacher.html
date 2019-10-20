@@ -49,6 +49,7 @@
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Leaderboard</a></li>
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Feedback</a></li>
+            <li id="navButton" style="position: relative; top: 5px; left: 15px;" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Report A Bug!</a></li>
 
             <!-- DropDown incase screen size goes below 450px -->
             <li id="dropdown" class="dropdown">
@@ -58,6 +59,7 @@
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Ping-Pong</a></li>
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Leaderboard</a></li>
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Feedback</a></li>
+                <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Report A Bug!</a></li>
               </ul>
             </li>
             <img class="hoverable" id="profile"></img>
@@ -259,6 +261,10 @@
 
     <div id="feedback" style="display: none">
       <embed id="feedback-form" src="about:blank"></embed>
+    </div>
+
+    <div id="report-bug" style="display: none">
+      <embed id="report-bug-form" src="about:blank"></embed>
     </div>
 
     <div style="display: none; background: purple;" id="pong">
