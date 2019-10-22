@@ -281,7 +281,7 @@ function moveBoards(event) {
 
 	for(var i = 1; i < paddles.length; i++) {
 		p = paddles[i];
-		p.x = x;
+		p.x = x - p.w;
 	}
 }
 
