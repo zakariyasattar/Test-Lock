@@ -213,6 +213,9 @@ function update() {
 		}
 	}
 
+	document.addEventListener('touchstart', function(e) {doTouch(e);}, false);
+	document.addEventListener('touchmove', function(e) {doTouch(e);}, false);
+
 	// Move the ball
 	ball.x += ball.vx;
 	ball.y += ball.vy;
@@ -262,8 +265,6 @@ function update() {
 		}
 	}
 
-
-
 	// If flag is set, push the particles
 	if(flag == 1) {
 		for(var k = 0; k < particlesCount; k++) {
@@ -276,6 +277,16 @@ function update() {
 
 	// reset flag
 	flag = 0;
+}
+
+function moveBoards(event) {
+	var x = event.touches[0].clientX;
+  // var y = event.touches[0].clientY;
+
+	for(var i = 1; i < paddles.length; i++) {
+		p = paddles[i];
+		p.x = x - p.w/2;
+	}
 }
 
 //Function to check collision between ball and one of
