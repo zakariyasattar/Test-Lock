@@ -43,6 +43,8 @@ var canvas = document.getElementById("pong-canvas"),
 		students = [],
 		isPaused = false;
 
+		var mc = new Hammer(canvas);
+
 		document.body.onkeyup = function(e){
 	    if(e.keyCode == 32){
 				if(!isPaused){
@@ -276,15 +278,13 @@ function update() {
 	flag = 0;
 }
 
-function moveBoards(event) {
-	var x = event.touches[0].clientX;
-	alert(x)
-
-	for(var i = 1; i < paddles.length; i++) {
-		p = paddles[i];
-		p.x = x - p.w;
-	}
-}
+hammertime.on('pan-x', function(ev) {
+	alert(ev)
+	// for(var i = 1; i < paddles.length; i++) {
+	// 	p = paddles[i];
+	// 	p.x = x - p.w;
+	// }
+});
 
 //Function to check collision between ball and one of
 //the paddles
