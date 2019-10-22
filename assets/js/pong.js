@@ -278,6 +278,7 @@ function update() {
 
 function moveBoards(event) {
 	var x = event.touches[0].clientX;
+	alert(x)
 
 	for(var i = 1; i < paddles.length; i++) {
 		p = paddles[i];
