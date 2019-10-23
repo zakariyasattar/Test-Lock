@@ -283,7 +283,6 @@ function update() {
 }
 
 mc.on('pan', function(ev) {
-	console.log(ev)
 	for(var i = 1; i < paddles.length; i++) {
 		p = paddles[i];
 		p.x = ev.center.x - p.w;
