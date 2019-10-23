@@ -208,16 +208,20 @@ function update() {
 	ctx.fillText("Press 'space' to pause ", window.innerWidth - 20, 20 );
 
 	// Move the paddles on mouse move
-	if(mouse.x && mouse.y) {
-		for(var i = 1; i < paddles.length; i++) {
-			p = paddles[i];
-			p.x = mouse.x - p.w/2;
+	var isNotMobile = !(window.matchMedia("only screen and (max-width: 760px)").matches);
+
+  if (isNotMobile) {
+		if(mouse.x && mouse.y) {
+			for(var i = 1; i < paddles.length; i++) {
+				p = paddles[i];
+				p.x = mouse.x - p.w/2;
+			}
 		}
-	}
+  }
 
 	// Move the ball
-	ball.x += ball.vx;
-	ball.y += ball.vy;
+	// ball.x += ball.vx;
+	// ball.y += ball.vy;
 
 	// Collision with paddles
 	p1 = paddles[1];
@@ -279,11 +283,11 @@ function update() {
 }
 
 mc.on('pan', function(ev) {
-	alert(ev)
-	// for(var i = 1; i < paddles.length; i++) {
-	// 	p = paddles[i];
-	// 	p.x = x - p.w;
-	// }
+	console.log(ev)
+	for(var i = 1; i < paddles.length; i++) {
+		p = paddles[i];
+		p.x = ev.center.x - p.w;
+	}
 });
 
 //Function to check collision between ball and one of
