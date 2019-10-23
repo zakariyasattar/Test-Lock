@@ -278,7 +278,7 @@ function update() {
 	flag = 0;
 }
 
-mc.on('pan-x', function(ev) {
+mc.on('pan', function(ev) {
 	alert(ev)
 	// for(var i = 1; i < paddles.length; i++) {
 	// 	p = paddles[i];
