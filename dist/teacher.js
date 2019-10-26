@@ -117,49 +117,74 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"assets/js/raindrop.js":[function(require,module,exports) {
-(function () {
-  var c = document.getElementById("rain"),
-      ctx = c.getContext("2d");
-  c.width = innerWidth;
-  c.height = innerHeight;
-  var lines = [],
-      maxSpeed = 2,
-      spacing = 5,
-      xSpacing = 0,
-      n = innerWidth / spacing,
-      colors = ["#3092ce", "#ffb3a4", "#bbc3cc", "#0B486B"],
-      i;
+})({"../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
 
-  for (i = 0; i < n; i++) {
-    xSpacing += spacing;
-    lines.push({
-      x: xSpacing,
-      y: Math.round(Math.random() * c.height),
-      width: 2,
-      height: Math.round(Math.random() * (innerHeight / 10)),
-      speed: Math.random() * maxSpeed + 1,
-      color: colors[Math.floor(Math.random() * colors.length)]
-    });
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
   }
 
-  function draw() {
-    var i;
-    ctx.clearRect(0, 0, c.width, c.height);
+  return bundleURL;
+}
 
-    for (i = 0; i < n; i++) {
-      ctx.fillStyle = lines[i].color;
-      ctx.fillRect(lines[i].x, lines[i].y, lines[i].width, lines[i].height);
-      lines[i].y += lines[i].speed;
-      if (lines[i].y > c.height) lines[i].y = 0 - lines[i].height;
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
     }
 
-    requestAnimationFrame(draw);
-  }
+    cssTimeout = null;
+  }, 50);
+}
 
-  draw();
-})();
-},{}],"../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+module.exports = reloadCSS;
+},{"./bundle-url":"../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -363,5 +388,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","assets/js/raindrop.js"], null)
-//# sourceMappingURL=/raindrop.443670db.js.map
+},{}]},{},["../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
+//# sourceMappingURL=/teacher.js.map

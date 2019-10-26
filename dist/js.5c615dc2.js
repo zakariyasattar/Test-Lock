@@ -585,8 +585,8 @@ function displayQuiz() {
   document.getElementById('display-exam').style.display = "initial";
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
-  populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code)); //toggleFullScreen();
-  // listen for alt+tab changes and act upon them
+  populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
+  toggleFullScreen(); // listen for alt+tab changes and act upon them
 
   window.onblur = function () {
     toggleFullScreen();
@@ -1334,7 +1334,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51298" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55938" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

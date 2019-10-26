@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"assets/js/pong.js":[function(require,module,exports) {
+})({"assets/js/teacher_pong.js":[function(require,module,exports) {
 // RequestAnimFrame: a browser API for getting smooth animations
 window.requestAnimFrame = function () {
   return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
@@ -168,7 +168,6 @@ init,
 paddleHit,
     students = [],
     isPaused = false;
-var mc = new Hammer(canvas);
 
 document.body.onkeyup = function (e) {
   if (e.keyCode == 32) {
@@ -449,15 +448,7 @@ function gameOver() {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("Game Over - You scored " + points + " points!", W / 2, H / 2 + 25);
-
-  if (points > 5) {
-    var id = prompt("Would you like to report your score? Input id below! (Double tap space bar to reopen if closed)");
-
-    if (id) {
-      submitToLeaderboard(id);
-    }
-  } // Stop the Animation
-
+  submitToLeaderboard(userName); // Stop the Animation
 
   cancelRequestAnimFrame(init); // Set the over flag
 
@@ -466,40 +457,29 @@ function gameOver() {
   restartBtn.draw();
 }
 
-function submitToLeaderboard(id) {
+function submitToLeaderboard(userName) {
   var possibleDuplicates = [];
-  firebase.database().ref('leaderboard').push("Student;" + getStudent(id).split(";")[1] + ";" + points);
-
-  if (getStudent(id) != -1) {
-    firebase.database().ref('leaderboard').on('value', function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        if (getStudent(id).split(";")[1] == childSnapshot.val().split(";")[0]) {
-          possibleDuplicates.push(childSnapshot.val() + ";" + childSnapshot.key);
-        }
-      });
-      var highest = -111111111;
-
-      for (var i = 0; i < possibleDuplicates.length; i++) {
-        if (possibleDuplicates[i].split(";")[1] > highest) {
-          highest = possibleDuplicates[i].split(";")[1];
-        }
-      }
-
-      for (i = 0; i < possibleDuplicates.length; i++) {
-        if (possibleDuplicates[i].split(";")[1] != highest) {
-          firebase.database().ref('leaderboard').child(possibleDuplicates[i].split(";")[2]).remove();
-        }
+  firebase.database().ref('leaderboard').push("Teacher;" + userName + ";" + points);
+  firebase.database().ref('leaderboard').on('value', function (snapshot) {
+    snapshot.forEach(function (childSnapshot) {
+      if (userName == childSnapshot.val().split(";")[1]) {
+        possibleDuplicates.push(childSnapshot.val() + ";" + childSnapshot.key);
       }
     });
-    populateLeaderboard();
-  } else {
-    swal("Error!", "hmmm, real ID?", "error");
-    var id = prompt("Would you like to report your score? Input id below! (Double tap space bar to reopen if closed)");
+    var highest = -111111111;
 
-    if (id) {
-      submitToLeaderboard(id);
+    for (var i = 0; i < possibleDuplicates.length; i++) {
+      if (possibleDuplicates[i].split(";")[2] > highest) {
+        highest = possibleDuplicates[i].split(";")[2];
+      }
     }
-  }
+
+    for (i = 0; i < possibleDuplicates.length; i++) {
+      if (possibleDuplicates[i].split(";")[2] != highest) {
+        firebase.database().ref('leaderboard').child(possibleDuplicates[i].split(";")[3]).remove();
+      }
+    }
+  });
 }
 
 function populateLeaderboard() {
@@ -882,5 +862,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","assets/js/pong.js"], null)
-//# sourceMappingURL=/pong.8a459418.js.map
+},{}]},{},["../.nvm/versions/node/v13.0.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","assets/js/teacher_pong.js"], null)
+//# sourceMappingURL=/teacher_pong.d07f2d23.js.map

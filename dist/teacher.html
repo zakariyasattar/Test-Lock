@@ -3,24 +3,22 @@
 <html id="html">
   <head>
     <!-- NFOGIX -->
-    <script type="text/javascript">
-      // var _paq = window._paq || [];
-      // _paq.push(['trackPageView']);
-      // _paq.push(['enableLinkTracking']);
-      // (function() {
-      //   var u="//nfogix.com/";
-      //   _paq.push(['setTrackerUrl', u+'api/track']);
-      //   _paq.push(['setSiteId', 'ba809182-d46d-4be2-8eaa-9d9fec7707d1']);
-      //   var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-      //   g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'js/nfogix.min.js'; s.parentNode.insertBefore(g,s);
-      // })();
-    </script>
+    <script>// var _paq = window._paq || [];
+// _paq.push(['trackPageView']);
+// _paq.push(['enableLinkTracking']);
+// (function() {
+//   var u="//nfogix.com/";
+//   _paq.push(['setTrackerUrl', u+'api/track']);
+//   _paq.push(['setSiteId', 'ba809182-d46d-4be2-8eaa-9d9fec7707d1']);
+//   var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+//   g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'js/nfogix.min.js'; s.parentNode.insertBefore(g,s);
+// })();</script>
 
     <!-- Misc -->
-    <meta charset="utf-8"/>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Test-Lock &#124; A secure, cheat-free testing solution for the web</title>
-    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/favicon.d42470cd.ico" type="image/x-icon">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <!-- StyleSheets -->
@@ -28,13 +26,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="assets/css/teacher.css">
+    <link rel="stylesheet" type="text/css" href="/teacher.99fbc5e4.css">
 
     <!-- Google Sign-In -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js" async="" defer=""></script>
     <meta name="google-signin-client_id" content="941839358228-410f7ai6fkiqqob91o0uv5p07djgu2m6.apps.googleusercontent.com">
 
-  </head>
+  <script src="/teacher.99fbc5e4.js"></script></head>
 
   <!-- Main Body -->
   <body>
@@ -42,8 +40,8 @@
     <nav id="navigation" class="navbar navbar-default">
       <div class="container-fluid">
           <ul id="tabs" class="nav nav-tabs">
-            <a class="navbar-brand" href="teacher.html">
-              <img id="logo" src="assets/images/test_lock_logo.png"></img>
+            <a class="navbar-brand" href="/teacher.html">
+              <img id="logo" src="/test_lock_logo.d3e3e1da.png">
             </a>
 
             <li id="navButton" style="position: relative; top: 5px; left: 15px;" class="active" role="presentation" onclick="removeAllActive(); this.className='active'; display(this.innerHTML)"><a href="#">Dashboard</a></li>
@@ -63,7 +61,7 @@
                 <li role="presentation" onclick="display(this.innerHTML)"><a href="#">Report A Bug!</a></li>
               </ul>
             </li>
-            <img class="hoverable" id="profile"></img>
+            <img class="hoverable" id="profile">
             <div id="bounce">
               <p style="float: left;">Sign-Out</p>
               &nbsp
@@ -98,7 +96,7 @@
             </ol>
 
             <h1 id="main-header"></h1>
-            <br/>
+            <br>
             <a class="btn btn-primary btn-lg" href="#" role="button" onclick="createQuiz();">
               <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
               Create Exam
@@ -118,13 +116,13 @@
         </div>
       </div>
 
-      <br/>
-      <h1 style="margin-left: 25px;margin-right: 25px;"><hr style="float: left; width: 5vw;"/>&nbsp Previous Exams &nbsp <hr id="right-hr" /></h1>
-      <br/>
+      <br>
+      <h1 style="margin-left: 25px;margin-right: 25px;"><hr style="float: left; width: 5vw;">&nbsp Previous Exams &nbsp <hr id="right-hr"></h1>
+      <br>
 
       <div class="form-group">
-        <center><input id="exam-search" style="width: 80vw" type="text" placeholder='Search Through Exams...' onkeyup="searchExams()" class="form-control" id="usr" name="username"></input></center>
-        <br/>
+        <center><input id="exam-search" style="width: 80vw" type="text" placeholder="Search Through Exams..." onkeyup="searchExams()" class="form-control" name="username"></center>
+        <br>
       </div>
 
       <div id="exam-wrapper"></div>
@@ -147,7 +145,7 @@
             </ol>
 
             <h1 id="exam-name"></h1>
-            <br/>
+            <br>
           </div>
 
           <div id="overall-data">
@@ -180,18 +178,18 @@
             <li><a onclick="sort(this.innerHTML.split(';')[1])"><i class="glyphicon glyphicon-sort"></i>&nbsp Original</a></li>
           </ul>
         </div>
-        <br/>
-        <br/>
+        <br>
+        <br>
       </div>
 
       <div id="student-exam-data" style="display: none;">
         <a style="margin: 35px; position: relative; top: 15px" href="javascript:location.reload()"> <span class="glyphicon glyphicon-hand-left"></span> &nbsp Go Back Home</a>
-        <br/>
+        <br>
         <a style="cursor: pointer; margin: 35px; position: relative; top: 15px" id="resetStatus"><span class="glyphicon glyphicon-refresh"></span> &nbsp Reset Exam Status</a>
         <center>
-          <h1 style="font-size: 4vw"id="score"></h1>
+          <h1 style="font-size: 4vw" id="score"></h1>
           <span style="font-size: 20px;" id="score-num"></span>
-          <hr></hr>
+          <hr>
         </center>
         <div id="question-data"></div>
       </div>
@@ -199,21 +197,19 @@
       <!-- The core Firebase JS SDK is always required and must be listed first -->
       <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
       <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
-      <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-          apiKey: "AIzaSyAX6wiL4sngrJ05Zc9ku_b8Hs0MtOGXiPc",
-          authDomain: "drip-af470.firebaseapp.com",
-          databaseURL: "https://drip-af470.firebaseio.com",
-          projectId: "drip-af470",
-          storageBucket: "drip-af470.appspot.com",
-          messagingSenderId: "493959564556",
-          appId: "1:493959564556:web:71ea299e6c68681a"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-      </script>
-      <script src="assets/js/teacher.js"></script>
+      <script>// Your web app's Firebase configuration
+var firebaseConfig = {
+  apiKey: "AIzaSyAX6wiL4sngrJ05Zc9ku_b8Hs0MtOGXiPc",
+  authDomain: "drip-af470.firebaseapp.com",
+  databaseURL: "https://drip-af470.firebaseio.com",
+  projectId: "drip-af470",
+  storageBucket: "drip-af470.appspot.com",
+  messagingSenderId: "493959564556",
+  appId: "1:493959564556:web:71ea299e6c68681a"
+}; // Initialize Firebase
+
+firebase.initializeApp(firebaseConfig);</script>
+      <script src="/teacher.d00ec059.js"></script>
     </div>
 
     <!-- CREATE EXAM -->
@@ -225,21 +221,21 @@
           <a style="margin-left: 35px; color: red;" href="#" onclick="deleteExam('')">Delete This Exam</a>
           <p style="margin-left: 35px;">Your Exam Code Is: <span id="exam-code"></span></p>
 
-          <br/>
+          <br>
           <center><input type="text" id="nameOfExam" placeholder="Exam Title">
-            <br/>
-            (<input class="points" type="text" id="maxScore" placeholder="Ex: 25" readonly> points, <input type="text" class="time" id="maxScore" placeholder="Ex: 42"> minutes)
-            <br/>
+            <br>
+            (<input class="points" type="text" id="maxScore" placeholder="Ex: 25" readonly=""> points, <input type="text" class="time" id="maxScore" placeholder="Ex: 42"> minutes)
+            <br>
             <textarea id="description" placeholder="Optional Description..."></textarea>
           </center>
         </div>
-        <hr/>
+        <hr>
 
         <div id="exam">
           <div id="question-manager"></div>
         </div>
 
-        <br/><br/>
+        <br><br>
           <center><p><a id="create-question-button" class="btn btn-primary btn-lg" href="javascript:void(0)" role="button" onclick="createQuestion(false, 4);">
             <i style="padding-right: 2px" class="glyphicon glyphicon-plus"></i>
             Create Question
@@ -252,7 +248,7 @@
       <div id="item-analysis-welcome">
         <center>
           <h1>Item Analysis: <span id="item-analysis-name"></span></h1>
-          <hr style="border-color: white"/>
+          <hr style="border-color: white">
 
           <div id="item-analysis-data">
           </div>
@@ -272,29 +268,29 @@
 
     </a>
       <center><h1 style="font-size: 10vw;"><span id="display-code"></span></h1></center>
-      <hr/>
+      <hr>
 
       <center><div id="joined-students" style="background-image: none"></div></center>
     </div>
 
     <div id="feedback" style="display: none">
-      <embed id="feedback-form" src="about:blank"></embed>
+      <embed id="feedback-form" src="about:blank">
     </div>
 
     <div id="report-bug" style="display: none">
-      <embed id="report-bug-form" src="about:blank"></embed>
+      <embed id="report-bug-form" src="about:blank">
     </div>
 
     <div style="display: none; background: purple;" id="pong">
       <canvas style="position: relative; bottom: 20px;" id="pong-canvas"></canvas>
-      <script src="assets/js/teacher_pong.js"></script>
+      <script src="/teacher_pong.d07f2d23.js"></script>
     </div>
 
     <div style="display: none;" id="leaderboard">
       <center><h1>Leaderboard</h1></center>
-      <br/>
-      <center><input id="lb-search" style="width: 80vw" type="text" placeholder='Search Through Leaderboard...' onkeyup="searchLeaderboard()" class="form-control" id="usr" name="username"></input></center>
-      <br/>
+      <br>
+      <center><input id="lb-search" style="width: 80vw" type="text" placeholder="Search Through Leaderboard..." onkeyup="searchLeaderboard()" class="form-control" name="username"></center>
+      <br>
       <center><table id="table" class="table table-bordered">
         <tr>
           <th>Place</th>
