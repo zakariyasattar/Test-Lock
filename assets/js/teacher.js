@@ -877,22 +877,8 @@ function populateItemAnalysis(code, ref) {
 // </div>
 // </div>
 
+// function is called multiple times per question
 function createItemAnalysis(div, question, answers, num) {
-  var totalAnswers = 0;
-  var counters = new Array(26); for(var c = 0; c < counters.length; c++) {counters[c] = 0;}
-  alphabetCounters = [];
-
-  for(var i = 0; i < answers.length; i++) {
-    counters[parseInt(answers[i][num].split(";")[1])]++;
-  }
-
-  for(var c = 0; c < counters.length; c++) {
-    if(counters[c] != 0) {
-      alphabetCounters.push([("abcdefghijklmnopqrstuvwxyz".split(""))[c], c, 0, false])
-      totalAnswers += c;
-    }
-  }
-
   var span = document.createElement('span');
   span.style.color = "#2e2f7d";
   span.style.paddingRight = "20px";
@@ -906,24 +892,23 @@ function createItemAnalysis(div, question, answers, num) {
   div.appendChild(document.createElement('br'));
   div.appendChild(document.createElement('hr'))
 
+  var totalAnswers = answers.length;
+  var mcCounters = new Array(question.choices.length).fill(0);
+  var tfCounters = new Array(2).fill(0);
+
   if(question.type == "mc") {
-    for(var i = 0; i < alphabetCounters.length; i++) {
-      alphabetCounters[i][2] = (alphabetCounters[i][1] / totalAnswers) * 100;
-      if(("abcdefghijklmnopqrstuvwxyz".split("")[parseInt(question.checked)] == alphabetCounters[i][0])) {
-        console.log(alphabetCounters[i][0]);
+    for(var i = 0; i < answers.length; i++) {
+      mcCounters[(parseInt(answers[i][0].split(";")[1]))]++;
+    }
+
+    var percentages = [];
+    for(var j = 0; j < mcCounters.length; j++) {
+      if(mcCounters[j] != 0) {
+        percentages.push([mcCounters[j] / totalAnswers, "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j]])
       }
     }
 
-    var itemDiv = document.createElement('div');
-    itemDiv.style.background = "linear-gradient(to right, green"+ alphabetCounters[0][2] +"%, green 80%, red 80%, red 100%)"
-    div.appendChild(itemDiv)
-
-    console.log(alphabetCounters);
-
-    var pgBar = document.createElement('div');
-    pgBar.className = "progress";
-
-    var pgBar = "";
+    console.log(percentages)
   }
 
   else if(question.type == "tf") {
@@ -933,6 +918,7 @@ function createItemAnalysis(div, question, answers, num) {
   else if(question.type == "fr") {
 
   }
+
 }
 
 function getPercentileOriginal(score, exam, name) {
@@ -2853,70 +2839,76 @@ function swapDiv(elem, numToSwap){
 // append new answer choice to question based on num
 function createNewOptionChoice(num) {
   var val = document.getElementById(num).childNodes[7];
-  val.childNodes[val.childNodes.length - 1].remove();
 
-  var label = document.createElement('label');
-  label.id = "label";
+  if(val.childNodes.length <= 8) {
+    val.childNodes[val.childNodes.length - 1].remove();
 
-  var input = document.createElement('input');
-  input.style.outline = "none";
-  input.type = "radio";
-  input.className = "option-input radio";
-  input.name = "radio";
+    var label = document.createElement('label');
+    label.id = "label";
 
-  var answer_choice = document.createElement('input');
-  answer_choice.className = "option";
-  answer_choice.id = "question-choice";
-  answer_choice.type="text";
-  answer_choice.placeholder = " Answer Choice...";
+    var input = document.createElement('input');
+    input.style.outline = "none";
+    input.type = "radio";
+    input.className = "option-input radio";
+    input.name = "radio";
 
-  var answer_choice = document.createElement('input');
-  answer_choice.className = "option";
-  answer_choice.id = "question-choice";
-  answer_choice.type="text";
-  answer_choice.placeholder = " Answer Choice...";
+    var answer_choice = document.createElement('input');
+    answer_choice.className = "option";
+    answer_choice.id = "question-choice";
+    answer_choice.type="text";
+    answer_choice.placeholder = " Answer Choice...";
 
-  var labelTrash = document.createElement('span');
-  labelTrash.className = "glyphicon glyphicon-minus";
-  labelTrash.style.display = "none";
-  labelTrash.style.marginRight = "5px";
-  labelTrash.style.color = "#f25555";
+    var answer_choice = document.createElement('input');
+    answer_choice.className = "option";
+    answer_choice.id = "question-choice";
+    answer_choice.type="text";
+    answer_choice.placeholder = " Answer Choice...";
 
-  $(labelTrash).click(function(){
-      this.parentNode.remove();
-      saveExam();
-  });
+    var labelTrash = document.createElement('span');
+    labelTrash.className = "glyphicon glyphicon-minus";
+    labelTrash.style.display = "none";
+    labelTrash.style.marginRight = "5px";
+    labelTrash.style.color = "#f25555";
 
-  $(label).hover(function(){
-    this.childNodes[0].style.display = "initial";
-  }, function(){
-    this.childNodes[0].style.display = "none";
-  });
+    $(labelTrash).click(function(){
+        this.parentNode.remove();
+        saveExam();
+    });
 
-  $(labelTrash).hover(function(){
-    this.style.cursor="pointer";
-    this.style.color = "#f25555";
-  }, function(){
+    $(label).hover(function(){
+      this.childNodes[0].style.display = "initial";
+    }, function(){
+      this.childNodes[0].style.display = "none";
+    });
 
-  });
+    $(labelTrash).hover(function(){
+      this.style.cursor="pointer";
+      this.style.color = "#f25555";
+    }, function(){
 
-  label.appendChild(labelTrash);
-  label.appendChild(input);
-  label.appendChild(answer_choice);
-  val.appendChild(label);
+    });
 
-  var plus = document.createElement('span');
-  plus.className = "glyphicon glyphicon-plus";
+    label.appendChild(labelTrash);
+    label.appendChild(input);
+    label.appendChild(answer_choice);
+    val.appendChild(label);
 
-  var createNewAnswerChoice = document.createElement('a');
-  createNewAnswerChoice.id = "createNewAnswerChoice";
-  createNewAnswerChoice.href = "javascript:createNewOptionChoice(" +  num + ")";
-  createNewAnswerChoice.clasName = "newChoice";
-  createNewAnswerChoice.appendChild(plus);
-  createNewAnswerChoice.innerHTML += ' New Answer Choice';
+    var plus = document.createElement('span');
+    plus.className = "glyphicon glyphicon-plus";
 
-  val.appendChild(createNewAnswerChoice);
-  saveExam(false);
+    var createNewAnswerChoice = document.createElement('a');
+    createNewAnswerChoice.id = "createNewAnswerChoice";
+    createNewAnswerChoice.href = "javascript:createNewOptionChoice(" +  num + ")";
+    createNewAnswerChoice.clasName = "newChoice";
+    createNewAnswerChoice.appendChild(plus);
+    createNewAnswerChoice.innerHTML += ' New Answer Choice';
+
+    val.appendChild(createNewAnswerChoice);
+    saveExam(false);
+  }
+  else {
+    swal("Maximum", "Sorry, you can only add 8 option choices", "error");
+  }
 }
 
 // return letter grade based on avg
