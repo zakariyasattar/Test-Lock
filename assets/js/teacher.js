@@ -866,31 +866,22 @@ function populateItemAnalysis(code, ref) {
 }
 
 // <div class="progress">
-// <div class="progress-bar progress-bar-success" style="width: 35%">
-//   <span class="sr-only">35% Complete (success)</span>
-// </div>
-// <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
-//   <span class="sr-only">20% Complete (warning)</span>
-// </div>
-// <div class="progress-bar progress-bar-danger" style="width: 10%">
-//   <span class="sr-only">10% Complete (danger)</span>
-// </div>
+//
 // </div>
 
 // function is called multiple times per question
 function createItemAnalysis(div, question, answers, num) {
+  var item = document.createElement('div');
+
   var span = document.createElement('span');
   span.style.color = "#2e2f7d";
   span.style.paddingRight = "20px";
   span.style.paddingLeft = "20px";
   span.style.float = "left";
+  span.style.paddingRight = "20px";
   span.style.borderRight = "1px solid #2e2f7d"
   span.innerHTML = parseInt(num) + 1;
-
-  div.appendChild(document.createElement('br'));
-  div.appendChild(span);
-  div.appendChild(document.createElement('br'));
-  div.appendChild(document.createElement('hr'))
+  item.appendChild(span);
 
   var totalAnswers = answers.length;
   var mcCounters = new Array(question.choices.length).fill(0);
@@ -904,11 +895,31 @@ function createItemAnalysis(div, question, answers, num) {
     var percentages = [];
     for(var j = 0; j < mcCounters.length; j++) {
       if(mcCounters[j] != 0) {
-        percentages.push([mcCounters[j] / totalAnswers, "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j]])
+        percentages.push([mcCounters[j] / totalAnswers, "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j]]);
       }
     }
 
-    console.log(percentages)
+    var pgBar = document.createElement('div');
+    pgBar.className = "progress";
+    pgBar.style.width = "85%";
+
+    var pg_green = document.createElement('div');
+    pg_green.className = "progress-bar progress-bar-success";
+     setTimeout(function(){ pg_green.style.width = "35%"; }, 300);
+
+    var info_green = document.createElement('span');
+    info_green.className = "sr-only";
+    info_green.innerHTML = "35%";
+
+    pg_green.appendChild(info_green);  pgBar.appendChild(pg_green)
+
+    // <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
+    //   <span class="sr-only">20% Complete (warning)</span>
+    // </div>
+    // <div class="progress-bar progress-bar-danger" style="width: 10%">
+    //   <span class="sr-only">10% Complete (danger)</span>
+    // </div>
+    item.appendChild(pgBar)
   }
 
   else if(question.type == "tf") {
@@ -918,6 +929,11 @@ function createItemAnalysis(div, question, answers, num) {
   else if(question.type == "fr") {
 
   }
+
+  div.appendChild(document.createElement('br'));
+  div.appendChild(item);
+  div.appendChild(document.createElement('br'));
+  div.appendChild(document.createElement('hr'))
 
 }
 
