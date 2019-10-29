@@ -721,6 +721,7 @@ function displayExamData(examName) {
     document.getElementById('main').appendChild(document.createElement('br'));
     document.getElementById('main').appendChild(i);
     var finalSelectedCode = "";
+    var examCodeWithLetter = "";
 
     for (var key in exams) {
       // skip loop if the property is from prototype
@@ -735,6 +736,7 @@ function displayExamData(examName) {
 
             if (examName == obj[prop][initData].examTitle) {
               finalSelectedCode = code;
+              examCodeWithLetter = prop;
               document.getElementById('edit-exam').innerHTML = examName;
               document.getElementById('edit-current-exam').style.display = "initial";
 
@@ -742,7 +744,7 @@ function displayExamData(examName) {
                 document.getElementById('create-exam').style.display = "initial";
                 document.getElementById('main').style.display = "none";
                 document.body.style.background = "white";
-                populateExam(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop);
+                populateExam(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter);
               };
 
               document.getElementById('view-item-analysis').style.display = "initial";
@@ -752,7 +754,7 @@ function displayExamData(examName) {
                 document.getElementById('item-analysis').style.display = "inline-block";
                 document.body.style.backgroundImage = "linear-gradient(to bottom, #6a85b6 0%, #bac8e0 100%)";
                 document.getElementById('item-analysis-name').innerHTML = examName;
-                populateItemAnalysis(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop);
+                populateItemAnalysis(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter);
               };
             } // skip loop if the property is from prototype
 
@@ -891,6 +893,60 @@ function displayExamData(examName) {
 
 function populateItemAnalysis(code, ref) {
   var dataDiv = document.getElementById('item-analysis-data');
+  var answers = [];
+  firebase.database().ref(ref).once('value', function (snapshot) {
+    for (var response in snapshot.val()['responses']) {
+      var responseData = snapshot.val()['responses'][response][[Object.keys(snapshot.val()['responses'][response])[0]]];
+      answers.push(responseData.answers);
+    }
+
+    snapshot.forEach(function (childSnapshot) {
+      if (childSnapshot.val().examCode != undefined) {
+        var data = childSnapshot.val();
+        var questions = data.questions;
+
+        for (var q in questions) {
+          var question = questions[q];
+          createItemAnalysis(dataDiv, question, answers, q);
+        }
+      }
+    });
+  });
+} // <div class="progress">
+// <div class="progress-bar progress-bar-success" style="width: 35%">
+//   <span class="sr-only">35% Complete (success)</span>
+// </div>
+// <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
+//   <span class="sr-only">20% Complete (warning)</span>
+// </div>
+// <div class="progress-bar progress-bar-danger" style="width: 10%">
+//   <span class="sr-only">10% Complete (danger)</span>
+// </div>
+// </div>
+
+
+function createItemAnalysis(div, question, answers, num) {
+  for (var i = 0; i < answers.length; i++) {
+    console.log(answers[num][i]);
+  }
+
+  var span = document.createElement('span');
+  span.style.color = "#2e2f7d";
+  span.style.paddingRight = "20px";
+  span.style.paddingLeft = "20px";
+  span.style.float = "left";
+  span.style.borderRight = "1px solid #2e2f7d";
+  span.innerHTML = parseInt(num) + 1;
+  div.appendChild(document.createElement('br'));
+  div.appendChild(span);
+  div.appendChild(document.createElement('br'));
+  div.appendChild(document.createElement('hr'));
+
+  if (question.type == "mc") {
+    var pgBar = document.createElement('div');
+    pgBar.className = "progress";
+    var pgBar;
+  } else if (question.type == "tf") {} else if (question.type == "fr") {}
 }
 
 function getPercentileOriginal(score, exam, name) {
@@ -2765,7 +2821,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55938" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62217" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -649,6 +649,7 @@ function displayExamData(examName) {
     document.getElementById('main').appendChild(i);
 
     var finalSelectedCode = "";
+    var examCodeWithLetter = "";
 
     for (var key in exams) {
       // skip loop if the property is from prototype
@@ -664,6 +665,8 @@ function displayExamData(examName) {
 
             if(examName == obj[prop][initData].examTitle) {
               finalSelectedCode = code;
+              examCodeWithLetter = prop;
+
               document.getElementById('edit-exam').innerHTML = examName;
               document.getElementById('edit-current-exam').style.display = "initial";
 
@@ -671,7 +674,7 @@ function displayExamData(examName) {
                 document.getElementById('create-exam').style.display = "initial";
                 document.getElementById('main').style.display = "none";
                 document.body.style.background = "white";
-                populateExam(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop)
+                populateExam(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter)
               };
 
               document.getElementById('view-item-analysis').style.display = "initial";
@@ -680,7 +683,7 @@ function displayExamData(examName) {
                 document.getElementById('item-analysis').style.display = "inline-block";
                 document.body.style.backgroundImage = "linear-gradient(to bottom, #6a85b6 0%, #bac8e0 100%)";
                 document.getElementById('item-analysis-name').innerHTML = examName;
-                populateItemAnalysis(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + prop)
+                populateItemAnalysis(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter)
               }
             }
 
@@ -837,7 +840,99 @@ function displayExamData(examName) {
 
 function populateItemAnalysis(code, ref) {
   var dataDiv = document.getElementById('item-analysis-data');
-  
+  var answers = [];
+
+  firebase.database().ref(ref).once('value', function(snapshot) {
+    for(var response in snapshot.val()['responses']) {
+      var responseData = (snapshot.val()['responses'][response][[Object.keys(snapshot.val()['responses'][response])[0]]]);
+
+      answers.push(responseData.answers);
+    }
+
+    snapshot.forEach(function(childSnapshot) {
+      if(childSnapshot.val().examCode != undefined) {
+        var data = childSnapshot.val();
+        var questions = data.questions;
+
+        for(var q in questions) {
+          var question = questions[q];
+
+          createItemAnalysis(dataDiv, question, answers, q)
+        }
+      }
+    });
+  });
+
+}
+
+// <div class="progress">
+// <div class="progress-bar progress-bar-success" style="width: 35%">
+//   <span class="sr-only">35% Complete (success)</span>
+// </div>
+// <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
+//   <span class="sr-only">20% Complete (warning)</span>
+// </div>
+// <div class="progress-bar progress-bar-danger" style="width: 10%">
+//   <span class="sr-only">10% Complete (danger)</span>
+// </div>
+// </div>
+
+function createItemAnalysis(div, question, answers, num) {
+  var totalAnswers = 0;
+  var counters = new Array(26); for(var c = 0; c < counters.length; c++) {counters[c] = 0;}
+  alphabetCounters = [];
+
+  for(var i = 0; i < answers.length; i++) {
+    counters[parseInt(answers[i][num].split(";")[1])]++;
+  }
+
+  for(var c = 0; c < counters.length; c++) {
+    if(counters[c] != 0) {
+      alphabetCounters.push([("abcdefghijklmnopqrstuvwxyz".split(""))[c], c, 0, false])
+      totalAnswers += c;
+    }
+  }
+
+  var span = document.createElement('span');
+  span.style.color = "#2e2f7d";
+  span.style.paddingRight = "20px";
+  span.style.paddingLeft = "20px";
+  span.style.float = "left";
+  span.style.borderRight = "1px solid #2e2f7d"
+  span.innerHTML = parseInt(num) + 1;
+
+  div.appendChild(document.createElement('br'));
+  div.appendChild(span);
+  div.appendChild(document.createElement('br'));
+  div.appendChild(document.createElement('hr'))
+
+  if(question.type == "mc") {
+    for(var i = 0; i < alphabetCounters.length; i++) {
+      alphabetCounters[i][2] = (alphabetCounters[i][1] / totalAnswers) * 100;
+      if(("abcdefghijklmnopqrstuvwxyz".split("")[parseInt(question.checked)] == alphabetCounters[i][0])) {
+        console.log(alphabetCounters[i][0]);
+      }
+    }
+
+    var itemDiv = document.createElement('div');
+    itemDiv.style.background = "linear-gradient(to right, green"+ alphabetCounters[0][2] +"%, green 80%, red 80%, red 100%)"
+    div.appendChild(itemDiv)
+
+    console.log(alphabetCounters);
+
+    var pgBar = document.createElement('div');
+    pgBar.className = "progress";
+
+    var pgBar = "";
+  }
+
+  else if(question.type == "tf") {
+
+  }
+
+  else if(question.type == "fr") {
+
+  }
 }
 
 function getPercentileOriginal(score, exam, name) {
