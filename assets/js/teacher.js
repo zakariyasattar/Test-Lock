@@ -887,31 +887,52 @@ function createItemAnalysis(div, question, answers, num) {
   var mcCounters = new Array(question.choices.length).fill(0);
   var tfCounters = new Array(2).fill(0);
 
+  var pgBar = document.createElement('div');
+  pgBar.className = "progress";
+  pgBar.style.width = "85%";
+
+  var pg_green, info_green;
+  var pg_red, info_red;
+
   if(question.type == "mc") {
     for(var i = 0; i < answers.length; i++) {
       mcCounters[(parseInt(answers[i][0].split(";")[1]))]++;
     }
 
-    var percentages = [];
     for(var j = 0; j < mcCounters.length; j++) {
       if(mcCounters[j] != 0) {
-        percentages.push([mcCounters[j] / totalAnswers, "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j]]);
+        if(j == question.checked) {
+          pg_green = document.createElement('div');
+          pg_green.className = "progress-bar progress-bar-success";
+
+          var percentage = (mcCounters[j] / totalAnswers) * 100 + "%";
+          console.log(percentage, totalAnswers, mcCounters);
+
+          setTimeout(function(){ pg_green.style.width = percentage}, 250);
+
+          info_green = document.createElement('span');
+          info_green.className = "sr-only";
+          info_green.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j];
+
+          pg_green.appendChild(info_green);  pgBar.appendChild(pg_green);
+          console.log('appendedGreen')
+        }
+        else {
+          pg_red = document.createElement('div');
+          pg_red.className = "progress-bar progress-bar-danger";
+
+          var percentage = (mcCounters[j] / totalAnswers) * 100 + "%";
+          setTimeout(function(){ pg_red.style.width = percentage}, 250);
+
+          info_red = document.createElement('span');
+          info_red.className = "sr-only";
+          info_red.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j];
+
+          pg_red.appendChild(info_red);  pgBar.appendChild(pg_red);
+          console.log('appendedRed')
+        }
       }
     }
-
-    var pgBar = document.createElement('div');
-    pgBar.className = "progress";
-    pgBar.style.width = "85%";
-
-    var pg_green = document.createElement('div');
-    pg_green.className = "progress-bar progress-bar-success";
-     setTimeout(function(){ pg_green.style.width = "35%"; }, 300);
-
-    var info_green = document.createElement('span');
-    info_green.className = "sr-only";
-    info_green.innerHTML = "35%";
-
-    pg_green.appendChild(info_green);  pgBar.appendChild(pg_green)
 
     // <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
     //   <span class="sr-only">20% Complete (warning)</span>

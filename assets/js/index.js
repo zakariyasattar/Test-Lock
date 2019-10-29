@@ -536,7 +536,7 @@ function populateExam(code, ref) {
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
           // var currShuffledPos = shuffled[i];
 
-          done.push(0);
+          // done.push(0);
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
