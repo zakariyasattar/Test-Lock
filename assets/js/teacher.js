@@ -1,5 +1,5 @@
 // check if user is signed in
-if(localStorage.getItem('userInfo') == null) {
+if(sessionStorage.getItem('userInfo') == null) {
   document.body.style.display = "none";
   alert("NOT AUTHORIZED");
 }
@@ -82,9 +82,9 @@ window.onload = function() {
   })
 };
 
-// retrieve userName, img from LocalStorage
-var userName = (JSON.parse(localStorage.getItem("userInfo"))[1]);
-var profileImg = (JSON.parse(localStorage.getItem("userInfo"))[2]);
+// retrieve userName, img from sessionStorage
+var userName = (JSON.parse(sessionStorage.getItem("userInfo"))[1]);
+var profileImg = (JSON.parse(sessionStorage.getItem("userInfo"))[2]);
 
 //initialize aspects of page with JS data
 document.getElementById('welcome-text').innerHTML = "Welcome " + userName + "!";
@@ -145,10 +145,10 @@ function createQuiz() {
   };
 
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/").once('value', function(snapshot) {
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('className') + "/Exams/").once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.val() == "no_exams") {
-        firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/").child(childSnapshot.key).remove();
+        firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('className') + "/Exams/").child(childSnapshot.key).remove();
       }
       else {
         examCounter++;
@@ -157,10 +157,10 @@ function createQuiz() {
   });
 
   if(examCounter < 26) {
-    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + alphabet[(alphabet.length - 1) - examCounter] + randomCode.toUpperCase()).push(examInit);
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('className') + "/Exams/" + alphabet[(alphabet.length - 1) - examCounter] + randomCode.toUpperCase()).push(examInit);
   }
   else {
-    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + alphabet[(alphabet.length - 1) - examCounter-26] +  alphabet[(alphabet.length - 1) - examCounter-26] + randomCode.toUpperCase()).push(examInit);
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('className') + "/Exams/" + alphabet[(alphabet.length - 1) - examCounter-26] +  alphabet[(alphabet.length - 1) - examCounter-26] + randomCode.toUpperCase()).push(examInit);
   }
 
   createQuestion(true, 4);
@@ -287,16 +287,16 @@ function saveExam(alert) {
 
   var code = "";
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/").once('value').then(function(snapshot) {
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/").once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.key.substring(1) == document.getElementById('exam-code').innerHTML) {
         code = childSnapshot.key;
       }
     });
-    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code).once('value').then(function(snapshot) {
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + code).once('value').then(function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         if(childSnapshot.key != "responses" && childSnapshot.key != "taken") {
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + code).child(childSnapshot.key).set(examInit);
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + code).child(childSnapshot.key).set(examInit);
         }
       });
     });
@@ -498,7 +498,7 @@ function loadClass(name) {
     document.getElementById('main-header').innerHTML = "Welcome to " + name;
     document.body.style.backgroundImage = "linear-gradient(to top, #dfe9f3 0%, white 100%)";
 
-    localStorage.setItem('createExamClass', name);
+    sessionStorage.setItem('createExamClass', name);
 
     firebase.database().ref("Teachers/" + userName + "/Classes/" + name + "/Exams/").on('value', function(snapshot) {
       exams.push(snapshot.val());
@@ -518,7 +518,7 @@ function loadClass(name) {
             createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.key, childSnapshot.val()[key].examCode);
             var val = childSnapshot.val()[key].examTitle;
 
-            if(localStorage.getItem("CreatedExamCode") != "") {
+            if(sessionStorage.getItem("CreatedExamCode") != "") {
               var button = document.getElementById('cached-code');
               if(button != null) {
                 button.id = "cached-exam-button";
@@ -531,9 +531,9 @@ function loadClass(name) {
                   document.getElementById('main').style.display = "none";
                   document.body.style.background = "white";
 
-                  console.log(localStorage.getItem("CreatedExamCode").toUpperCase())
+                  console.log(sessionStorage.getItem("CreatedExamCode").toUpperCase())
 
-                  populateExam(localStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem("CreatedExamCode").toUpperCase());
+                  populateExam(sessionStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + sessionStorage.getItem("CreatedExamCode").toUpperCase());
                 }
               }
             }
@@ -542,8 +542,8 @@ function loadClass(name) {
               val = childSnapshot.val()[key].examCode;
             }
 
-            if(localStorage.getItem("CreatedExamCode") != null && localStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
-              console.log(localStorage.getItem("CreatedExamCode").toUpperCase(), childSnapshot.val()[key].examCode)
+            if(sessionStorage.getItem("CreatedExamCode") != null && sessionStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
+              console.log(sessionStorage.getItem("CreatedExamCode").toUpperCase(), childSnapshot.val()[key].examCode)
                 document.getElementById('cached-exam-button').style.display = "initial";
                 document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
             }
@@ -568,7 +568,7 @@ function loadClass(name) {
       }
       else{
         document.getElementById('avg-grade-number').innerHTML = collectiveAvg + "%";
-        localStorage.setItem("avg-grade-number", collectiveAvg + "%");
+        sessionStorage.setItem("avg-grade-number", collectiveAvg + "%");
       }
     });
 }
@@ -592,7 +592,7 @@ function generateCode() {
 
   if(examCodes.indexOf(code) == -1){
     firebase.database().ref("exam-codes").push(code.toUpperCase() + ";" + userName + ";" + className + ";" + code.toUpperCase());
-    localStorage.setItem("CreatedExamCode", code);
+    sessionStorage.setItem("CreatedExamCode", code);
     return code;
   }
   else {
@@ -661,7 +661,7 @@ function displayExamData(examName) {
           if(obj[prop][initData].examCode != undefined && Object.keys(obj[prop]).length > 1) {
             var code = obj[prop][initData].examCode;
 
-            localStorage.setItem('populatedExamCode', code);
+            sessionStorage.setItem('populatedExamCode', code);
 
             if(examName == obj[prop][initData].examTitle) {
               finalSelectedCode = code;
@@ -674,7 +674,7 @@ function displayExamData(examName) {
                 document.getElementById('create-exam').style.display = "initial";
                 document.getElementById('main').style.display = "none";
                 document.body.style.background = "white";
-                populateExam(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter)
+                populateExam(finalSelectedCode, "Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter)
               };
 
               document.getElementById('view-item-analysis').style.display = "initial";
@@ -683,7 +683,7 @@ function displayExamData(examName) {
                 document.getElementById('item-analysis').style.display = "inline-block";
                 document.body.style.backgroundImage = "linear-gradient(to bottom, #6a85b6 0%, #bac8e0 100%)";
                 document.getElementById('item-analysis-name').innerHTML = examName;
-                populateItemAnalysis(finalSelectedCode, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter)
+                populateItemAnalysis(finalSelectedCode, "Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter)
               }
             }
 
@@ -891,9 +891,6 @@ function createItemAnalysis(div, question, answers, num) {
   pgBar.className = "progress";
   pgBar.style.width = "85%";
 
-  var pg_green, info_green;
-  var pg_red, info_red;
-
   if(question.type == "mc") {
     for(var i = 0; i < answers.length; i++) {
       mcCounters[(parseInt(answers[i][0].split(";")[1]))]++;
@@ -901,35 +898,28 @@ function createItemAnalysis(div, question, answers, num) {
 
     for(var j = 0; j < mcCounters.length; j++) {
       if(mcCounters[j] != 0) {
-        if(j == question.checked) {
-          pg_green = document.createElement('div');
-          pg_green.className = "progress-bar progress-bar-success";
-
+        if((j + 1) == question.checked) {
+          var pg_green, info_green;
           var percentage = (mcCounters[j] / totalAnswers) * 100 + "%";
-          console.log(percentage, totalAnswers, mcCounters);
+
+          pg_green = document.createElement('div');
+          pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
+          pg_green.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + percentage + ")";
 
           setTimeout(function(){ pg_green.style.width = percentage}, 250);
-
-          info_green = document.createElement('span');
-          info_green.className = "sr-only";
-          info_green.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j];
-
-          pg_green.appendChild(info_green);  pgBar.appendChild(pg_green);
+          pgBar.appendChild(pg_green);
           console.log('appendedGreen')
         }
         else {
-          pg_red = document.createElement('div');
-          pg_red.className = "progress-bar progress-bar-danger";
-
+          var pg_red, info_red;
           var percentage = (mcCounters[j] / totalAnswers) * 100 + "%";
+
+          pg_red = document.createElement('div');
+          pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
+          pg_red.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + percentage + ")";
+
           setTimeout(function(){ pg_red.style.width = percentage}, 250);
-
-          info_red = document.createElement('span');
-          info_red.className = "sr-only";
-          info_red.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j];
-
-          pg_red.appendChild(info_red);  pgBar.appendChild(pg_red);
-          console.log('appendedRed')
+          pgBar.appendChild(pg_red);
         }
       }
     }
@@ -953,7 +943,6 @@ function createItemAnalysis(div, question, answers, num) {
 
   div.appendChild(document.createElement('br'));
   div.appendChild(item);
-  div.appendChild(document.createElement('br'));
   div.appendChild(document.createElement('hr'))
 
 }
@@ -1077,7 +1066,7 @@ function loadStudentExamData(name, code) {
     table[i].style.display = "none";
   }
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Students").once('value', function(snapshot) {
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem("className") + "/Students").once('value', function(snapshot) {
     for(var info in snapshot.val()) {
       var data = snapshot.val()[info];
       var id = data.split(";")[0];
@@ -1089,7 +1078,7 @@ function loadStudentExamData(name, code) {
     }
   });
 
-  firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + code).once('value', function(snapshot) {
+  firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem("className") + "/Exams/" + code).once('value', function(snapshot) {
     var data = (snapshot.val().responses[name][Object.keys(snapshot.val().responses[name])[0]]);
 
     document.getElementById('resetStatus').onclick = function() {
@@ -1097,7 +1086,7 @@ function loadStudentExamData(name, code) {
         var id = (snapshot.val().taken[takenKey]);
 
         if(id == finalId) {
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + code + "/taken/").child(takenKey).remove()
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem("className") + "/Exams/" + code + "/taken/").child(takenKey).remove()
         }
       }
 
@@ -1109,7 +1098,7 @@ function loadStudentExamData(name, code) {
     document.getElementById('score').innerHTML = data.totalScore + "%";
 
     var corrAnswer = "";
-    localStorage.setItem("totalPointsExcludingFr", 0);
+    sessionStorage.setItem("totalPointsExcludingFr", 0);
 
     for(var i = 0; i < Object.keys(data.answers).length; i++) {
 
@@ -1162,7 +1151,7 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
   }
 
   if(questions.type != "fr" && correct) {
-    localStorage.setItem("totalPointsExcludingFr", parseInt(localStorage.getItem("totalPointsExcludingFr")) + parseInt(questions.points))
+    sessionStorage.setItem("totalPointsExcludingFr", parseInt(sessionStorage.getItem("totalPointsExcludingFr")) + parseInt(questions.points))
   }
 
   var exam = document.getElementById('question-data');
@@ -1289,7 +1278,7 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
     var numAcceptedPoints = document.createElement('input');
     numAcceptedPoints.maxLength = questions.points.length;
 
-    firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName).once('value', function(snapshot) {
+    firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName).once('value', function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         var questionNum;
         var answers = childSnapshot.val().answers;
@@ -1314,7 +1303,7 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
 
       var cleanVersion = this.value;
 
-      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName).once('value', function(snapshot) {
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName).once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
           var questionNum;
           var answers = childSnapshot.val().answers;
@@ -1325,13 +1314,13 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
               answers[k] = answers[k].split(";")[0] + ";" + answers[k].split(";")[1] + ";" + cleanVersion;
             }
           }
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName + "/" + childSnapshot.key).update({ 'answers': answers });
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName + "/" + childSnapshot.key).update({ 'answers': answers });
 
-          var newScore = (((parseInt(localStorage.getItem("totalPointsExcludingFr")) + parseInt(cleanVersion)) / examTotalPoints) * 100).toFixed(1);
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName + "/" + childSnapshot.key).update({ 'totalScore': newScore });
+          var newScore = (((parseInt(sessionStorage.getItem("totalPointsExcludingFr")) + parseInt(cleanVersion)) / examTotalPoints) * 100).toFixed(1);
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem("className") + "/Exams/" + examCurrentCode + "/responses/" + studName + "/" + childSnapshot.key).update({ 'totalScore': newScore });
 
           document.getElementById("score").innerHTML = newScore + "%";
-          document.getElementById("score-num").innerHTML = (parseInt(localStorage.getItem("totalPointsExcludingFr")) + parseInt(cleanVersion)) + " / " + examTotalPoints;
+          document.getElementById("score-num").innerHTML = (parseInt(sessionStorage.getItem("totalPointsExcludingFr")) + parseInt(cleanVersion)) + " / " + examTotalPoints;
         });
       });
     }
@@ -1422,7 +1411,7 @@ function sort(func) {
       var tr = document.createElement('tr');
 
       var iTracker = i;
-      tr.onclick = function() { loadStudentExamData(examData[iTracker].split(":")[0], localStorage.getItem("populatedExamCode")); }
+      tr.onclick = function() { loadStudentExamData(examData[iTracker].split(":")[0], sessionStorage.getItem("populatedExamCode")); }
 
       table.appendChild(document.createElement('br'));
 
@@ -1486,7 +1475,7 @@ function sort(func) {
 
       for(var i = 0; i < testExamData.length; i++){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
+        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0], sessionStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1550,7 +1539,7 @@ function sort(func) {
 
       for(var i = testExamData.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
+        tr.onclick = function() { loadStudentExamData(testExamData[i].split(":")[0], sessionStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1614,7 +1603,7 @@ function sort(func) {
 
       for(var i = scores.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
+        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0], sessionStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1678,7 +1667,7 @@ function sort(func) {
 
       for(var i = 0; i < scores.length; i++){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
+        tr.onclick = function() { loadStudentExamData(scores[i].split(":")[0], sessionStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1742,7 +1731,7 @@ function sort(func) {
 
       for(var i = times.length - 1; i >= 0; i--){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
+        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0], sessionStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -1805,7 +1794,7 @@ function sort(func) {
 
       for(var i = 0; i < times.length; i++){
         var tr = document.createElement('tr');
-        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0], localStorage.getItem("populatedExamCode")); }
+        tr.onclick = function() { loadStudentExamData(times[i].split(":")[0], sessionStorage.getItem("populatedExamCode")); }
 
         table.appendChild(document.createElement('br'));
 
@@ -2034,14 +2023,14 @@ function createExamBox(name, classAvg, ref, code) {
       document.body.style.backgroundImage = "none";
 
       var randomStr = Math.random().toString(36).substring(7);
-      setCorrectExamCode(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass')+ "/Exams/", randomStr);
+      setCorrectExamCode(code, "Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass')+ "/Exams/", randomStr);
 
-      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem(randomStr) + "/taken").on('value', function(snapshot) {
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + sessionStorage.getItem(randomStr) + "/taken").on('value', function(snapshot) {
         $("#joined-students").html("");
         snapshot.forEach(function(childSnapshot) {
           var name = "";
 
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Students/").once('value', function(s) {
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Students/").once('value', function(s) {
             s.forEach(function(cs) {
               if(cs.val().split(";")[0] == childSnapshot.val()){
                 name = cs.val().split(";")[1];
@@ -2125,14 +2114,14 @@ function createExamBox(name, classAvg, ref, code) {
       document.body.style.backgroundImage = "none";
 
       var randomStr = Math.random().toString(36).substring(7);
-      setCorrectExamCode(code, "Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass')+ "/Exams/", randomStr);
+      setCorrectExamCode(code, "Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass')+ "/Exams/", randomStr);
 
-      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/" + localStorage.getItem(randomStr) + "/taken").on('value', function(snapshot) {
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + sessionStorage.getItem(randomStr) + "/taken").on('value', function(snapshot) {
         $("#joined-students").html("");
         snapshot.forEach(function(childSnapshot) {
           var name = "";
 
-          firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Students/").once('value', function(s) {
+          firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Students/").once('value', function(s) {
             s.forEach(function(cs) {
               if(cs.val().split(";")[0] == childSnapshot.val()){
                 name = cs.val().split(";")[1];
@@ -2172,7 +2161,7 @@ function setCorrectExamCode(code, ref, randomNum) {
   firebase.database().ref(ref).once('value', function(snapshot) {
     for(var v in snapshot.val()) {
       if(v.substring(1) == code) {
-        localStorage.setItem(randomNum, v)
+        sessionStorage.setItem(randomNum, v)
       }
     }
   });
@@ -2221,15 +2210,15 @@ function deleteExam(code) {
     if (willDelete) {
       var data = false;
 
-      firebase.database().ref("Teachers/" + userName + "/Classes/" + localStorage.getItem('createExamClass') + "/Exams/").once('value').then(function(snapshot) {
+      firebase.database().ref("Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/").once('value').then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
           if(childSnapshot.key.substring(1) == code) {
             modifiedCode = childSnapshot.key;
           }
         });
-        firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/" + modifiedCode).remove();
+        firebase.database().ref('Teachers/' + userName + "/Classes/" + sessionStorage.getItem('className') + "/Exams/" + modifiedCode).remove();
 
-        var ref = (firebase.database().ref('Teachers/' + userName + "/Classes/" + localStorage.getItem('className') + "/Exams/"));
+        var ref = (firebase.database().ref('Teachers/' + userName + "/Classes/" + sessionStorage.getItem('className') + "/Exams/"));
         ref.once('value', function(snapshot) {
           snapshot.forEach(function(childSnapshot) {
             data = true;
@@ -2256,10 +2245,10 @@ function deleteExam(code) {
         $("#exam-wrapper").empty();
         $("#exam").empty();
 
-        loadClass(localStorage.getItem("className"));
+        loadClass(sessionStorage.getItem("className"));
 
-        if(localStorage.getItem("CreatedExamCode").toUpperCase() == code) {
-          localStorage.setItem("CreatedExamCode", "");
+        if(sessionStorage.getItem("CreatedExamCode").toUpperCase() == code) {
+          sessionStorage.setItem("CreatedExamCode", "");
           document.getElementById('cached-exam-button').remove();
         }
 
@@ -2974,7 +2963,7 @@ function createClassBox(className, numStudentsInClass, numExamsInClass) {
 
   var classBox = document.createElement('div');
   classBox.onclick = function() {
-    localStorage.setItem('className', className);
+    sessionStorage.setItem('className', className);
     loadClass(className, numExamsInClass);
   };
 

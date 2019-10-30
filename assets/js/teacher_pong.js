@@ -43,6 +43,8 @@ var canvas = document.getElementById("pong-canvas"),
 		students = [],
 		isPaused = false;
 
+		var mc = new Hammer(canvas);
+
 		document.body.onkeyup = function(e){
 	    if(e.keyCode == 32){
 				if(!isPaused){

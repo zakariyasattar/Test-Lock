@@ -1,6 +1,6 @@
 var examCodes = [], students = [], done = [];
 var stopEnter = false, canCount = false, canChangeCircle = true;
-var key = initKey(); var timer = 0;
+var key = initKey(); var timer = 0; var originalOrder = [];
 
 (function() {
     // Expose to global
@@ -51,7 +51,7 @@ var key = initKey(); var timer = 0;
     }
 
 })();
-//
+
 // var data;
 // 	$.ajax({
 // 	  type: "GET",
@@ -99,11 +99,11 @@ function onSignIn(googleUser) {
     window.location = "teacher.html";
 
     var profile = googleUser.getBasicProfile();
-    localStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
+    sessionStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
   }
   else {
     window.location.href = document.URL.substring(0, document.URL.indexOf("?"));
-    localStorage.setItem("userInfo", "");
+    sessionStorage.setItem("userInfo", "");
     signOut();
   }
 }
@@ -112,7 +112,7 @@ function onSignIn(googleUser) {
 function signOut() {
   var auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
-    localStorage.removeItem('userInfo');
+    sessionStorage.removeItem('userInfo');
   });
 }
 
@@ -134,16 +134,16 @@ window.onload = function() {
     }
   });
 
-  document.getElementById('timeLeftInExam').innerHTML = localStorage.getItem("timeLimit") - 0 + " minutes";
+  document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") - 0 + " minutes";
 
   setInterval(function(){
     if(canCount) {
-      if(timer == (localStorage.getItem("timeLimit") - 5)) {
+      if(timer == (sessionStorage.getItem("timeLimit") - 5)) {
         swal("Timer Warning", "5 minutes remaining in this exam", "info");
       }
-      if(timer <= localStorage.getItem("timeLimit")) {
+      if(timer <= sessionStorage.getItem("timeLimit")) {
         timer++;
-        document.getElementById('timeLeftInExam').innerHTML = localStorage.getItem("timeLimit") - timer + " minutes";
+        document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") - timer + " minutes";
       }
       else {
         window.location.reload();
@@ -361,7 +361,7 @@ function submitExamCode() {
     }
 
     else if(data.split(";")[0] == code) {
-      localStorage.setItem("teacher", data.split(";")[1]);
+      sessionStorage.setItem("teacher", data.split(";")[1]);
       document.getElementById('exam-info').innerHTML = data.split(";")[3] + " | " + data.split(";")[2];
       document.getElementById('id-input').style.display = 'initial';
 
@@ -375,7 +375,7 @@ function getCodeLetter(code, teacher, className) {
   firebase.database().ref("Teachers/" + teacher + "/Classes/" + className).once('value', function(snapshot) {
     for(exam in snapshot.val().Exams) {
       if(exam.substring(1) == code) {
-        localStorage.setItem('ExamCode', exam);
+        sessionStorage.setItem('ExamCode', exam);
       }
     }
   });
@@ -391,7 +391,7 @@ function retrieveName() {
       var decryptedBytes = CryptoJS.AES.decrypt(examCodes[x], key);
       var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
-      if(plaintext.split(";")[0] == localStorage.getItem('ExamCode').substring(1)){
+      if(plaintext.split(";")[0] == sessionStorage.getItem('ExamCode').substring(1)){
         i = x;
         break;
       }
@@ -402,7 +402,7 @@ function retrieveName() {
 
     document.getElementById('userName').innerHTML = "";
 
-    firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").once('value', function(snapshot) {
+    firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + sessionStorage.getItem("ExamCode") + "/taken").once('value', function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         if(childSnapshot.val() == id) {
           taken = true;
@@ -410,7 +410,7 @@ function retrieveName() {
       });
       if(!taken || taken) {
         document.getElementById('userName').style.color = "black";
-        localStorage.setItem('idNum', id);
+        sessionStorage.setItem('idNum', id);
         firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
           snapshot.forEach(function(childSnapshot) {
             if(childSnapshot.val().split(";")[0] == id) {
@@ -453,10 +453,10 @@ function findCode(code) {
 
 // function to display quiz to student
 function displayQuiz() {
-  var code = localStorage.getItem("ExamCode");
-  var teacher = localStorage.getItem("teacher");
+  var code = sessionStorage.getItem("ExamCode");
+  var teacher = sessionStorage.getItem("teacher");
 
-  localStorage.setItem("StudentName", document.getElementById('userName').innerHTML);
+  sessionStorage.setItem("StudentName", document.getElementById('userName').innerHTML);
   var i = 0;
 
   for(var x = 0; x < examCodes.length; x++){
@@ -471,7 +471,7 @@ function displayQuiz() {
   var teacher = CryptoJS.AES.decrypt(examCodes[i], key);
   var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
-  localStorage.setItem("className", plaintext.split(";")[2]);
+  sessionStorage.setItem("className", plaintext.split(";")[2]);
 
   document.getElementById('main').style.display = "none";
   document.getElementById('navigation').style.display = "none";
@@ -480,7 +480,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  // toggleFullScreen();
 
 
   // listen for alt+tab changes and act upon them
@@ -490,15 +490,15 @@ function displayQuiz() {
 
   canCount = true;
 
-  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
+  firebase.database().ref("Teachers/" + sessionStorage.getItem('teacher') + "/Classes/" + sessionStorage.getItem('className') + "/Exams/" + sessionStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.val().examCode != undefined) {
-        localStorage.setItem("timeLimit", childSnapshot.val().examTotalMins);
+        sessionStorage.setItem("timeLimit", childSnapshot.val().examTotalMins);
       }
     });
   });
 
-  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/taken").push(localStorage.getItem('idNum'));
+  firebase.database().ref("Teachers/" + sessionStorage.getItem('teacher') + "/Classes/" + sessionStorage.getItem('className') + "/Exams/" + sessionStorage.getItem("ExamCode") + "/taken").push(sessionStorage.getItem('idNum'));
 }
 
 //pull and populate exam
@@ -510,7 +510,7 @@ function populateExam(code, ref) {
       if(val.examCode != undefined){
         var counter = 0;
 
-        document.getElementById('exam-code').innerHTML = val.examCode + " | " + localStorage.getItem("StudentName");
+        document.getElementById('exam-code').innerHTML = val.examCode + " | " + sessionStorage.getItem("StudentName");
 
         if(val.examDate.split("-")[1] != null) {
           document.getElementById('date').innerHTML = val.examTeacher + " | " + val.examDate.split("-")[1] + "-" + val.examDate.split("-")[2] + "-" + val.examDate.split("-")[0];
@@ -534,7 +534,6 @@ function populateExam(code, ref) {
         $(document.getElementById('finalDiv')).empty();
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
-          // var currShuffledPos = shuffled[i];
 
           // done.push(0);
           var localQuestions = document.getElementsByClassName('question');
@@ -592,6 +591,7 @@ function populateExam(code, ref) {
      var exam = document.getElementById('exam');
 
      //convert HTMLcollection to array and shuffle
+     originalOrder = questions;
      var questionsArr = shuffle(Array.prototype.slice.call( questions ));
 
      $('.questionBr').remove(); $('.questionHr').remove(); $('.question').remove();
@@ -1097,14 +1097,14 @@ function getChecked(question) {
 function submitExam() {
   var student_answers = [];
 
-  for(var i = 0; i < document.getElementsByClassName('question').length; i++) {
-    var question = document.getElementsByClassName('question')[i];
+  for(var i = 0; i < originalOrder.length; i++) {
+    var question = originalOrder[i];
     var checked = getChecked(question);
 
     student_answers.push(i + ";" + checked);
   }
 
-  localStorage.setItem("student_answers", JSON.stringify(student_answers));
+  sessionStorage.setItem("student_answers", JSON.stringify(student_answers));
 
   document.getElementById('display-exam').style.display = "none";
   document.getElementById('result').style.display = "initial";
@@ -1114,11 +1114,11 @@ function submitExam() {
 
 // function to display Results
 function displayResults() {
-  var answers = JSON.parse(localStorage.getItem('student_answers'));
+  var answers = JSON.parse(sessionStorage.getItem('student_answers'));
   var dbAnswers;
   var responseStructure = {};
 
-  firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
+  firebase.database().ref("Teachers/" + sessionStorage.getItem('teacher') + "/Classes/" + sessionStorage.getItem('className') + "/Exams/" + sessionStorage.getItem("ExamCode")).once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       if(childSnapshot.toJSON().questions != undefined) {
         dbAnswers = childSnapshot.toJSON();
@@ -1128,7 +1128,8 @@ function displayResults() {
     var total = 0;
     var frTotalPoints = 0;
 
-    for(var i = 0; i < answers.length; i++) {
+    for(var i = 0; i < originalOrder.length; i++) {
+      console.log(answers[i], originalOrder[i])
       var answer = "";
       var fr = false;
       var tf = false;
@@ -1174,11 +1175,11 @@ function displayResults() {
       "score" : ((total / (dbAnswers.examTotalPoints - frTotalPoints)) * 100).toFixed(1),
       "time" : timer,
       "answers" : answers,
-      "name" : localStorage.getItem('StudentName'),
+      "name" : sessionStorage.getItem('StudentName'),
       "totalScore" : (total / (dbAnswers.examTotalPoints) * 100).toFixed(1)
     }
 
-    firebase.database().ref("Teachers/" + localStorage.getItem('teacher') + "/Classes/" + localStorage.getItem('className') + "/Exams/" + localStorage.getItem("ExamCode") + "/responses/" + localStorage.getItem('StudentName')).push(studentExamData);
+    firebase.database().ref("Teachers/" + sessionStorage.getItem('teacher') + "/Classes/" + sessionStorage.getItem('className') + "/Exams/" + sessionStorage.getItem("ExamCode") + "/responses/" + sessionStorage.getItem('StudentName')).push(studentExamData);
 
     var min = " Minutes"
 
