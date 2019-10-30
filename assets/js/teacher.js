@@ -943,6 +943,7 @@ function createItemAnalysis(div, question, answers, num) {
 
   div.appendChild(document.createElement('br'));
   div.appendChild(item);
+  div.appendChild(document.createElement('br'));
   div.appendChild(document.createElement('hr'))
 
 }
@@ -3032,7 +3033,6 @@ function populateDashboard() {
               if(obj[prop].Exams[Object.keys(obj[prop].Exams)[0]] == "no_exams") {
                 createClassBox(prop, Object.keys(obj[prop].Students).length, 0);
               }
-
               else {
                 createClassBox(prop, Object.keys(obj[prop].Students).length, Object.keys(obj[prop].Exams).length);
               }

@@ -900,6 +900,7 @@ function createQuestion(loading, numAnswerChoices) {
   var question = document.createElement('div');
   question.className = "question";
   question.id = document.getElementsByClassName('question').length + 1;
+  question.dataset.original = document.getElementsByClassName('question').length + 1;
 
   var num = document.createElement('span');
   num.innerHTML = document.getElementsByClassName('question').length + 1 + ". ";
@@ -1093,12 +1094,27 @@ function getChecked(question) {
   }
 }
 
+function bubbleSort(array) {
+  for(var i = 0; i < array.length; i++) {
+    for(var j = 1; j < array.length; j++) {
+      if(array[j - 1].dataset.original > array[j].dataset.original) {
+        var temp = array[j-1];
+        array[j-1] = array[j];
+        array[j] = temp;
+      }
+    }
+  }
+  return array;
+}
+
 // submit code - reroute!
 function submitExam() {
   var student_answers = [];
+  var sortedArray = bubbleSort(Array.prototype.slice.call( originalOrder ));
+  console.log(bubbleSort(Array.prototype.slice.call( originalOrder )));
 
-  for(var i = 0; i < originalOrder.length; i++) {
-    var question = originalOrder[i];
+  for(var i = 0; i < sortedArray.length; i++) {
+    var question = sortedArray[i];
     var checked = getChecked(question);
 
     student_answers.push(i + ";" + checked);
@@ -1112,7 +1128,7 @@ function submitExam() {
   displayResults();
 }
 
-// function to display Results
+// function to display results
 function displayResults() {
   var answers = JSON.parse(sessionStorage.getItem('student_answers'));
   var dbAnswers;
@@ -1129,7 +1145,6 @@ function displayResults() {
     var frTotalPoints = 0;
 
     for(var i = 0; i < originalOrder.length; i++) {
-      console.log(answers[i], originalOrder[i])
       var answer = "";
       var fr = false;
       var tf = false;
