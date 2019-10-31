@@ -480,7 +480,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  // toggleFullScreen();
+  toggleFullScreen();
 
 
   // listen for alt+tab changes and act upon them
@@ -535,7 +535,7 @@ function populateExam(code, ref) {
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
 
-          // done.push(0);
+          done.push(0);
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
