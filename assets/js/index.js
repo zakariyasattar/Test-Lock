@@ -51,7 +51,7 @@ var key = initKey(); var timer = 0; var originalOrder = [];
     }
 
 })();
-
+//
 // var data;
 // 	$.ajax({
 // 	  type: "GET",
@@ -62,17 +62,18 @@ var key = initKey(); var timer = 0; var originalOrder = [];
 //   		data = $.csv.toArrays(response);
 //       for(var i = 0; i < data.length; i++){
 //         var id = data[i][0];
-//         var names = data[i][3] + " " + data[i][2];
+//         var name = data[i][3] + " " + data[i][2];
 //         var className = data[i][10];
 //
 //         // firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
+//
 //         var json = {
-//           name: names,
+//           name: name,
 //           score:  Math.floor((Math.random() * 25) + 75),
 //           time: 5,
 //           totalScore: Math.floor((Math.random() * 5) + 15)
 //         }
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/ZIPIXM/responses/" + names).push(json);
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/ZKFOEP/responses/" + name).push(json);
 //       }
 // 	  }
 // });
@@ -134,7 +135,7 @@ window.onload = function() {
     }
   });
 
-  document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") - 0 + " minutes";
+  setTimeout(function(){ document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") + " minutes";  }, 500);
 
   setInterval(function(){
     if(canCount) {
@@ -154,10 +155,10 @@ window.onload = function() {
   setInterval(function(){
     var today = new Date();
     if(today.getSeconds() < 10) {
-      document.getElementById("currTime").innerHTML = today.getHours() + ":" + today.getMinutes() + ":0" + today.getSeconds();
+      document.getElementById("currTime").innerHTML = (today.getHours() % 12 || 12) + ":" + today.getMinutes() + ":0" + today.getSeconds();
     }
     else {
-      document.getElementById("currTime").innerHTML = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+      document.getElementById("currTime").innerHTML = (today.getHours() % 12 || 12) + ":" + today.getMinutes() + ":" + today.getSeconds();
     }
 
   }, 1000)
@@ -480,7 +481,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  // toggleFullScreen();
 
 
   // listen for alt+tab changes and act upon them
@@ -1111,7 +1112,6 @@ function bubbleSort(array) {
 function submitExam() {
   var student_answers = [];
   var sortedArray = bubbleSort(Array.prototype.slice.call( originalOrder ));
-  console.log(bubbleSort(Array.prototype.slice.call( originalOrder )));
 
   for(var i = 0; i < sortedArray.length; i++) {
     var question = sortedArray[i];
