@@ -249,6 +249,10 @@ function saveExam(alert) {
       for(var j = 0; j < children[7].childNodes.length - 1; j++){
         jsonArg1.choices.push(children[7].childNodes[j].childNodes[2].value);
 
+        if(children[7].parentNode.childNodes[6].childNodes[4].checked) {
+          jsonArg1.multiple = "true";
+        }
+
         if(children[7].childNodes[j].childNodes[1].checked == true) {
           jsonArg1.checked = j;
         }
@@ -429,6 +433,31 @@ function populateExam(code, ref) {
                         }
                       }
                     }
+
+                    var checkBox = document.createElement('input');
+                    checkBox.type = "checkbox";
+                    checkBox.style.transform = "scale(1.2)";
+                    checkBox.style.marginLeft = "20px";
+
+                    if(question.multiple == "true"){
+                      checkBox.checked = true;
+                      changeNames(checkBox);
+                      saveExam(false);
+                    }
+
+                    checkBox.addEventListener( 'change', function() {
+                      if(this.checked) {
+                        changeNames(checkBox);
+                        saveExam(false);
+                      }
+                    });
+
+                    var label = document.createElement('span');
+                    label.innerHTML = "Multiple Correct Answers";
+                    label.style.marginLeft = "5px";
+                    label.style.fontSize = "15px";
+
+                    localQuestions[i].childNodes[6].appendChild(checkBox); localQuestions[i].childNodes[6].appendChild(label);
                   }
 
                   else if(question.type == "fr"){
@@ -474,6 +503,15 @@ function populateExam(code, ref) {
   });
 
   setTimeout(function(){ document.getElementsByClassName('points')[0].value = getAllPoints(); }, 200);
+}
+
+function changeNames(checkBox) {
+  var options = checkBox.parentNode.parentNode.childNodes[7].childNodes;
+  var numberOfOptions = (options.length - 1);
+
+  for(var i = 0; i < numberOfOptions; i++) {
+    options[i].childNodes[1].name = i;
+  }
 }
 
 function setChecked(div) {
@@ -2660,7 +2698,6 @@ function createQuestion(loading, numAnswerChoices) {
   points.appendChild(viewImage);
 
   question.appendChild(points);
-
 
   var answer_choices = document.createElement('div');
   answer_choices.className = "mc";
