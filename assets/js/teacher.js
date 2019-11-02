@@ -190,6 +190,7 @@ function successfulSave() {
 
 // Save Exam
 function saveExam(alert) {
+
   if(alert) {
     successfulSave();
   }
@@ -236,9 +237,9 @@ function saveExam(alert) {
     jsonArg1.type = children[5].value;
     jsonArg1.points = children[6].childNodes[1].value;
     jsonArg1.checked = -1;
-    jsonArg1.imgSrc = children[6].childNodes[3].className;
+    jsonArg1.imgSrc = children[6].childNodes[4].className;
 
-    if(alert != true && alert != false) {
+    if(alert && !alert) {
       jsonArg1.imgShortDescription = alert;
     }
 
@@ -251,7 +252,7 @@ function saveExam(alert) {
         jsonArg1.choices.push(children[7].childNodes[j].childNodes[2].value);
 
         // checkBox
-        if(children[7].parentNode.childNodes[6].childNodes[4].checked && !alreadyChecked) {
+        if(children[7].parentNode.childNodes[6].childNodes[3].checked && !alreadyChecked) {
           jsonArg1.multiple = "true";
           jsonArg1.checked = [];
           alreadyChecked = true;
@@ -259,10 +260,8 @@ function saveExam(alert) {
 
         if(children[7].childNodes[j].childNodes[1].checked == true) {
           jsonArg1.checked.push(j);
-          console.log(j)
         }
       }
-      console.log(jsonArg1.checked)
     }
 
     else if(jsonArg1.type == 'fr') {
@@ -412,8 +411,8 @@ function populateExam(code, ref) {
                   localQuestions[i].childNodes[5].value = question.type;
 
                   if(question.imgSrc != "") {
-                    localQuestions[i].childNodes[6].childNodes[3].style.display = "initial";
-                    localQuestions[i].childNodes[6].childNodes[3].onclick = function() {
+                    localQuestions[i].childNodes[6].childNodes[4].style.display = "initial";
+                    localQuestions[i].childNodes[6].childNodes[4].onclick = function() {
                       swal({
                         icon: question.imgSrc,
                         text: question.imgShortDescription,
@@ -425,29 +424,34 @@ function populateExam(code, ref) {
                   changeQuestionType(question.type, i, 'mc');
 
                   if(question.type == "mc") {
+                    var multiple = (question.multiple == "true");
+
                     for(var j = 0; j < Object.keys(question.choices).length; j++){
                       if(question.choices[j].value != undefined){
                         localQuestions[i].childNodes[7].childNodes[j].childNodes[2].value = (question.choices[j].value);
-                        if(j == question.checked) {
+                        if(j == question.checked && !multiple) {
                           setChecked(localQuestions[i].childNodes[7].childNodes[j].childNodes[1]);
                         }
                       }
                       else {
                         localQuestions[i].childNodes[7].childNodes[j].childNodes[2].value = (question.choices[j]);
-                        if(j == question.checked) {
+                        if(j == question.checked && !multiple) {
                           setChecked(localQuestions[i].childNodes[7].childNodes[j].childNodes[1]);
                         }
                       }
                     }
 
-                    var checkBox = document.createElement('input');
-                    checkBox.type = "checkbox";
-                    checkBox.style.transform = "scale(1.2)";
-                    checkBox.style.marginLeft = "20px";
+                    var checkBox = document.getElementsByClassName('checkBox')[i];
 
-                    if(question.multiple == "true"){
+                    if(multiple){
                       checkBox.checked = true;
-                      setTimeout(function(){ changeNames(checkBox); saveExam(false); }, 1000);
+                      setTimeout(function(){ changeNames(checkBox);}, 1000);
+
+                      for(var k = 0; k < question.checked.length; k++) {
+                        setChecked(localQuestions[i].childNodes[7].childNodes[k].childNodes[1]);
+                      }
+
+                      saveExam(false);
                     }
 
                     checkBox.addEventListener( 'change', function() {
@@ -460,13 +464,6 @@ function populateExam(code, ref) {
                         saveExam(false);
                       }
                     });
-
-                    var label = document.createElement('span');
-                    label.innerHTML = "Multiple Correct Answers";
-                    label.style.marginLeft = "5px";
-                    label.style.fontSize = "15px";
-
-                    localQuestions[i].childNodes[6].appendChild(checkBox); localQuestions[i].childNodes[6].appendChild(label);
                   }
 
                   else if(question.type == "fr"){
@@ -533,7 +530,7 @@ function resetNames(checkBox) {
 }
 
 function setChecked(div) {
-  setTimeout(function(){ div.checked = true; }, 200);
+  setTimeout(function(){ div.checked = true; }, 800);
 }
 
 //load class based on name
@@ -580,14 +577,10 @@ function loadClass(name) {
                 button.id = "cached-exam-button";
                 button.style.display = "inline-block";
 
-                console.log(button)
-
                 button.onclick = function() {
                   document.getElementById('create-exam').style.display = "initial";
                   document.getElementById('main').style.display = "none";
                   document.body.style.background = "white";
-
-                  console.log(sessionStorage.getItem("CreatedExamCode").toUpperCase())
 
                   populateExam(sessionStorage.getItem("CreatedExamCode").toUpperCase(), "Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + sessionStorage.getItem("CreatedExamCode").toUpperCase());
                 }
@@ -599,7 +592,6 @@ function loadClass(name) {
             }
 
             if(sessionStorage.getItem("CreatedExamCode") != null && sessionStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
-              console.log(sessionStorage.getItem("CreatedExamCode").toUpperCase(), childSnapshot.val()[key].examCode)
                 document.getElementById('cached-exam-button').style.display = "initial";
                 document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
             }
@@ -1367,7 +1359,6 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
 
           for(var k = 0; k < answers.length; k++) {
             if(isNaN(answers[k].split(";")[1])) {
-              console.log(answers[k])
               answers[k] = answers[k].split(";")[0] + ";" + answers[k].split(";")[1] + ";" + cleanVersion;
             }
           }
@@ -2712,7 +2703,19 @@ function createQuestion(loading, numAnswerChoices) {
   var finishingSpan =  document.createElement('span');
   finishingSpan.innerHTML = " points)";
 
+  var checkBox = document.createElement('input');
+  checkBox.className = "checkBox";
+  checkBox.type = "checkbox";
+  checkBox.style.transform = "scale(1.2)";
+  checkBox.style.marginLeft = "20px";
+
+  var label = document.createElement('span');
+  label.innerHTML = "Multiple Correct Answers";
+  label.style.marginLeft = "5px";
+  label.style.fontSize = "15px";
+
   points.appendChild(span); points.appendChild(numPoints); points.appendChild(finishingSpan);
+  points.appendChild(checkBox); points.appendChild(label);
   points.appendChild(viewImage);
 
   question.appendChild(points);
