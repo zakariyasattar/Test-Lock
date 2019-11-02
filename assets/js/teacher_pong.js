@@ -385,28 +385,30 @@ function gameOver() {
 function submitToLeaderboard(userName) {
 	var possibleDuplicates = [];
 
-	firebase.database().ref('leaderboard').push("Teacher;" + userName + ";" + points);
+	if(sessionStorage.getItem('exists') != "false") {
+		firebase.database().ref('leaderboard').push("Teacher;" + userName + ";" + points);
 
-		firebase.database().ref('leaderboard').on('value', function(snapshot) {
-			snapshot.forEach(function(childSnapshot) {
-				if(userName == childSnapshot.val().split(";")[1]) {
-					possibleDuplicates.push(childSnapshot.val() + ";" + childSnapshot.key);
-				}
-			});
-			var highest = -111111111;
+			firebase.database().ref('leaderboard').on('value', function(snapshot) {
+				snapshot.forEach(function(childSnapshot) {
+					if(userName == childSnapshot.val().split(";")[1]) {
+						possibleDuplicates.push(childSnapshot.val() + ";" + childSnapshot.key);
+					}
+				});
+				var highest = -111111111;
 
-			for(var i = 0; i < possibleDuplicates.length; i++) {
-				if(possibleDuplicates[i].split(";")[2] > highest) {
-					highest = possibleDuplicates[i].split(";")[2];
+				for(var i = 0; i < possibleDuplicates.length; i++) {
+					if(possibleDuplicates[i].split(";")[2] > highest) {
+						highest = possibleDuplicates[i].split(";")[2];
+					}
 				}
-			}
 
-			for(i = 0; i < possibleDuplicates.length; i++) {
-				if(possibleDuplicates[i].split(";")[2] != highest) {
-					firebase.database().ref('leaderboard').child(possibleDuplicates[i].split(";")[3]).remove();
+				for(i = 0; i < possibleDuplicates.length; i++) {
+					if(possibleDuplicates[i].split(";")[2] != highest) {
+						firebase.database().ref('leaderboard').child(possibleDuplicates[i].split(";")[3]).remove();
+					}
 				}
-			}
 		});
+	}
 }
 
 function populateLeaderboard() {

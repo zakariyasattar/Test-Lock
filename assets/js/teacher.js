@@ -3101,6 +3101,8 @@ function populateDashboard() {
       if(!exists) {
         document.getElementById('doesNotExist').style.display = "initial";
       }
+
+      sessionStorage.setItem('exists', exists);
     });
   }
 
