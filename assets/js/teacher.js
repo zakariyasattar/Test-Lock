@@ -244,19 +244,25 @@ function saveExam(alert) {
 
     jsonArg1.choices = [];
 
-
     if(jsonArg1.type == 'mc') {
+      var alreadyChecked = false;
+
       for(var j = 0; j < children[7].childNodes.length - 1; j++){
         jsonArg1.choices.push(children[7].childNodes[j].childNodes[2].value);
 
-        if(children[7].parentNode.childNodes[6].childNodes[4].checked) {
+        // checkBox
+        if(children[7].parentNode.childNodes[6].childNodes[4].checked && !alreadyChecked) {
           jsonArg1.multiple = "true";
+          jsonArg1.checked = [];
+          alreadyChecked = true;
         }
 
         if(children[7].childNodes[j].childNodes[1].checked == true) {
-          jsonArg1.checked = j;
+          jsonArg1.checked.push(j);
+          console.log(j)
         }
       }
+      console.log(jsonArg1.checked)
     }
 
     else if(jsonArg1.type == 'fr') {
@@ -441,13 +447,16 @@ function populateExam(code, ref) {
 
                     if(question.multiple == "true"){
                       checkBox.checked = true;
-                      changeNames(checkBox);
-                      saveExam(false);
+                      setTimeout(function(){ changeNames(checkBox); saveExam(false); }, 1000);
                     }
 
                     checkBox.addEventListener( 'change', function() {
                       if(this.checked) {
                         changeNames(checkBox);
+                        saveExam(false);
+                      }
+                      else {
+                        resetNames(checkBox);
                         saveExam(false);
                       }
                     });
@@ -511,6 +520,15 @@ function changeNames(checkBox) {
 
   for(var i = 0; i < numberOfOptions; i++) {
     options[i].childNodes[1].name = i;
+  }
+}
+
+function resetNames(checkBox) {
+  var options = checkBox.parentNode.parentNode.childNodes[7].childNodes;
+  var numberOfOptions = (options.length - 1);
+
+  for(var i = 0; i < numberOfOptions; i++) {
+    options[i].childNodes[1].name = checkBox.parentNode.parentNode.id + ".";
   }
 }
 
