@@ -481,7 +481,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  // toggleFullScreen();
 
 
   // listen for alt+tab changes and act upon them
@@ -535,8 +535,8 @@ function populateExam(code, ref) {
         $(document.getElementById('finalDiv')).empty();
 
         for(var i = 0; i < Object.keys(val.questions).length; i++) {
-
           done.push(0);
+
           var localQuestions = document.getElementsByClassName('question');
           var question = childSnapshot.val().questions[i];
 
@@ -561,6 +561,7 @@ function populateExam(code, ref) {
           changeQuestionType(question.type, i);
 
           if(question.type == "mc") {
+            var multiple = question.multiple == "true";
             for(var j = 0; j < Object.keys(question.choices).length; j++){
               if(question.choices[j].value != undefined){
                 localQuestions[i].childNodes[3].childNodes[j].childNodes[1].innerHTML = (question.choices[j].value);
@@ -568,6 +569,17 @@ function populateExam(code, ref) {
               else {
                 localQuestions[i].childNodes[3].childNodes[j].childNodes[1].innerHTML = (question.choices[j]);
               }
+            }
+
+            if(question.multiple == "true") {
+              changeNames(localQuestions[i]);
+
+              var span = document.createElement('span');
+              span.style.fontSize = "13px";
+              span.style.paddingLeft = "20px";
+              span.innerHTML = "You may select more than one answer for this question";
+
+              localQuestions[i].childNodes[2].appendChild(span)
             }
           }
 
@@ -604,6 +616,14 @@ function populateExam(code, ref) {
      }
      restructureQuestions();
    }, 500);
+}
+
+function changeNames(question) {
+  var choices = question.childNodes[3].childNodes;
+
+  for(var i = 0; i < choices.length; i++) {
+    choices[i].childNodes[0].name = i;
+  }
 }
 
 function shuffle(array) {
