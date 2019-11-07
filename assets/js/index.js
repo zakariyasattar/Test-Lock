@@ -120,14 +120,12 @@ function signOut() {
 // for displayQuiz()
 window.onload = function() {
   $("#create-exam").on('change', "input:radio", function() {
-    if(parseInt(this.name.substring(0, 1))) {  //MC
-      done[parseInt(this.name.substring(0, 1)) - 1] = 1;
+    if(!isNaN(parseInt(this.parentNode.parentNode.parentNode.id) - 1)) {  //MC
+      done[parseInt(this.parentNode.parentNode.parentNode.id) - 1] = 1;
     }
     else {  //TF
-      done[parseInt(this.parentNode.parentNode.id) - 1] = 1;
+      done[parseInt(this.parentNode.parentNode.parentNode.id) - 1] = 1;
     }
-
-    // document.getElementsByClassName(this.parentNode.parentNode.parentNode.id)[0].style.background = "green";
 
     if(done.indexOf(0) == -1) {
       document.getElementById('submit-exam').style.display = 'initial';
@@ -135,7 +133,7 @@ window.onload = function() {
     }
   });
 
-  setTimeout(function(){ document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") + " minutes";  }, 500);
+  setTimeout(function(){ document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") + " minutes";  }, 1500);
 
   setInterval(function(){
     if(canCount) {
@@ -355,7 +353,7 @@ function submitExamCode() {
   var code = document.getElementById('inputExamCode').value.toUpperCase();
   var data = findCode(code);
 
-  if(code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code))) {
+  if(code.length == 5 && (!/[~!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(code)) ) {
     document.getElementById('exam-info').innerHTML = "";
     if(data == null) {
       swal("Invalid exam code!", "Check for special characters and make sure the length is at least 5", "error");
@@ -375,6 +373,7 @@ function submitExamCode() {
 function getCodeLetter(code, teacher, className) {
   firebase.database().ref("Teachers/" + teacher + "/Classes/" + className).once('value', function(snapshot) {
     for(exam in snapshot.val().Exams) {
+      console.log(exam)
       if(exam.substring(1) == code) {
         sessionStorage.setItem('ExamCode', exam);
       }
@@ -769,7 +768,7 @@ function createFreeResponse() {
         document.getElementById('submit-exam').style.display = 'initial';
         document.getElementById('submit-exam-disabled').style.display = "none";
       }
-    }, 100)
+    }, 350)
   }
 
   ta.className = "fr";
@@ -984,6 +983,12 @@ function createQuestion(loading, numAnswerChoices) {
 
     label.appendChild(input);
     label.appendChild(answer_choice);
+
+
+    label.onclick = function() {
+      console.log(this.childNodes[0].checked);
+    }
+
     answer_choices.appendChild(label);
   }
   question.appendChild(answer_choices);
