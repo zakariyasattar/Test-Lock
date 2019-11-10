@@ -1396,15 +1396,15 @@ function createGradedQuestion(studAnswer, corrAnswer, numAnswerChoices, numAnswe
 }
 
 //function to calc precentile range
-function getPercentile(val, exam) {
+function getPercentile(score, exam) {
   var numBelow = 0;
   var numEqual = 0;
 
   for(var student in exam) {
-    if(parseInt(val.split(":")[1]) > parseInt(exam[student].split(":")[1])) {
+    if(parseInt(score.split(":")[1]) > parseInt(exam[student].split(":")[1])) {
       numBelow++;
     }
-    else if(parseInt(val.split(":")[1]) == parseInt(exam[student].split(":")[1]) && val.split(":")[0] != exam[student].split(":")[0]) {
+    else if(parseInt(score.split(":")[1]) == parseInt(exam[student].split(":")[1]) && score.split(":")[0] != exam[student].split(":")[0]) {
       numEqual++;
     }
   }
