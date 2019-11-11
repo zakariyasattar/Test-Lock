@@ -2285,7 +2285,8 @@ function deleteExam(code) {
         });
       });
 
-      document.getElementById('create-exam').style.display = "none";
+      resetInitExam();
+      document.getElementById('create-exam').style.display = "";
       document.getElementById('main').style.display = "initial";
       document.body.style.background = "white";
 
@@ -2307,6 +2308,15 @@ function deleteExam(code) {
 
     }
   });
+}
+
+//function to reset all data boxes in initexam data div
+function resetInitExam() {
+  document.getElementById('nameOfExam').value = "";
+  document.getElementById('description').value = "";
+  document.getElementsByClassName('time')[0].value = "";
+  document.getElementById('maxScore').value = "";
+  document.getElementById('date').value = "";
 }
 
 //function to restructure if question is deleted in the middle
