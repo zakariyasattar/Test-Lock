@@ -974,6 +974,7 @@ function createQuestion(loading, numAnswerChoices) {
     var input = document.createElement('input');
     input.style.outline = "none";
     input.type = "radio";
+    input.name = "group";
     input.className = "option-input radio";
     input.name = num.innerHTML;
 
@@ -984,9 +985,11 @@ function createQuestion(loading, numAnswerChoices) {
     label.appendChild(input);
     label.appendChild(answer_choice);
 
-
-    label.onclick = function() {
-      console.log(this.childNodes[0].checked);
+    label.onmouseup = function() {
+      if(this.childNodes[0].checked) {
+        var button = this.childNodes[0];
+        setTimeout(function(){ button.checked = false; }, 150);
+      }
     }
 
     answer_choices.appendChild(label);

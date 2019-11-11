@@ -2770,6 +2770,12 @@ function createQuestion(loading, numAnswerChoices) {
       this.style.color = "#f25555";
     }, function(){});
 
+    label.onmouseup = function() {
+      if(this.childNodes[0].checked) {
+        var button = this.childNodes[0];
+        setTimeout(function(){ button.checked = false; }, 150);
+      }
+    }
 
     label.appendChild(labelTrash)
     label.appendChild(input);
