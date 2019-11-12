@@ -259,7 +259,13 @@ function saveExam(alert) {
         }
 
         if(children[7].childNodes[j].childNodes[1].checked == true) {
-          jsonArg1.checked.push(j);
+          //check if .checked is an Array
+          if(typeof jsonArg1.checked == "object") {
+            jsonArg1.checked.push(j);
+          }
+          else {
+            jsonArg1.checked = j;
+          }
         }
       }
     }

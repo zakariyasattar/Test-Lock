@@ -51,7 +51,7 @@ var key = initKey(); var timer = 0; var originalOrder = [];
     }
 
 })();
-//
+
 // var data;
 // 	$.ajax({
 // 	  type: "GET",
@@ -68,12 +68,14 @@ var key = initKey(); var timer = 0; var originalOrder = [];
 //         // firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
 //
 //         var json = {
+//           answers: ["0:0", "1:0"],
 //           name: name,
 //           score:  Math.floor((Math.random() * 25) + 75),
 //           time: 5,
 //           totalScore: Math.floor((Math.random() * 5) + 15)
 //         }
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/ZKFOEP/responses/" + name).push(json);
+//
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/XNXOYB/responses/" + name).push(json);
 //       }
 // 	  }
 // });
@@ -123,8 +125,8 @@ window.onload = function() {
     if(!isNaN(parseInt(this.parentNode.parentNode.parentNode.id) - 1)) {  //MC
       done[parseInt(this.parentNode.parentNode.parentNode.id) - 1] = 1;
     }
-    else {  //TF
-      done[parseInt(this.parentNode.parentNode.parentNode.id) - 1] = 1;
+    else {  //
+      done[parseInt(this.parentNode.parentNode.id) - 1] = 1;
     }
 
     if(done.indexOf(0) == -1) {
