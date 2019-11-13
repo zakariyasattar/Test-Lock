@@ -68,7 +68,7 @@ var key = initKey(); var timer = 0; var originalOrder = [];
 //         // firebase.database().ref("Teachers/Zakariya Sattar/Classes/" + className + "/Students").push(id + ";" + name);
 //
 //         var json = {
-//           answers: ["0:0", "1:0"],
+//           answers: ["0:" + Math.floor(1 + Math.random()*(3)), "1:" + Math.floor(0 + Math.random()*(2))],
 //           name: name,
 //           score: Math.floor((Math.random() * 25) + 75),
 //           time: 5,

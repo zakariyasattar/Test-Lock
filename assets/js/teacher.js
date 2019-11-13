@@ -946,28 +946,26 @@ function createItemAnalysis(div, question, answers, num) {
   pgBar.style.width = "85%";
 
   if(question.type == "mc") {
-    // loop
     for(var i = 0; i < answers.length; i++) {
-      mcCounters[(parseInt(answers[i][0].split(";")[0]))]++;
+      mcCounters[(parseInt(answers[i][0].split(":")[1]))]++;
     }
 
     for(var j = 0; j < mcCounters.length; j++) {
       if(mcCounters[j] != 0) {
-        if((j + 1) == question.checked) {
+        if(j == question.checked) {
           var pg_green, info_green;
-          var percentage = (mcCounters[j] / totalAnswers) * 100 + "%";
+          var correctPercentage = ((mcCounters[j] / totalAnswers) * 100).toFixed(2) + "%";
 
           pg_green = document.createElement('div');
           pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
           pg_green.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + percentage + ")";
 
-          setTimeout(function(){ pg_green.style.width = percentage}, 250);
+          setTimeout(function(){ pg_green.style.width = correctPercentage}, 250);
           pgBar.appendChild(pg_green);
-          console.log('appendedGreen')
         }
         else {
           var pg_red, info_red;
-          var percentage = (mcCounters[j] / totalAnswers) * 100 + "%";
+          var percentage = ((mcCounters[j] / totalAnswers) * 100).toFixed(2) + "%";
 
           pg_red = document.createElement('div');
           pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
@@ -984,7 +982,7 @@ function createItemAnalysis(div, question, answers, num) {
 
   else if(question.type == "tf") {
     for(var i = 0; i < answers.length; i++) {
-      tfCounters[(parseInt(answers[i][0].split(";")[0]))]++;
+      tfCounters[(parseInt(answers[i][0].split(":")[0]))]++;
     }
 
     if(question.choices[0] == 'true') {
@@ -1008,6 +1006,7 @@ function createItemAnalysis(div, question, answers, num) {
       setTimeout(function(){ pg_red.style.width = otherPercentage}, 250);
       pgBar.appendChild(pg_red);
     }
+
     else if(question.choices[0] == "false"){
       var totalAnswers = parseInt(tfCounters[0]) + parseInt(tfCounters[1]);
       var pg_green, info_green; var pg_red, info_red;
