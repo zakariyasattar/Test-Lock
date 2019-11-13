@@ -946,8 +946,9 @@ function createItemAnalysis(div, question, answers, num) {
   pgBar.style.width = "85%";
 
   if(question.type == "mc") {
+    // loop
     for(var i = 0; i < answers.length; i++) {
-      mcCounters[(parseInt(answers[i][0].split(";")[1]))]++;
+      mcCounters[(parseInt(answers[i][0].split(";")[0]))]++;
     }
 
     for(var j = 0; j < mcCounters.length; j++) {
@@ -978,17 +979,57 @@ function createItemAnalysis(div, question, answers, num) {
       }
     }
 
-    // <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
-    //   <span class="sr-only">20% Complete (warning)</span>
-    // </div>
-    // <div class="progress-bar progress-bar-danger" style="width: 10%">
-    //   <span class="sr-only">10% Complete (danger)</span>
-    // </div>
     item.appendChild(pgBar)
   }
 
   else if(question.type == "tf") {
+    for(var i = 0; i < answers.length; i++) {
+      tfCounters[(parseInt(answers[i][0].split(";")[0]))]++;
+    }
 
+    if(question.choices[0] == 'true') {
+      var totalAnswers = parseInt(tfCounters[0]) + parseInt(tfCounters[1]);
+      var pg_green, info_green; var pg_red, info_red;
+      var percentage = (tfCounters[0] / totalAnswers) * 100 + "%";
+
+      pg_green = document.createElement('div');
+      pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
+      pg_green.innerHTML = "TF".split("")[0] + " (" + percentage + ")";
+
+      setTimeout(function(){ pg_green.style.width = percentage}, 250);
+      pgBar.appendChild(pg_green);
+
+      var otherPercentage = (tfCounters[1] / totalAnswers) * 100 + "%";
+
+      pg_red = document.createElement('div');
+      pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
+      pg_red.innerHTML = "TF".split("")[1] + " (" + otherPercentage + ")";
+
+      setTimeout(function(){ pg_red.style.width = otherPercentage}, 250);
+      pgBar.appendChild(pg_red);
+    }
+    else if(question.choices[0] == "false"){
+      var totalAnswers = parseInt(tfCounters[0]) + parseInt(tfCounters[1]);
+      var pg_green, info_green; var pg_red, info_red;
+      var percentage = (tfCounters[1] / totalAnswers) * 100 + "%";
+
+      pg_green = document.createElement('div');
+      pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
+      pg_green.innerHTML = "TF".split("")[1] + " (" + percentage + ")";
+
+      setTimeout(function(){ pg_green.style.width = percentage}, 250);
+      pgBar.appendChild(pg_green);
+
+      var otherPercentage = (tfCounters[0] / totalAnswers) * 100 + "%";
+
+      pg_red = document.createElement('div');
+      pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
+      pg_red.innerHTML = "TF".split("")[0] + " (" + otherPercentage + ")";
+
+      setTimeout(function(){ pg_red.style.width = otherPercentage}, 250);
+      pgBar.appendChild(pg_red);
+    }
+    item.appendChild(pgBar)
   }
 
   else if(question.type == "fr") {

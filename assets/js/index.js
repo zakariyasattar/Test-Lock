@@ -70,7 +70,7 @@ var key = initKey(); var timer = 0; var originalOrder = [];
 //         var json = {
 //           answers: ["0:0", "1:0"],
 //           name: name,
-//           score:  Math.floor((Math.random() * 25) + 75),
+//           score: Math.floor((Math.random() * 25) + 75),
 //           time: 5,
 //           totalScore: Math.floor((Math.random() * 5) + 15)
 //         }
