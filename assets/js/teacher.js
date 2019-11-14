@@ -1036,7 +1036,14 @@ function createItemAnalysis(div, question, answers, num) {
   }
 
   else if(question.type == "fr") {
+    var span = document.createElement('span');
+    span.style.color = "black";
+    span.style.borderLeft = "1px solid black";
+    span.style.borderRight = "1px solid black";
+    span.style.paddingLeft = "10px";
 
+    span.innerHTML = "This is a Free Response question, so there is no item-analysis data.";
+    item.appendChild(span);
   }
 
   div.appendChild(document.createElement('br'));
