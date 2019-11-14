@@ -923,9 +923,10 @@ function populateItemAnalysis(code, ref) {
 //
 // </div>
 
-// function is called multiple times per question
+// function is called multiple times per exam
 function createItemAnalysis(div, question, answers, num) {
   var item = document.createElement('div');
+  var percentages = [];
 
   var span = document.createElement('span');
   span.style.color = "#2e2f7d";
@@ -960,29 +961,29 @@ function createItemAnalysis(div, question, answers, num) {
           pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
           pg_green.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + percentage + ")";
 
-          setTimeout(function(){ pg_green.style.width = correctPercentage}, 250);
+          setTimeout(setPercentageItem, 250, pg_green, correctPercentage);
           pgBar.appendChild(pg_green);
         }
         else {
           var pg_red, info_red;
           var percentage = ((mcCounters[j] / totalAnswers) * 100).toFixed(2) + "%";
+          percentages.push(percentage);
 
           pg_red = document.createElement('div');
           pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
           pg_red.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + percentage + ")";
 
-          setTimeout(function(){ pg_red.style.width = percentage}, 250);
+          setTimeout(setPercentageItem, 250, pg_red, percentage);
           pgBar.appendChild(pg_red);
         }
+        item.appendChild(pgBar)
       }
     }
-
-    item.appendChild(pgBar)
   }
 
   else if(question.type == "tf") {
     for(var i = 0; i < answers.length; i++) {
-      tfCounters[(parseInt(answers[i][0].split(":")[0]))]++;
+      tfCounters[(parseInt(answers[i][0].split(":")[1]))]++;
     }
 
     if(question.choices[0] == 'true') {
@@ -994,7 +995,7 @@ function createItemAnalysis(div, question, answers, num) {
       pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
       pg_green.innerHTML = "TF".split("")[0] + " (" + percentage + ")";
 
-      setTimeout(function(){ pg_green.style.width = percentage}, 250);
+      setTimeout(setPercentageItem, 250, pg_green, percentage);
       pgBar.appendChild(pg_green);
 
       var otherPercentage = (tfCounters[1] / totalAnswers) * 100 + "%";
@@ -1003,7 +1004,7 @@ function createItemAnalysis(div, question, answers, num) {
       pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
       pg_red.innerHTML = "TF".split("")[1] + " (" + otherPercentage + ")";
 
-      setTimeout(function(){ pg_red.style.width = otherPercentage}, 250);
+      setTimeout(setPercentageItem, 250, pg_red, otherPercentage);
       pgBar.appendChild(pg_red);
     }
 
@@ -1016,7 +1017,7 @@ function createItemAnalysis(div, question, answers, num) {
       pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
       pg_green.innerHTML = "TF".split("")[1] + " (" + percentage + ")";
 
-      setTimeout(function(){ pg_green.style.width = percentage}, 250);
+      setTimeout(setPercentageItem, 250, pg_green, percentage);
       pgBar.appendChild(pg_green);
 
       var otherPercentage = (tfCounters[0] / totalAnswers) * 100 + "%";
@@ -1025,7 +1026,7 @@ function createItemAnalysis(div, question, answers, num) {
       pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
       pg_red.innerHTML = "TF".split("")[0] + " (" + otherPercentage + ")";
 
-      setTimeout(function(){ pg_red.style.width = otherPercentage}, 250);
+      setTimeout(setPercentageItem, 250, pg_red, otherPercentage);
       pgBar.appendChild(pg_red);
     }
     item.appendChild(pgBar)
@@ -1040,6 +1041,10 @@ function createItemAnalysis(div, question, answers, num) {
   div.appendChild(document.createElement('br'));
   div.appendChild(document.createElement('hr'))
 
+}
+
+function setPercentageItem(div, percentage) {
+  div.style.width = percentage;
 }
 
 function getPercentileOriginal(score, exam, name) {
