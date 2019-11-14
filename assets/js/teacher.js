@@ -959,7 +959,7 @@ function createItemAnalysis(div, question, answers, num) {
 
           pg_green = document.createElement('div');
           pg_green.className = "progress-bar progress-bar-success progress-bar-striped";
-          pg_green.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + percentage + ")";
+          pg_green.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + correctPercentage + ")";
 
           setTimeout(setPercentageItem, 250, pg_green, correctPercentage);
           pgBar.appendChild(pg_green);
@@ -970,6 +970,7 @@ function createItemAnalysis(div, question, answers, num) {
           percentages.push(percentage);
 
           pg_red = document.createElement('div');
+          pg_red.style.borderLeft = "2px solid white";
           pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
           pg_red.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[j] + " (" + percentage + ")";
 
@@ -1001,6 +1002,7 @@ function createItemAnalysis(div, question, answers, num) {
       var otherPercentage = (tfCounters[1] / totalAnswers) * 100 + "%";
 
       pg_red = document.createElement('div');
+      pg_red.style.borderLeft = "2px solid white";
       pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
       pg_red.innerHTML = "TF".split("")[1] + " (" + otherPercentage + ")";
 
@@ -1023,6 +1025,7 @@ function createItemAnalysis(div, question, answers, num) {
       var otherPercentage = (tfCounters[0] / totalAnswers) * 100 + "%";
 
       pg_red = document.createElement('div');
+      pg_red.style.borderLeft = "2px solid white";
       pg_red.className = "progress-bar progress-bar-danger progress-bar-striped";
       pg_red.innerHTML = "TF".split("")[0] + " (" + otherPercentage + ")";
 
