@@ -737,6 +737,7 @@ function displayExamData(examName) {
                 document.getElementById('item-analysis').style.display = "inline-block";
                 document.body.style.backgroundImage = "linear-gradient(to bottom, #6a85b6 0%, #bac8e0 100%)";
                 document.getElementById('item-analysis-name').innerHTML = examName;
+                document.getElementById('current-exam').innerHTML = examName;
                 populateItemAnalysis(finalSelectedCode, "Teachers/" + userName + "/Classes/" + sessionStorage.getItem('createExamClass') + "/Exams/" + examCodeWithLetter)
               }
             }
@@ -919,9 +920,6 @@ function populateItemAnalysis(code, ref) {
 
 }
 
-// <div class="progress">
-//
-// </div>
 
 // function is called multiple times per exam
 function createItemAnalysis(div, question, answers, num) {
@@ -1041,6 +1039,7 @@ function createItemAnalysis(div, question, answers, num) {
     span.style.borderLeft = "1px solid black";
     span.style.borderRight = "1px solid black";
     span.style.paddingLeft = "10px";
+    span.style.paddingRight = "10px";
 
     span.innerHTML = "This is a Free Response question, so there is no item-analysis data.";
     item.appendChild(span);
@@ -1050,11 +1049,18 @@ function createItemAnalysis(div, question, answers, num) {
   div.appendChild(item);
   div.appendChild(document.createElement('br'));
   div.appendChild(document.createElement('hr'))
-
 }
 
 function setPercentageItem(div, percentage) {
   div.style.width = percentage;
+}
+
+
+// function to increase nav from item-analysis
+function goBackToCurrentExams() {
+  document.getElementById('main').style.display = "initial";
+  document.getElementById('item-analysis').style.display = "none";
+  document.body.style.backgroundImage = "linear-gradient(135deg, rgb(245, 247, 250) 0%, rgb(195, 207, 226) 100%)";
 }
 
 function getPercentileOriginal(score, exam, name) {
@@ -1090,6 +1096,9 @@ function display(title) {
     document.getElementById('feedback').style.display = "none";
     document.getElementById('create-exam').style.display = "none"
     document.getElementById('report-bug').style.display = "none";
+
+    document.getElementById('item-analysis').style.display = "none";
+    document.getElementById('create-exam').style.display = "none";
   }
   else if(title == '<a href="#">Dashboard</a>') {
     document.getElementById('main').style.display = "initial";
@@ -1098,12 +1107,18 @@ function display(title) {
     document.getElementById('feedback').style.display = "none";
     document.getElementById('create-exam').style.display = "none"
     document.getElementById('report-bug').style.display = "none";
+
+    document.getElementById('item-analysis').style.display = "none";
+    document.getElementById('create-exam').style.display = "none";
   }
   else if(title == '<a href="#">Leaderboard</a>') {
     populateLeaderboard(); // takes care of all other display calls
     document.getElementById('feedback').style.display = "none";
     document.getElementById('create-exam').style.display = "none"
     document.getElementById('report-bug').style.display = "none";
+
+    document.getElementById('item-analysis').style.display = "none";
+    document.getElementById('create-exam').style.display = "none";
   }
   else if(title == '<a href="#">Feedback</a>') {
     document.getElementById('main').style.display = "none";
@@ -1113,9 +1128,13 @@ function display(title) {
     document.getElementById('create-exam').style.display = "none"
     document.getElementById('report-bug').style.display = "none";
 
-    var iframe = $("#feedback-form");
-    iframe.attr("src", 'https://forms.id/f/zakariyasattar.id.blockstack/56856430b7');
+    document.getElementById('item-analysis').style.display = "none";
+    document.getElementById('create-exam').style.display = "none";
+
+    var iframe = document.getElementById("feedback-form");
+    iframe.src = 'https://forms.id/f/zakariyasattar.id.blockstack/56856430b7';
   }
+
   else if(title == '<a href="#">Report A Bug!</a>') {
     document.getElementById('main').style.display = "none";
     document.getElementById('pong').style.display = "none";
@@ -1123,11 +1142,15 @@ function display(title) {
     document.getElementById('report-bug').style.display = "initial";
     document.getElementById('feedback').style.display = "none";
     document.getElementById('create-exam').style.display = "none"
-
-    var iframe = $("#report-bug-form");
-    iframe.attr("src", 'https://forms.id/f/zakariyasattar.id.blockstack/30e2bc327b');
   }
 }
+setTimeout(function(){
+  var iframe = document.getElementById("feedback-form");
+  iframe.src = 'https://forms.id/f/zakariyasattar.id.blockstack/56856430b7';
+
+  var iframe = $("#report-bug-form");
+  iframe.attr("src", 'https://forms.id/f/zakariyasattar.id.blockstack/30e2bc327b');
+}, 500);
 
 // function to display / undisplay items to simulate going home
 function goHomeFromExams() {
