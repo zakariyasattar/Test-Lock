@@ -864,7 +864,7 @@ function displayExamData(examName) {
 
       var standardDev = document.createElement('li');
 
-      // calc SD
+      // calculate SD
       mean = standardDeviation.reduce((a,b) => a+b)/standardDeviation.length;
       sd = Math.sqrt(standardDeviation.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/standardDeviation.length);
 
@@ -1061,7 +1061,10 @@ function goBackToCurrentExams() {
   document.getElementById('main').style.display = "initial";
   document.getElementById('item-analysis').style.display = "none";
   document.body.style.backgroundImage = "linear-gradient(135deg, rgb(245, 247, 250) 0%, rgb(195, 207, 226) 100%)";
+
+  var examDataHasLoaded = false;
 }
+
 
 function getPercentileOriginal(score, exam, name) {
   var numBelow = 0;
@@ -1162,6 +1165,8 @@ function goHomeFromExams() {
   document.getElementById('exam-wrapper').style.display = "none";
 
   document.body.style.backgroundImage = "none"
+
+  var examDataHasLoaded = false;
 }
 
 function goExamsFromExam() {
@@ -1178,10 +1183,12 @@ function goExamsFromExam() {
 
   document.body.style.backgroundImage = "linear-gradient(to top, rgb(223, 233, 243) 0%, white 100%)";
   $(document.getElementById('overall-data')).empty()
+  var examDataHasLoaded = false;
 }
 
 function goHomeFromExamData() {
   goExamsFromExam(); goHomeFromExams();
+  var examDataHasLoaded = false;
 }
 
 // function to display student exam data
