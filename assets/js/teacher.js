@@ -1133,9 +1133,6 @@ function display(title) {
 
     document.getElementById('item-analysis').style.display = "none";
     document.getElementById('create-exam').style.display = "none";
-
-    // var iframe = document.getElementById("feedback-form");
-    // iframe.src = 'https://forms.id/f/zakariyasattar.id.blockstack/56856430b7';
   }
 
   else if(title == '<a href="#">Report A Bug!</a>') {
@@ -1147,13 +1144,6 @@ function display(title) {
     document.getElementById('create-exam').style.display = "none"
   }
 }
-// setTimeout(function(){
-//   var iframe = document.getElementById("feedback-form");
-//   iframe.src = 'https://forms.id/f/zakariyasattar.id.blockstack/56856430b7';
-//
-//   var iframe = $("#report-bug-form");
-//   iframe.attr("src", 'https://forms.id/f/zakariyasattar.id.blockstack/30e2bc327b');
-// }, 500);
 
 // function to display / undisplay items to simulate going home
 function goHomeFromExams() {
