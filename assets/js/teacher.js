@@ -2226,7 +2226,7 @@ function createExamBox(name, classAvg, ref, code) {
     if(isOverflown(difBackground)) {
       difBackground.childNodes[0].innerHTML = difBackground.childNodes[0].innerHTML.substring(0, 15) + "..."
     }
-   }, 500)
+  }, 250)
 
   classBox.appendChild(difBackground);
 
