@@ -2138,6 +2138,7 @@ function createExamBox(name, classAvg, ref, code) {
 
     deleteTest.onclick = function() {
       deleteExam(code);
+      setTimeout(function(){ document.getElementById('create-exam').style.display = "none"; }, 500);
     }
 
     var displayInfo = document.createElement('li');
@@ -2212,11 +2213,7 @@ function createExamBox(name, classAvg, ref, code) {
   difBackground.appendChild(option_vertical);
   difBackground.appendChild(document.createElement('hr'));
 
-  setTimeout(function(){
-    if(isOverflown(difBackground)) {
-      difBackground.childNodes[0].innerHTML = difBackground.childNodes[0].innerHTML.substring(0, 15) + "..."
-    }
-  }, 250)
+  setTimeout(isOverflown, 250, difBackground);
 
   classBox.appendChild(difBackground);
 
@@ -2266,7 +2263,7 @@ function createExamBox(name, classAvg, ref, code) {
             })
           });
 
-          setTimeout(function(){ createCurrentTakingBox(name); }, 55);
+          setTimeout(function(){ createCurrentTakingBox(name); }, 100);
         });
       });
     }
@@ -2305,7 +2302,14 @@ function setCorrectExamCode(code, ref, randomNum) {
 }
 
 function isOverflown(element) {
-    return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+  var originalString = element.childNodes[0].innerHTML;
+  element.childNodes[0].innerHTML = element.childNodes[0].innerHTML.replace(/ /g,"");
+
+  var overflow = element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+
+  if(overflow) {
+    element.childNodes[0].innerHTML = originalString.substring(0, 15) + "..."
+  }
 }
 
 // create currentlyTaking box
@@ -2378,7 +2382,7 @@ function deleteExam(code) {
       });
 
       resetInitExam();
-      document.getElementById('create-exam').style.display = "";
+      document.getElementById('create-exam').style.display = "none";
       document.getElementById('main').style.display = "initial";
       document.body.style.background = "white";
 
