@@ -176,12 +176,26 @@
     <div id="result" style="display:none">
       <a style="margin: 35px; position: relative; top: 15px" href="javascript:location.reload()"> <span class="glyphicon glyphicon-hand-left"></span> &nbsp Go Back Home</a>
       <center>
-        <h1 id="score"></h1>
-        <span style="font-size: 20px;" id="score-num"></span>
-        <hr></hr>
+          <h1 id="score"></h1>
+          <span style="font-size: 20px;" id="score-num"></span>
+          <hr></hr>
 
-        <div id="question-data"></div>
-      </center>
+          <div id="question-data"></div>
+
+          <div id="feedback">
+            <br/>
+            <br/>
+
+            <h1 id="feedback-header">Do you have any feedback for <span id="teacher-feedback-name"></span> on this exam? (Anonymous)</h1>
+            <br/>
+
+            <textarea id="form-text" placeholder="Enter Feedback Here..."></textarea>
+
+            <br/><br/>
+            <button id="submit-feedback">Submit This Form</button>
+          </div>
+        </center>
+      </div>
     </div>
 
     <div style="display: none; background: purple;" id="pong">

@@ -102,11 +102,11 @@ function onSignIn(googleUser) {
     window.location = "teacher.html";
 
     var profile = googleUser.getBasicProfile();
-    sessionStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
+    localStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
   }
   else {
     window.location.href = document.URL.substring(0, document.URL.indexOf("?"));
-    sessionStorage.setItem("userInfo", "");
+    localStorage.setItem("userInfo", "");
     signOut();
   }
 }
@@ -482,7 +482,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  toggleFullScreen();
+  // toggleFullScreen();
 
 
   // listen for alt+tab changes and act upon them
@@ -1158,6 +1158,12 @@ function submitExam() {
   document.getElementById('result').style.display = "initial";
 
   displayResults();
+  displayFeedbackForm();
+}
+
+function displayFeedbackForm() {
+  var form = document.getElementById('feedback');
+  document.getElementById('teacher-feedback-name').innerHTML = sessionStorage.getItem('teacher');
 }
 
 // function to display results

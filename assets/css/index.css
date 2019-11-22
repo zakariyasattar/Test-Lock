@@ -167,6 +167,29 @@ body {
  #result::-webkit-input-placeholder { text-align: left; padding-left: 10px;}
  #result::-moz-placeholder { text-align: left; margin-left: 20px;}
 
+ #feedback-header {
+   font-size: 15px;
+   text-decoration: underline;
+   padding-top: 45px;
+   border-top: 1px solid black;
+ }
+
+ #form-text {
+   border: 1px solid #2e2f7d;;
+   border-radius: 15px;
+   resize: none;
+   width: 75vw;
+   height: 300px;
+   padding: 25px;
+ }
+
+ #submit-feedback {
+   width: 75vw;
+   margin-bottom: 50px;
+   height: 5vh;
+   border-radius: 7px;
+ }
+
  #answer-choices {
    margin: 33px;
    padding-top: 5px;
