@@ -582,7 +582,7 @@ function loadClass(name) {
             createExamBox(childSnapshot.val()[key].examTitle, (classAvg / classCounter).toFixed(1), "Teachers/" + userName + "/Classes/" + name + "/Exams/" + childSnapshot.key, childSnapshot.val()[key].examCode);
             var val = childSnapshot.val()[key].examTitle;
 
-            if(sessionStorage.getItem("CreatedExamCode") != "") {
+            if(sessionStorage.getItem("CreatedExamCode") != null) {
               var button = document.getElementById('cached-code');
               if(button != null) {
                 button.id = "cached-exam-button";
@@ -597,6 +597,18 @@ function loadClass(name) {
                 }
               }
             }
+            else if(localStorage.getItem('lastEditedExam') != null) {
+              var button = document.getElementById('cached-code');
+              if(button != null) {
+                button.id = "cached-exam-button";
+                button.style.display = "inline-block";
+                document.getElementById('cached-exam-code').innerHTML = "View " + localStorage.getItem('lastEditedExam');
+
+                button.onclick = function() {
+                  displayExamData(localStorage.getItem('lastEditedExam'));
+                }
+              }
+            }
 
             if(childSnapshot.val()[key].examTitle == ""){
               val = childSnapshot.val()[key].examCode;
@@ -605,9 +617,6 @@ function loadClass(name) {
             if(sessionStorage.getItem("CreatedExamCode") != null && sessionStorage.getItem("CreatedExamCode").toUpperCase() == childSnapshot.val()[key].examCode) {
                 document.getElementById('cached-exam-button').style.display = "initial";
                 document.getElementById('cached-exam-code').innerHTML = "Edit " + val;
-            }
-            else if(document.getElementById('cached-exam-button') != null){
-              document.getElementById('cached-exam-button').style.display = "none";
             }
             break;
           }
@@ -2067,6 +2076,7 @@ function createExamBox(name, classAvg, ref, code) {
 
   classBox.onclick = function() {
     displayExamData(name);
+    localStorage.setItem('lastEditedExam', name);
     document.getElementById("this-exam").innerHTML = name;
   };
 
@@ -2886,7 +2896,7 @@ function createQuestion(loading, numAnswerChoices) {
           button.checked = false;
           saveExam(false);
         }, 150);
-        
+
       }
     }
 
