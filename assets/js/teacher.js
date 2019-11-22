@@ -2881,7 +2881,12 @@ function createQuestion(loading, numAnswerChoices) {
       console.log(this.childNodes)
       if(this.childNodes[1].checked) {
         var button = this.childNodes[1];
-        setTimeout(function(){ button.checked = false; }, 150);
+
+        setTimeout(function(){
+          button.checked = false;
+          saveExam(false);
+        }, 150);
+        
       }
     }
 

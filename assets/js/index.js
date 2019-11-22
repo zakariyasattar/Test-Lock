@@ -482,7 +482,7 @@ function displayQuiz() {
   document.body.style.background = "white";
   document.body.style.overflow = "scroll";
   populateExam(code, firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Exams/" + code));
-  // toggleFullScreen();
+  toggleFullScreen();
 
 
   // listen for alt+tab changes and act upon them
