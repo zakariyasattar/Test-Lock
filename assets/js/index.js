@@ -75,7 +75,7 @@ var key = initKey(); var timer = 0; var originalOrder = [];
 //           totalScore: Math.floor((Math.random() * 5) + 15)
 //         }
 //
-//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/XNXOYB/responses/" + name).push(json);
+//         firebase.database().ref("Teachers/Zakariya Sattar/Classes/Advance App Development/Exams/YSDIMI/responses/" + name).push(json);
 //       }
 // 	  }
 // });

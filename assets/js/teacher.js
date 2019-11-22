@@ -452,13 +452,7 @@ function populateExam(code, ref) {
 
                     if(multiple){
                       checkBox.checked = true;
-                      setTimeout(function(){ changeNames(checkBox);}, 1000);
-
-                      for(var k = 0; k < question.checked.length; k++) {
-                        setChecked(localQuestions[i].childNodes[7].childNodes[k].childNodes[1]);
-                      }
-
-                      saveExam(false);
+                      setTimeout(ifMultiple, 500, localQuestions[i], question.checked.length, checkBox);
                     }
 
                     checkBox.addEventListener( 'change', function() {
@@ -516,6 +510,16 @@ function populateExam(code, ref) {
   });
 
   setTimeout(function(){ document.getElementsByClassName('points')[0].value = getAllPoints(); }, 200);
+}
+
+function ifMultiple(localQuestion, questionCheckedLength, checkBox) {
+  changeNames(checkBox);
+
+  for(var k = 0; k < questionCheckedLength; k++) {
+    setChecked(localQuestion.childNodes[7].childNodes[k].childNodes[1]);
+  }
+
+  saveExam(false);
 }
 
 function changeNames(checkBox) {
@@ -2311,6 +2315,9 @@ function isOverflown(element) {
   if(overflow) {
     element.childNodes[0].innerHTML = originalString.substring(0, 15) + "..."
   }
+  else {
+    element.childNodes[0].innerHTML = originalString;
+  }
 }
 
 // create currentlyTaking box
@@ -2871,8 +2878,9 @@ function createQuestion(loading, numAnswerChoices) {
     }, function(){});
 
     label.onmouseup = function() {
-      if(this.childNodes[0].checked) {
-        var button = this.childNodes[0];
+      console.log(this.childNodes)
+      if(this.childNodes[1].checked) {
+        var button = this.childNodes[1];
         setTimeout(function(){ button.checked = false; }, 150);
       }
     }
