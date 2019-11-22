@@ -702,6 +702,7 @@ function displayExamData(examName) {
     document.getElementById('examSpecific').style.display = "initial";
     document.getElementById('sort-menu').style.display = "initial";
     document.getElementById('exam-name').innerHTML = examName;
+    document.getElementById('this-exam').innerHTML = examName;
     document.body.style.backgroundImage = "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)";
 
     var i = document.createElement('i');
