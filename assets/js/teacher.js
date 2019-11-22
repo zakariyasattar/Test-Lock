@@ -237,7 +237,8 @@ function saveExam(alert) {
     jsonArg1.type = children[5].value;
     jsonArg1.points = children[6].childNodes[1].value;
     jsonArg1.checked = -1;
-    jsonArg1.imgSrc = children[6].childNodes[4].className;
+
+    jsonArg1.imgSrc = children[6].childNodes[children[6].childNodes.length - 1].className;
 
     if(alert && !alert) {
       jsonArg1.imgShortDescription = alert;
@@ -2453,18 +2454,21 @@ function changeQuestionType(val, i, prevVal) {
     if(val == "mc") {
       document.getElementsByClassName("mc")[i].style.display = "initial";
     }
-
-    else if(val == "fr") {
-      document.getElementsByClassName("mc")[i].style.display = "none";
-      document.getElementById(plus).appendChild(createFreeResponse());
-    }
-    else if(val == "tf") {
-      document.getElementsByClassName("mc")[i].style.display = "none";
-      document.getElementById(plus).appendChild(createTrueFalse());
-    }
-    else if(val == "matching") {
-      document.getElementsByClassName("mc")[i].style.display = "none";
-      document.getElementById(plus).appendChild(createMatching());
+    else {
+      // by removing it twice, it eliminates the checkbox then the text as array position updates
+      plusDiv.childNodes[6].childNodes[3].remove(); plusDiv.childNodes[6].childNodes[3].remove();
+      if(val == "fr") {
+        document.getElementsByClassName("mc")[i].style.display = "none";
+        document.getElementById(plus).appendChild(createFreeResponse());
+      }
+      if(val == "tf") {
+        document.getElementsByClassName("mc")[i].style.display = "none";
+        document.getElementById(plus).appendChild(createTrueFalse());
+      }
+      if(val == "matching") {
+        document.getElementsByClassName("mc")[i].style.display = "none";
+        document.getElementById(plus).appendChild(createMatching());
+      }
     }
   }
 }

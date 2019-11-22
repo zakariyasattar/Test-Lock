@@ -1097,13 +1097,15 @@ function endTest() {
 
 function getChecked(question) {
   var type = question.childNodes[Object.keys(question.childNodes)[question.childNodes.length - 1]];
+  var checked = [];
 
   if(type.className == "mc") {
     for(var i = 0; i < type.childNodes.length; i++) {
       if(type.childNodes[i].childNodes[0].checked == true) {
-        return i;
+        checked.push(i);
       }
     }
+    return checked;
   }
 
   else if(type.className == "tf") {
@@ -1196,9 +1198,16 @@ function displayResults() {
           createIncorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
         }
       }
+
       else if(dbAnswers.questions[i].type == "mc") {
-        answer = parseInt(answers[i].split(";")[1])
+        if(answers[i].indexOf(',') == -1) {
+          answer = parseInt(answers[i].split(";")[1])
+        }
+        else {
+          answer = answers[i].split(";")[1];
+        }
       }
+
       else {
         fr = true;
         createFrBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
@@ -1206,12 +1215,29 @@ function displayResults() {
       }
 
       if(!fr && !tf) {
-        if(answer == dbAnswers.questions[i].checked) {
-          total += parseInt(dbAnswers.questions[i].points);
-          createCorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+        if(typeof answer == 'string' && answer.indexOf(',') != -1) {
+          for(var k = 0; k < Object.keys(dbAnswers.questions[i].checked).length; k++) {
+            for(var s = 0; s < answer.split(",").length; s++) {
+              if(dbAnswers.questions[i].checked[k] == parseInt(answer.split(",")[s])){
+                total += parseInt(dbAnswers.questions[i].points) / answer.split(",").length;
+              }
+            }
+          }
+          if(total == parseInt(dbAnswers.questions[i].points)) {
+            createCorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], total);
+          }
+          else {
+            createPartialBox(dbAnswers.questions[i].title, answers[i].split(";")[0], total, parseInt(dbAnswers.questions[i].points));
+          }
         }
         else {
-          createIncorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+          if(answer == dbAnswers.questions[i].checked) {
+            total += parseInt(dbAnswers.questions[i].points);
+            createCorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+          }
+          else {
+            createIncorrectBox(dbAnswers.questions[i].title, answers[i].split(";")[0], parseInt(dbAnswers.questions[i].points));
+          }
         }
       }
     }
@@ -1262,6 +1288,35 @@ function createFrBox(title, num, points) {
 
   var pointsAwarded = document.createElement('span');
   pointsAwarded.innerHTML = "Free Response Questions Require Manual Grading (Points Possible: " + points + ")"
+  pointsAwarded.style.float = "right";
+  pointsAwarded.style.paddingRight = "20px";
+
+  box.appendChild(name);
+  box.appendChild(pointsAwarded);
+
+  dataDiv.appendChild(box);
+}
+
+function createPartialBox(title, num, points, totalPoints) {
+  var dataDiv = document.getElementById('question-data');
+
+  var box = document.createElement('div');
+  box.style.width = "90vw";
+  box.style.marginTop = "10px";
+  box.style.border = "1px solid black";
+  box.style.padding = "15px";
+  box.style.height = "50px";
+  box.style.background = "#eac07c";
+  box.style.borderRadius = "6px";
+  box.className = "questionBox";
+
+  var name = document.createElement('span');
+  name.innerHTML = parseInt(num) + 1 + " | " + title;
+  name.style.float = "left";
+  name.style.paddingLeft = "10px";
+
+  var pointsAwarded = document.createElement('span');
+  pointsAwarded.innerHTML = "You Received " + points + " / " + totalPoints + " Points For This Question!"
   pointsAwarded.style.float = "right";
   pointsAwarded.style.paddingRight = "20px";
 
