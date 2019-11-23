@@ -208,6 +208,12 @@ window.onload = function() {
   });
 };
 
+function submitFeedbackForm() {
+  var text = document.getElementById('form-text').value;
+
+  // firebase.database().ref()
+}
+
 //initialize key with random val
 function initKey() {
   var finalString;
@@ -1159,11 +1165,6 @@ function submitExam() {
 
   displayResults();
   displayFeedbackForm();
-}
-
-function displayFeedbackForm() {
-  var form = document.getElementById('feedback');
-  document.getElementById('teacher-feedback-name').innerHTML = sessionStorage.getItem('teacher');
 }
 
 // function to display results
