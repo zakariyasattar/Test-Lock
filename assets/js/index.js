@@ -102,11 +102,11 @@ function onSignIn(googleUser) {
     window.location = "teacher.html";
 
     var profile = googleUser.getBasicProfile();
-    localStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
+    sessionStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
   }
   else {
     window.location.href = document.URL.substring(0, document.URL.indexOf("?"));
-    localStorage.setItem("userInfo", "");
+    sessionStorage.setItem("userInfo", "");
     signOut();
   }
 }
@@ -211,7 +211,14 @@ window.onload = function() {
 function submitFeedbackForm() {
   var text = document.getElementById('form-text').value;
 
-  // firebase.database().ref()
+  var teacher = sessionStorage.getItem('teacher');
+  var className = sessionStorage.getItem('className');
+  var examCode = sessionStorage.getItem('ExamCode');
+
+  firebase.database().ref("Teachers/" + teacher + "/Classes/" + className + "/Exams/" + examCode + "/feedback").push(text);
+
+  swal("Thanks!", "Your response has been recorded!", 'success');
+  document.getElementById('form-text').value = "";
 }
 
 //initialize key with random val
@@ -1164,7 +1171,6 @@ function submitExam() {
   document.getElementById('result').style.display = "initial";
 
   displayResults();
-  displayFeedbackForm();
 }
 
 // function to display results

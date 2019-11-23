@@ -118,6 +118,7 @@ function createQuiz() {
     });
   }
 
+  // generate exam code
   var randomCode = generateCode();
 
   var examInit = {
@@ -857,6 +858,31 @@ function displayExamData(examName) {
             }
           }
         }
+
+        var feedback = document.createElement('div');
+        feedback.style.marginBottom = "40px";
+        feedback.appendChild(document.createElement('hr'));
+        feedback.appendChild(document.createElement('br'));
+
+        var feedbackHeader = document.createElement('h1');
+        feedbackHeader.style.fontSize = "15px";
+        feedbackHeader.style.textAlign = "center";
+        feedbackHeader.innerHTML = "Feedback On '" + document.getElementById('exam-name').innerHTML + "'";
+        feedbackHeader.style.textDecoration = "underline";
+        feedback.appendChild(feedbackHeader)
+
+        for(data in obj[prop].feedback) {
+          var span = document.createElement('span');
+          span.innerHTML = (obj[prop].feedback[data]);
+          span.style.marginLeft = "35px";
+          span.style.borderLeft = "1px solid black";
+          span.style.paddingLeft = "15px";
+
+          feedback.appendChild(span);
+          feedback.appendChild(document.createElement('hr'));
+        }
+
+        document.getElementById('main').appendChild(feedback);
       }
     }
 
@@ -893,6 +919,7 @@ function displayExamData(examName) {
       ul.appendChild(standardDev);
 
       overallData.appendChild(ul);
+
     }
     else {
       var possibleTables = document.getElementsByClassName('table');
