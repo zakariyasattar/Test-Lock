@@ -433,7 +433,8 @@ function retrieveName() {
           taken = true;
         }
       });
-      if(!taken || taken) {
+
+      if(!taken) {
         document.getElementById('userName').style.color = "black";
         sessionStorage.setItem('idNum', id);
         firebase.database().ref("Teachers/" + plaintext.split(";")[1] + "/Classes/" + plaintext.split(";")[2] + "/Students").once('value', function(snapshot) {
