@@ -135,7 +135,7 @@ window.onload = function() {
     }
   });
 
-  setTimeout(function(){ document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") + " minutes";  }, 1500);
+  setTimeout(function(){ document.getElementById('timeLeftInExam').innerHTML = sessionStorage.getItem("timeLimit") + " minutes";  }, 5000);
 
   setInterval(function(){
     if(canCount) {
@@ -154,12 +154,22 @@ window.onload = function() {
 
   setInterval(function(){
     var today = new Date();
+    var ampm = today.getHours() >= 12 ? 'pm' : 'am';
+    var timeStamp = (today.getHours() % 12 || 12) + ":" + today.getMinutes() + ":" + today.getSeconds() + " " + ampm.toUpperCase();
+
     if(today.getSeconds() < 10) {
-      document.getElementById("currTime").innerHTML = (today.getHours() % 12 || 12) + ":" + today.getMinutes() + ":0" + today.getSeconds();
+      var split = timeStamp.split(":");
+      split[2] = "0" + split[2];
+      timeStamp = split.join().replace(/,/g, ":");
     }
-    else {
-      document.getElementById("currTime").innerHTML = (today.getHours() % 12 || 12) + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+    if(today.getMinutes() < 10) {
+      var split = timeStamp.split(":");
+      split[1] = "0" + split[1];
+      timeStamp = split.join().replace(/,/g, ":");
     }
+
+    document.getElementById("currTime").innerHTML = timeStamp;
 
   }, 1000)
 
