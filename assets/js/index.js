@@ -102,11 +102,11 @@ function onSignIn(googleUser) {
     window.location = "teacher.html";
 
     var profile = googleUser.getBasicProfile();
-    sessionStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
+    localStorage.setItem("userInfo", JSON.stringify([profile.getId(), profile.getName(), profile.getImageUrl(), profile.getEmail()]));
   }
   else {
     window.location.href = document.URL.substring(0, document.URL.indexOf("?"));
-    sessionStorage.setItem("userInfo", "");
+    localStorage.setItem("userInfo", "");
     signOut();
   }
 }
@@ -115,7 +115,7 @@ function onSignIn(googleUser) {
 function signOut() {
   var auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
-    sessionStorage.removeItem('userInfo');
+    localStorage.removeItem('userInfo');
   });
 }
 

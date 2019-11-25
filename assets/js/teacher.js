@@ -1,7 +1,14 @@
 // check if user is signed in
-if(sessionStorage.getItem('userInfo') == null) {
+if(localStorage.getItem('userInfo') == null) {
   document.body.style.display = "none";
   alert("NOT AUTHORIZED");
+  setTimeout(function(){ window.location.href = "/?" }, 3000);
+}
+
+function ken() {
+  var modified = JSON.parse(localStorage.getItem('userInfo'))
+  modified[1] = "Kenneth Albert"
+  localStorage.setItem('userInfo', JSON.stringify(modified))
 }
 
 var examCodes = [];
@@ -83,8 +90,8 @@ window.onload = function() {
 };
 
 // retrieve userName, img from sessionStorage
-var userName = (JSON.parse(sessionStorage.getItem("userInfo"))[1]);
-var profileImg = (JSON.parse(sessionStorage.getItem("userInfo"))[2]);
+var userName = (JSON.parse(localStorage.getItem("userInfo"))[1]);
+var profileImg = (JSON.parse(localStorage.getItem("userInfo"))[2]);
 
 //initialize aspects of page with JS data
 document.getElementById('welcome-text').innerHTML = "Welcome " + userName + "!";
@@ -93,7 +100,7 @@ document.getElementById('profile').src = profileImg;
 $('#profile').click(function(){
   swal({
     title: "Sign Out",
-    text: "Are You Sure You Want To Sign Out?",
+    text: "Are you sure you want to Sign Out?",
     icon: "warning",
     buttons: ["Cancel", "Sign Me Out!"],
   })
