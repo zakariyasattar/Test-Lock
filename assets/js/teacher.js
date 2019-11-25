@@ -458,21 +458,23 @@ function populateExam(code, ref) {
 
                     var checkBox = document.getElementsByClassName('checkBox')[i];
 
-                    if(multiple){
-                      checkBox.checked = true;
-                      setTimeout(ifMultiple, 500, localQuestions[i], question.checked.length, checkBox);
-                    }
+                    if (typeof checkBox !== 'undefined') {
+                      if(multiple){
+                        checkBox.checked = true;
+                        setTimeout(ifMultiple, 500, localQuestions[i], question.checked.length, checkBox);
+                      }
 
-                    checkBox.addEventListener( 'change', function() {
-                      if(this.checked) {
-                        changeNames(checkBox);
-                        saveExam(false);
-                      }
-                      else {
-                        resetNames(checkBox);
-                        saveExam(false);
-                      }
-                    });
+                      checkBox.addEventListener( 'change', function() {
+                        if(this.checked) {
+                          changeNames(checkBox);
+                          saveExam(false);
+                        }
+                        else {
+                          resetNames(checkBox);
+                          saveExam(false);
+                        }
+                      });
+                    }
                   }
 
                   else if(question.type == "fr"){
