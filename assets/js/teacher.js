@@ -2546,19 +2546,20 @@ function searchLeaderboard() {
 function createTrueFalse() {
   var label = document.createElement('label');
   label.id = "label";
+  var randomNum = Math.floor(Math.random() * 1000000);
   label.className = "tf";
 
   var true_input = document.createElement('input');
   true_input.style.outline = "none";
   true_input.type = "radio";
   true_input.className = "option-input radio";
-  true_input.name = "tf";
+  true_input.name = "tf" + randomNum;
 
   var false_input = document.createElement('input');
   false_input.style.outline = "none";
   false_input.type = "radio";
   false_input.className = "option-input radio";
-  false_input.name = "tf";
+  false_input.name = "tf" + randomNum;
   false_input.style.marginLeft = "10%";
 
   var true_span = document.createElement('span');
