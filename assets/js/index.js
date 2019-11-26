@@ -52,6 +52,13 @@ var key = initKey(); var timer = 0; var originalOrder = [];
 
 })();
 
+function createTeacher(name, classes) {
+  for(var i = 0; i < classes.length; i++) {
+    firebase.database().ref("Teachers/" + name + "/Classes/" + classes[i] + "/Exams/").push('no_exams');
+    firebase.database().ref("Teachers/" + name + "/Classes/" + classes[i] + "/Students/").push('68742;Zakariya Sattar');
+  }
+}
+
 // var data;
 // 	$.ajax({
 // 	  type: "GET",
