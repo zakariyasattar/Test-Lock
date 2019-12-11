@@ -5,7 +5,7 @@ if(localStorage.getItem('userInfo') == null) {
   setTimeout(function(){ window.location.href = "/?" }, 3000);
 }
 
-function switch() {
+function hack() {
   var modified = JSON.parse(localStorage.getItem('userInfo'))
   modified[1] = "Zakariya Sattar"
   localStorage.setItem('userInfo', JSON.stringify(modified))
