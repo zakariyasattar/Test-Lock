@@ -5,9 +5,9 @@ if(localStorage.getItem('userInfo') == null) {
   setTimeout(function(){ window.location.href = "/?" }, 3000);
 }
 
-function ken() {
+function switch() {
   var modified = JSON.parse(localStorage.getItem('userInfo'))
-  modified[1] = "Kenneth Albert"
+  modified[1] = "Zakariya Sattar"
   localStorage.setItem('userInfo', JSON.stringify(modified))
 }
 
