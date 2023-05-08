@@ -1,9 +1,9 @@
-// check if user is signed in
-if(localStorage.getItem('userInfo') == null) {
-  document.body.style.display = "none";
-  alert("NOT AUTHORIZED");
-  setTimeout(function(){ window.location.href = "/?" }, 3000);
-}
+// // check if user is signed in
+// if(localStorage.getItem('userInfo') == null) {
+//   document.body.style.display = "none";
+//   alert("NOT AUTHORIZED");
+//   setTimeout(function(){ window.location.href = "/?" }, 3000);
+// }
 
 function hack() {
   var modified = JSON.parse(localStorage.getItem('userInfo'))
