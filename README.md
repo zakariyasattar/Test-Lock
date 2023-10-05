@@ -1,5 +1,5 @@
 # Test-Lock
- A secure testing application for the web
+ A secure testing application for the web, built entirely from the front-end!
 
  View a basic walkthrough here:
 
